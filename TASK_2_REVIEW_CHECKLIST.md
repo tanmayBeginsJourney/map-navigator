@@ -12,7 +12,7 @@
 
 ### File Structure Completeness
 - [x] **docker-compose.yml**: Complete configuration file created
-- [x] **.env**: Database credentials file created  
+- [x] **.env.example**: Environment template created (actual .env excluded from git)  
 - [x] **DOCKER_SETUP.md**: Comprehensive documentation created
 - [x] **Project Structure**: Files placed in correct project root location
 
@@ -38,7 +38,7 @@
 - [x] **Subtask 2.4**: Verify PostGIS Extension and Database Connectivity
 
 ### Best Practices Adherence
-- [x] **Security**: Database credentials externalized via environment variables
+- [x] **Security**: Database credentials externalized via environment variables (not committed to git)
 - [x] **Flexibility**: Environment variable defaults allow customization
 - [x] **Maintainability**: Clear documentation and configuration structure
 - [x] **Development Focus**: Configuration optimized for local development

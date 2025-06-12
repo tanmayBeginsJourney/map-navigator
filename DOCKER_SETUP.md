@@ -24,8 +24,9 @@ Both commands should return version numbers without errors.
 
 ## Quick Start
 
-1. **Copy environment variables** (create `.env` file in project root):
+1. **Create environment variables** (create `.env` file in project root):
 ```bash
+# Copy this template and replace with your actual values
 # Database Configuration
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=secret
@@ -36,6 +37,8 @@ POSTGRES_PORT=5432
 # Development Database URL (for applications)
 DATABASE_URL=postgresql://admin:secret@localhost:5432/campus_navigation
 ```
+
+**⚠️ Security Note**: Never commit the actual `.env` file to version control. The `.env` file is already in `.gitignore` to prevent accidental commits.
 
 2. **Start the database**:
 ```bash

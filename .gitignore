@@ -9,6 +9,10 @@ dev-debug.log
 # Dependency directories
 node_modules/
 
+# Build artifacts
+dist/
+.vite/
+
 # Environment variables
 .env
 
