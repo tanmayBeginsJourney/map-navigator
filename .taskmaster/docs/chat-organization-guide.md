@@ -52,16 +52,30 @@ This guide provides a structured approach to organizing development conversation
 
 ### **Starting a New Chat Session**
 
-**Minimal Startup Template:**
+**🔧 Pre-Chat Git Setup:**
+```bash
+# 1. Sync with merged main branch
+git checkout main
+git pull origin main
+
+# 2. Delete previous chat branch (already merged)
+git branch -d chat-[X-1]
+
+# 3. Create new branch for current chat  
+git checkout -b chat-[X]
+```
+
+**📋 Minimal Startup Template:**
 
 ```markdown
-# Campus Navigation Development - Chat [X]: [Phase Name]
+# Campus Navigation Development - Chat [X]: [Task Name]
 
 ## 📋 Context Setup
 
 - **Project:** Campus Indoor-Outdoor Navigation System
-- **Current Phase:** [Foundation/Core Navigation/Search & Discovery/Quality & Testing/Advanced Features] (Tasks X-Y)
+- **Current Task:** [Task Number and Description]
 - **Previous Progress:** See Chat [X-1] in `.taskmaster/docs/chat-progress-log.md`
+- **Branch:** chat-[X] (created from updated main)
 
 ## 🎯 Ready to Begin
 
