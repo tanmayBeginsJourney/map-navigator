@@ -10,7 +10,7 @@ I am a college student, first year, studying computer science. People get lost o
 
 ### Initial Brain‑stormed Problems
 
-1. **GPS accuracy** — Is GPS (as used in Google Maps) accurate to the nearest metre? If not, then live tracking is not an option. It would be better to stick with manual entry. For example: the user enters that they want to go to *x* location; we show them the path to *y* location and instruct them to take a lift to *z* floor. Once they get to the lift, we can ask if they successfully reached *z* floor through the lift. When they click **yes**, the map changes to that particular floor.
+1. **GPS accuracy** — Is GPS (as used in Google Maps) accurate to the nearest metre? If not, then live tracking is not an option. It would be better to stick with manual entry. For example: the user enters that they want to go to _x_ location; we show them the path to _y_ location and instruct them to take a lift to _z_ floor. Once they get to the lift, we can ask if they successfully reached _z_ floor through the lift. When they click **yes**, the map changes to that particular floor.
 
 2. **Indoor map design & path‑finding** — Since this map must work on floors of individual buildings:
 
@@ -31,10 +31,10 @@ I am a college student, first year, studying computer science. People get lost o
 ### Visualised Walk‑through (Current Idea)
 
 - John finds the nearest **QR code** (most likely right next to the lift) and scans it.  
-- The **initial location** is automatically input as *1st floor, building 1* and a map of that floor (rooms labelled) is displayed.  
+- The **initial location** is automatically input as _1st floor, building 1_ and a map of that floor (rooms labelled) is displayed.  
 - He enters his destination as **room 2201**.  
 - He is told to **take the lift to the ground floor**.  
-- Once he does that, he can click **“yes”** on the pop‑up prompt *“Did you take the lift to the ground floor?”*.  
+- Once he does that, he can click **“yes”** on the pop‑up prompt _“Did you take the lift to the ground floor?”_.  
 - The map shifts to the **ground‑floor view** of building 1 and guides him to the correct exit (if multiple exits exist).  
 - After confirming exit, the map shifts to the **overall campus map** (because he has exited the building) and guides him to **building 2**.  
 - Another prompt confirms whether he is inside building 2.  
@@ -80,19 +80,19 @@ The ideal map‑navigation system would work perfectly for **any initial locatio
 - **Visiting parents & guests** during fests and convocations.
 - **New faculty / admin staff** during onboarding.
 
-Accessibility note: lifts exist in almost every building and will be used as default vertical links. Wheel‑chair routing is *future scope*.
+Accessibility note: lifts exist in almost every building and will be used as default vertical links. Wheel‑chair routing is _future scope_.
 
 ---
 
 ## 4. Assumptions & Constraints
 
-| ID | Assumption / Constraint                                                        | Notes |
-| -- | ------------------------------------------------------------------------------ | ----- |
-| A1 | QR codes may be pasted freely at agreed anchor points.                         |       |
-| A2 | Floorplans are publicly shareable; no security concern.                        |       |
-| A3 | Continuous indoor positioning *not* required (no beacons, no Wi‑Fi RTT).       |       |
-| A4 | Users have high‑speed cellular data; still optimise bundles.                   |       |
-| A5 | Placeholder SVGs acceptable until real PDFs arrive (campus closed for summer). |       |
+| ID  | Assumption / Constraint                                                        | Notes |
+| --- | ------------------------------------------------------------------------------ | ----- |
+| A1  | QR codes may be pasted freely at agreed anchor points.                         |       |
+| A2  | Floorplans are publicly shareable; no security concern.                        |       |
+| A3  | Continuous indoor positioning _not_ required (no beacons, no Wi‑Fi RTT).       |       |
+| A4  | Users have high‑speed cellular data; still optimise bundles.                   |       |
+| A5  | Placeholder SVGs acceptable until real PDFs arrive (campus closed for summer). |       |
 
 ---
 
@@ -122,11 +122,11 @@ Accessibility note: lifts exist in almost every building and will be used as def
 
 | ID    | Priority | Story                                                                                                                                                       | Acceptance Criteria                                                                         |
 | ----- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| US‑01 | Must     | *As a visitor*, after scanning a QR at my current room, I can input a room number and see a highlighted path segment on my current floor within 2 s.        | QR resolved to node; path API responds ≤ 150 ms; blue line drawn; legend shows next action. |
-| US‑02 | Must     | *As a visitor*, when I reach a lift, I tap “I’m inside lift, go to G” and the map auto‑switches to the ground‑floor layer with the new segment highlighted. | Touch event triggers floor change; correct sub‑path displayed.                              |
-| US‑03 | Must     | *As a content maintainer*, I can replace placeholder SVGs with real floor SVGs without touching JS code.                                                    | Build pipeline reads `/assets/svg/<bldg>/<floor>.svg`; graph rebuild script available.      |
-| US‑04 | Should   | *As any user*, if network drops mid‑route, the last retrieved tiles & path still render.                                                                    | Service‑worker caches last 3 floors & outdoor layer; path cache in localStorage.            |
-| US‑05 | Could    | *As a newcomer*, I can search “Mess Hall” instead of room #.                                                                                                | POI index with fuzzy search ≤ 50 ms.                                                        |
+| US‑01 | Must     | _As a visitor_, after scanning a QR at my current room, I can input a room number and see a highlighted path segment on my current floor within 2 s.        | QR resolved to node; path API responds ≤ 150 ms; blue line drawn; legend shows next action. |
+| US‑02 | Must     | _As a visitor_, when I reach a lift, I tap “I’m inside lift, go to G” and the map auto‑switches to the ground‑floor layer with the new segment highlighted. | Touch event triggers floor change; correct sub‑path displayed.                              |
+| US‑03 | Must     | _As a content maintainer_, I can replace placeholder SVGs with real floor SVGs without touching JS code.                                                    | Build pipeline reads `/assets/svg/<bldg>/<floor>.svg`; graph rebuild script available.      |
+| US‑04 | Should   | _As any user_, if network drops mid‑route, the last retrieved tiles & path still render.                                                                    | Service‑worker caches last 3 floors & outdoor layer; path cache in localStorage.            |
+| US‑05 | Could    | _As a newcomer_, I can search “Mess Hall” instead of room #.                                                                                                | POI index with fuzzy search ≤ 50 ms.                                                        |
 
 ---
 
@@ -137,7 +137,7 @@ Accessibility note: lifts exist in almost every building and will be used as def
 | FR‑1 | The system shall render a 2‑D vector map for the current layer, zoomable/pannable.                             |
 | FR‑2 | The system shall accept a start node ID (QR) and end node ID (QR or search).                                   |
 | FR‑3 | The routing engine shall compute the shortest path across indoor & outdoor graphs using A\* in ≤ 150 ms.       |
-| FR‑4 | The UI shall divide the full path into *segments* by floor/exterior and expose a **Next →** action to advance. |
+| FR‑4 | The UI shall divide the full path into _segments_ by floor/exterior and expose a **Next →** action to advance. |
 | FR‑5 | The system shall log `route_start`, `segment_complete`, `route_complete` events with anonymised IDs.           |
 
 ---
@@ -192,9 +192,9 @@ Service Worker                   Graph JSON / SQL
 
 ### Edge table
 
-| from | to | distance\_m | weight | kind                      |
-| ---- | -- | ----------- | ------ | ------------------------- |
-| FK   | FK | float       | float  | corridor / lift / outdoor |
+| from | to  | distance_m | weight | kind                      |
+| ---- | --- | ---------- | ------ | ------------------------- |
+| FK   | FK  | float      | float  | corridor / lift / outdoor |
 
 ---
 
@@ -219,8 +219,8 @@ Service Worker                   Graph JSON / SQL
   "source": "b1‑1101",
   "target": "b2‑2201",
   "constraints": {
-    "liftsOnly": true
-  }
+    "liftsOnly": true,
+  },
 }
 ```
 
@@ -395,9 +395,8 @@ docs(prd): add repo & VC section
 4. Address actionable feedback; re‑run tests → merge via squash.
 5. Conventional Commit message auto‑generated from PR title.
 
-> *Note: Workflow specifics are documented in **`/docs/development-workflow.md`**; this section sets the quality bar.*
+> _Note: Workflow specifics are documented in **`/docs/development-workflow.md`**; this section sets the quality bar._
 
 ---
 
 **End of PRD v0.1**
-

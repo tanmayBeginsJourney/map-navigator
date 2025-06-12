@@ -3,6 +3,7 @@
 ## Prerequisites
 
 ### Required Software
+
 - **Node.js 20+** - JavaScript runtime
 - **npm 9+** - Package manager (comes with Node.js)
 - **Docker Desktop** - For local database
@@ -10,6 +11,7 @@
 - **VS Code** (recommended) - Code editor with extensions
 
 ### VS Code Extensions (Recommended)
+
 - **TypeScript and JavaScript Language Features** (built-in)
 - **ES7+ React/Redux/React-Native snippets**
 - **Auto Rename Tag**
@@ -18,6 +20,7 @@
 - **Tailwind CSS IntelliSense** (if using Tailwind)
 
 ### Accounts Required
+
 - **GitHub Account** - For version control and deployment
 - **TaskMaster AI** - For project management (automatically configured)
 
@@ -52,12 +55,14 @@ map_navigation/
 ## Local Development Setup
 
 ### 1. Clone Repository
+
 ```bash
 git clone https://github.com/tanmayBeginsJourney/map-navigator.git
 cd map-navigator
 ```
 
 ### 2. Database Setup
+
 ```bash
 # Start PostgreSQL with PostGIS extension
 docker-compose up -d
@@ -70,6 +75,7 @@ docker ps
 ```
 
 ### 3. Backend Setup
+
 ```bash
 cd backend
 
@@ -87,6 +93,7 @@ cp .env.example .env
 ```
 
 ### 4. Frontend Setup
+
 ```bash
 cd ../frontend
 
@@ -102,6 +109,7 @@ cp .env.example .env.local
 ```
 
 ### 5. Run Database Migrations
+
 ```bash
 cd ../backend
 
@@ -115,6 +123,7 @@ npm run seed
 ### 6. Start Development Servers
 
 **Terminal 1 - Backend:**
+
 ```bash
 cd backend
 npm run dev
@@ -122,6 +131,7 @@ npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 cd frontend
 npm run dev
@@ -129,6 +139,7 @@ npm run dev
 ```
 
 ### 7. Verify Setup
+
 - **Frontend:** Open http://localhost:5173 in browser
 - **Backend API:** Check http://localhost:3001/api/health
 - **Database:** Should show "Connected to PostgreSQL" in backend logs
@@ -138,6 +149,7 @@ npm run dev
 ### Testing on Real Devices
 
 **Option 1: LAN Access (Recommended)**
+
 ```bash
 cd frontend
 npm run dev -- --host
@@ -147,6 +159,7 @@ npm run dev -- --host
 ```
 
 **Option 2: USB Debugging (Android)**
+
 ```bash
 # Enable USB debugging on Android device
 # Connect via USB
@@ -156,11 +169,13 @@ adb reverse tcp:5173 tcp:5173
 ```
 
 **Option 3: Safari Web Inspector (iOS)**
+
 - Connect iPhone via USB
 - Enable Web Inspector in Safari settings
 - Open Safari on Mac > Develop menu > iPhone > localhost
 
 ### Device Testing Checklist
+
 - [ ] Camera access works for QR scanning
 - [ ] Touch interactions are responsive
 - [ ] Map zooming and panning work smoothly
@@ -170,6 +185,7 @@ adb reverse tcp:5173 tcp:5173
 ## Environment Variables Reference
 
 ### Backend (.env)
+
 ```bash
 # Database
 DATABASE_URL=postgresql://postgres:password@localhost:5432/campus_nav
@@ -182,6 +198,7 @@ PORT=3001
 ```
 
 ### Frontend (.env.local)
+
 ```bash
 # API
 VITE_API_BASE_URL=http://localhost:3001/api
@@ -196,6 +213,7 @@ VITE_NODE_ENV=development
 ## Common Development Commands
 
 ### Backend
+
 ```bash
 npm run dev          # Start development server with hot reload
 npm run build        # Build for production
@@ -208,6 +226,7 @@ npm run seed         # Populate with sample data
 ```
 
 ### Frontend
+
 ```bash
 npm run dev          # Start development server
 npm run build        # Build for production
@@ -221,7 +240,9 @@ npm run type-check   # Check TypeScript types
 ## Troubleshooting
 
 ### Database Issues
+
 **Problem:** Database connection fails
+
 ```bash
 # Check if PostgreSQL is running
 docker ps
@@ -235,6 +256,7 @@ docker-compose logs postgres
 ```
 
 **Problem:** Migration fails
+
 ```bash
 # Reset database (WARNING: destroys data)
 docker-compose down -v
@@ -243,7 +265,9 @@ npm run migrate
 ```
 
 ### Frontend Issues
+
 **Problem:** Vite dev server won't start
+
 ```bash
 # Clear node_modules and reinstall
 rm -rf node_modules package-lock.json
@@ -254,6 +278,7 @@ lsof -i :5173
 ```
 
 **Problem:** TypeScript errors
+
 ```bash
 # Check types
 npm run type-check
@@ -263,12 +288,15 @@ Cmd/Ctrl + Shift + P > "TypeScript: Restart TS Server"
 ```
 
 ### Mobile Testing Issues
+
 **Problem:** Camera doesn't work on mobile
+
 - Ensure HTTPS (use ngrok for local HTTPS tunnel)
 - Check browser permissions
 - Test on different browsers (Chrome, Safari)
 
 **Problem:** Touch interactions not working
+
 - Check touch target sizes (minimum 44px)
 - Test on actual devices, not just browser dev tools
 - Verify CSS touch-action properties
@@ -276,6 +304,7 @@ Cmd/Ctrl + Shift + P > "TypeScript: Restart TS Server"
 ## Code Quality Setup
 
 ### Pre-commit Hooks
+
 ```bash
 # Install husky for git hooks
 npm install -g husky
@@ -285,7 +314,9 @@ npx husky add .husky/pre-commit "npm run lint && npm run type-check"
 ```
 
 ### VS Code Settings
+
 Create `.vscode/settings.json`:
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -300,6 +331,7 @@ Create `.vscode/settings.json`:
 ## Performance Monitoring
 
 ### Local Performance Testing
+
 ```bash
 # Frontend bundle analysis
 cd frontend
@@ -311,6 +343,7 @@ npm run preview
 ```
 
 ### API Performance
+
 ```bash
 # Backend load testing (install artillery first)
 npm install -g artillery
@@ -320,6 +353,7 @@ artillery quick --count 10 --num 10 http://localhost:3001/api/route
 ## Deployment Preparation
 
 ### Frontend Build Verification
+
 ```bash
 cd frontend
 npm run build
@@ -330,6 +364,7 @@ du -sh dist/
 ```
 
 ### Backend Production Build
+
 ```bash
 cd backend
 npm run build
@@ -342,6 +377,7 @@ curl http://localhost:3001/api/health
 ## Getting Help
 
 ### Resources
+
 - **React Documentation:** [react.dev](https://react.dev)
 - **TypeScript Handbook:** [typescriptlang.org](https://www.typescriptlang.org/docs/)
 - **Mapbox GL JS:** [docs.mapbox.com](https://docs.mapbox.com/mapbox-gl-js/)
@@ -349,14 +385,16 @@ curl http://localhost:3001/api/health
 - **PostgreSQL:** [postgresql.org](https://www.postgresql.org/docs/)
 
 ### Team Communication
+
 - **Issues:** Use GitHub Issues for bugs and feature requests
 - **Discussions:** Use GitHub Discussions for questions
 - **Code Review:** All changes require PR review before merge
 
 ### Development Workflow
+
 1. Create feature branch: `git checkout -b feat/feature-name`
 2. Make changes and test locally
 3. Commit with conventional commit format: `feat: add QR scanner component`
 4. Push and create Pull Request
 5. Address review feedback
-6. Merge after approval and passing CI 
+6. Merge after approval and passing CI
