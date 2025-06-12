@@ -13,8 +13,9 @@ node_modules/
 dist/
 .vite/
 
-# Environment variables
+# Environment variables (exclude actual credentials, keep example)
 .env
+!.env.example
 
 # Editor directories and files
 .idea

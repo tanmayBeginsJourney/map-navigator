@@ -24,21 +24,13 @@ Both commands should return version numbers without errors.
 
 ## Quick Start
 
-1. **Create environment variables** (create `.env` file in project root):
+1. **Create environment variables** (copy from template):
 ```bash
-# Copy this template and replace with your actual values
-# Database Configuration
-POSTGRES_USER=admin
-POSTGRES_PASSWORD=secret
-POSTGRES_DB=campus_navigation
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-
-# Development Database URL (for applications)
-DATABASE_URL=postgresql://admin:secret@localhost:5432/campus_navigation
+# Copy the template file and customize as needed
+cp .env.example .env
 ```
 
-**⚠️ Security Note**: Never commit the actual `.env` file to version control. The `.env` file is already in `.gitignore` to prevent accidental commits.
+**⚠️ Security Note**: Never commit the actual `.env` file to version control. The `.env` file is already in `.gitignore` to prevent accidental commits. Use the provided `.env.example` as your template.
 
 2. **Start the database**:
 ```bash
@@ -54,6 +46,18 @@ docker-compose ps
 ```bash
 docker-compose logs postgres_db
 ```
+
+## Environment Configuration
+
+The project includes a `.env.example` file with template environment variables. This file contains:
+
+- **Database Configuration**: PostgreSQL connection settings
+- **Development URLs**: Pre-configured connection strings for local development
+
+To set up your environment:
+1. Copy `.env.example` to `.env`: `cp .env.example .env`
+2. Modify values in `.env` if needed (default values work for local development)
+3. Never commit your `.env` file to version control
 
 ## Database Connection
 - **Host**: localhost
