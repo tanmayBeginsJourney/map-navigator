@@ -3,6 +3,7 @@
 ## System Architecture Details
 
 ### Frontend Stack
+
 ```
 React 18 + TypeScript
 ├── Vite (build tool, dev server)
@@ -13,6 +14,7 @@ React 18 + TypeScript
 ```
 
 ### Backend Stack
+
 ```
 Node.js 20 + Express 5 + TypeScript
 ├── pg (PostgreSQL driver)
@@ -24,6 +26,7 @@ Node.js 20 + Express 5 + TypeScript
 ### Database Schema
 
 #### Nodes Table (Simplified - No PostGIS)
+
 ```sql
 CREATE TABLE nodes (
     id TEXT PRIMARY KEY,           -- e.g., 'b1-1101'
@@ -38,6 +41,7 @@ CREATE TABLE nodes (
 ```
 
 #### Edges Table
+
 ```sql
 CREATE TABLE edges (
     from_node TEXT REFERENCES nodes(id),
@@ -53,6 +57,7 @@ CREATE TABLE edges (
 ### API Specification
 
 #### Route Calculation
+
 ```http
 POST /api/route
 Content-Type: application/json
@@ -67,6 +72,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "segments": [
@@ -94,11 +100,13 @@ Content-Type: application/json
 ```
 
 #### Node Search
+
 ```http
 GET /api/search?q=mess+hall&building=all&floor=all
 ```
 
 **Response:**
+
 ```json
 {
   "results": [
@@ -116,28 +124,32 @@ GET /api/search?q=mess+hall&building=all&floor=all
 ## Performance Requirements
 
 ### Response Time Targets
+
 - Route calculation: ≤ 150ms (95th percentile)
 - Initial page load: ≤ 2s (median, mobile 3G)
 - Map tile loading: ≤ 500ms per tile
 - QR scan to location detection: ≤ 1s
 
 ### Mobile Performance
+
 - First Contentful Paint: ≤ 2.5s
 - Time to Interactive: ≤ 4s
 - Cumulative Layout Shift: ≤ 0.1
 - Bundle size: ≤ 500KB gzipped
 
 ### Browser Support Matrix
-| Browser | Version | Notes |
-|---------|---------|--------|
-| Chrome Mobile | 100+ | Primary target |
-| Safari iOS | 15+ | Required for camera API |
-| Firefox Mobile | 100+ | Secondary support |
-| Samsung Internet | 18+ | Common on Android |
+
+| Browser          | Version | Notes                   |
+| ---------------- | ------- | ----------------------- |
+| Chrome Mobile    | 100+    | Primary target          |
+| Safari iOS       | 15+     | Required for camera API |
+| Firefox Mobile   | 100+    | Secondary support       |
+| Samsung Internet | 18+     | Common on Android       |
 
 ## Development Environment
 
 ### Local Setup
+
 ```bash
 # Database
 docker-compose up -d postgres
@@ -147,13 +159,14 @@ cd backend
 npm install
 npm run dev  # Port 3001
 
-# Frontend  
+# Frontend
 cd frontend
 npm install
 npm run dev  # Port 5173
 ```
 
 ### Environment Variables
+
 ```bash
 # .env.example
 DATABASE_URL=postgresql://user:pass@localhost:5432/campus_nav
@@ -168,24 +181,28 @@ VITE_APP_NAME=Campus Navigation
 ### Testing Strategy
 
 #### Unit Tests (Vitest)
+
 - Pathfinding algorithm correctness
 - Data validation and transformation
 - Utility functions
 - Target: ≥90% coverage on core logic
 
 #### Component Tests (React Testing Library)
+
 - Map rendering without errors
 - QR scanner component
 - Route display and interactions
 - Navigation flow components
 
 #### Integration Tests (Supertest)
+
 - API endpoint responses
 - Database queries
 - Error handling
 - Authentication flows
 
 #### E2E Tests (Cypress)
+
 - Complete user journeys
 - Cross-browser compatibility
 - Mobile viewport testing
@@ -194,6 +211,7 @@ VITE_APP_NAME=Campus Navigation
 ## Asset Pipeline
 
 ### SVG Floor Plans
+
 ```bash
 # Convert PDF floor plans to SVG
 scripts/pdf2svg.sh input.pdf output.svg
@@ -203,6 +221,7 @@ node scripts/extract-coordinates.mjs building1-floor1.svg
 ```
 
 ### Map Data Processing
+
 ```bash
 # Build navigation graph from SVG assets
 npm run build:graph
@@ -217,11 +236,13 @@ npm run export:json
 ## Deployment Architecture
 
 ### Development
+
 ```
 Developer → GitHub → GitHub Actions → Preview Deploy (Vercel)
 ```
 
 ### Production
+
 ```
 main branch → GitHub Actions → Build & Test → Production Deploy
                 ↓
@@ -229,6 +250,7 @@ main branch → GitHub Actions → Build & Test → Production Deploy
 ```
 
 ### Infrastructure (Free Tier)
+
 - **Frontend:** Vercel (free tier - unlimited bandwidth)
 - **Backend:** Railway/Render (free tier - sufficient for moderate traffic)
 - **Database:** Supabase (free tier - 500MB storage, 2GB bandwidth/month)
@@ -238,18 +260,21 @@ main branch → GitHub Actions → Build & Test → Production Deploy
 ## Security Considerations
 
 ### Data Privacy
+
 - No PII collection or storage
 - QR codes contain only opaque node IDs
 - Optional anonymous usage analytics
 - GDPR compliance for EU users
 
 ### API Security
+
 - Rate limiting (100 requests/minute per IP)
 - Input validation and sanitization
 - SQL injection prevention (parameterized queries)
 - CORS configuration for frontend domain
 
 ### Frontend Security
+
 - CSP headers to prevent XSS
 - Secure camera API usage
 - No sensitive data in localStorage
@@ -258,19 +283,22 @@ main branch → GitHub Actions → Build & Test → Production Deploy
 ## Monitoring and Analytics
 
 ### Application Metrics
+
 - Route calculation response times
 - Navigation success rates
 - QR scan success/failure rates
 - User session duration
 
 ### Infrastructure Metrics
+
 - API uptime and availability
 - Database query performance
 - CDN cache hit rates
 - Error rates by endpoint
 
 ### User Analytics (Anonymous)
+
 - Popular routes and destinations
 - Floor/building usage patterns
 - Device and browser distribution
-- Navigation abandonment points 
+- Navigation abandonment points

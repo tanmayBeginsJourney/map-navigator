@@ -27,22 +27,24 @@ A mobile-first web application that enables seamless navigation within campus bu
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [📋 Product Requirements](/.taskmaster/docs/prd.txt) | Complete PRD with technical specifications |
-| [📖 User Stories](/.taskmaster/docs/user-stories.md) | Comprehensive user stories and acceptance criteria |
-| [🔧 Development Setup](/.taskmaster/docs/development-setup.md) | Local development environment guide |
-| [📏 Coding Guidelines](/.cursor/rules/campus-nav.md) | Project-specific development patterns |
-| [🏗️ Technical Specifications](/.taskmaster/docs/technical-specs.md) | Detailed technical architecture and API specs |
+| Document                                                            | Description                                        |
+| ------------------------------------------------------------------- | -------------------------------------------------- |
+| [📋 Product Requirements](/.taskmaster/docs/prd.txt)                | Complete PRD with technical specifications         |
+| [📖 User Stories](/.taskmaster/docs/user-stories.md)                | Comprehensive user stories and acceptance criteria |
+| [🔧 Development Setup](/.taskmaster/docs/development-setup.md)      | Local development environment guide                |
+| [📏 Coding Guidelines](/.cursor/rules/campus-nav.md)                | Project-specific development patterns              |
+| [🏗️ Technical Specifications](/.taskmaster/docs/technical-specs.md) | Detailed technical architecture and API specs      |
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 20+
 - Docker Desktop
 - TaskMaster AI (for project management)
 
 ### Setup
+
 ```bash
 # Clone repository
 git clone <repository-url>
@@ -90,12 +92,14 @@ adb reverse tcp:5173 tcp:5173
 ## 🎯 Development Progress
 
 ### Current Status: **Foundation Phase**
+
 - [x] Project setup and TaskMaster integration
 - [x] 39 tasks with 205+ subtasks generated
 - [x] Complete end-to-end PRD coverage verified
 - [ ] Ready to begin Task 1: Project Initialization
 
 ### Task Management
+
 ```bash
 # View current tasks
 npx task-master-ai list
@@ -110,6 +114,7 @@ npx task-master-ai set-status --id=<task-id> --status=done
 ## 🔧 Development
 
 ### Key Commands
+
 ```bash
 # Frontend
 npm run dev          # Development server
@@ -131,6 +136,7 @@ npx task-master-ai set-status --id=<id> --status=done  # Mark complete
 ```
 
 ### Code Quality
+
 - **ESLint + Prettier** for consistent formatting
 - **TypeScript** for type safety
 
@@ -152,5 +158,3 @@ The project includes comprehensive testing coverage:
 ## 🎨 Design Principles
 
 - **Mobile-First:** Optimized for phone usage while walking
-
- 
