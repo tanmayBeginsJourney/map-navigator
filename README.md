@@ -45,7 +45,7 @@ A mobile-first web application that enables seamless navigation within campus bu
 ### Setup
 ```bash
 # Clone repository
-git clone https://github.com/tanmayBeginsJourney/map-navigator.git
+git clone <repository-url>
 cd map-navigator
 
 # Initialize TaskMaster (if not already done)
@@ -133,44 +133,24 @@ npx task-master-ai set-status --id=<id> --status=done  # Mark complete
 ### Code Quality
 - **ESLint + Prettier** for consistent formatting
 - **TypeScript** for type safety
-- **Husky** pre-commit hooks
-- **Conventional Commits** for clear history
+
+## 🧪 Testing Strategy
+
+The project includes comprehensive testing coverage:
+
+- **Unit Tests**: Jest for backend logic, Jest + React Testing Library for frontend components
+- **Integration Tests**: API endpoint testing with real database connections, network failure scenarios
+- **End-to-End Tests**: Cypress/Playwright for complete user workflows including QR scanning, camera permissions, and navigation flows
+- **Performance Testing**: Load testing for route calculation APIs and frontend optimization
+- **Cross-Browser Testing**: Compatibility verification across major browsers and mobile devices
+- **Accessibility Testing**: Automated WCAG compliance checks with axe-core integration
+- **Security Testing**: XSS prevention, input validation, and secure headers verification
+- **Visual Regression Testing**: Automated UI consistency checks to prevent unintended changes
+- **Mobile-Specific Testing**: Camera functionality, touch interactions, and device orientation handling
+- **Database Testing**: Migration testing, rollback procedures, and data integrity verification
 
 ## 🎨 Design Principles
 
 - **Mobile-First:** Optimized for phone usage while walking
-- **Accessible:** WCAG AA compliance, high contrast colors
-- **Performance:** <2s load time, <150ms route calculation
-- **Offline-Ready:** Cached routes and maps (Phase 3)
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feat/amazing-feature`
-3. Follow [coding guidelines](/.cursor/rules/campus-nav.md)
-4. Commit changes: `git commit -m 'feat: add amazing feature'`
-5. Push to branch: `git push origin feat/amazing-feature`
-6. Open Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🎓 Academic Context
-
-This is a college project developed by a computer science student to solve real campus navigation challenges. The project emphasizes:
-
-- **Learning-Focused:** Practical application of web development concepts
-- **Systematic Development:** TaskMaster AI for structured task management
-- **Problem-Solving:** Real-world spatial navigation challenges
-- **Modern Tech Stack:** Industry-standard tools and patterns
-
-## 📞 Support
-
-- **Issues:** [GitHub Issues](https://github.com/tanmayBeginsJourney/map-navigator/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/tanmayBeginsJourney/map-navigator/discussions)
-- **Documentation:** See the `/.taskmaster/docs/` folder for detailed guides
-
----
-
-**Vision:** "Never get lost again on campus. Scan, choose destination, and follow guided navigation that works both indoors and outdoors." 
+ 
