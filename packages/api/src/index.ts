@@ -70,7 +70,9 @@ app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
     timestamp: new Date().toISOString(),
   };
   
-  res.status(500).json(errorResponse);
+  // Preserve existing status code or default to 500
+  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
+  res.status(statusCode).json(errorResponse);
 });
 
 // 404 handler

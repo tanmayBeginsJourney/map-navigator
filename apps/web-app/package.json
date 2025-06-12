@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "format": "echo \"Format script to be added with Prettier setup\"",
     "preview": "vite preview",
-    "test": "echo \"Test script to be added later\""
+    "test": "echo \"No tests yet\""
   },
   "keywords": [
     "campus",
