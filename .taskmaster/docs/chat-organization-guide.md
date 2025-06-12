@@ -58,10 +58,7 @@ This guide provides a structured approach to organizing development conversation
 git checkout main
 git pull origin main
 
-# 2. Delete previous chat branch (already merged)
-git branch -d chat-[X-1]
-
-# 3. Create new branch for current chat  
+# 2. Create new branch for current chat  
 git checkout -b chat-[X]
 ```
 
