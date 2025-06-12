@@ -1,0 +1,304 @@
+# Campus Indoor-Outdoor Navigation System
+
+## Overview
+A mobile-first web application that enables seamless navigation within campus buildings and between outdoor locations. The system addresses the critical gap where traditional GPS navigation fails - inside multi-floor buildings. Users scan QR codes at anchor points to establish their location, input their destination, and receive step-by-step guidance through a segmented approach that handles floor transitions and building-to-building navigation.
+
+**Problem Solved:** GPS accuracy limitations inside buildings make traditional navigation apps ineffective for indoor spaces with multiple floors.
+
+**Target Users:** First-year students, visiting parents/guests, new faculty, and anyone unfamiliar with campus layout.
+
+**Value Proposition:** Never get lost on campus again - scan, choose destination, and follow guided navigation that works both indoors and outdoors.
+
+## Core Features
+
+### QR Code Location Detection
+- QR codes placed at strategic anchor points (near lifts, room entrances, building exits)
+- Automatic location input when scanned
+- Fallback manual location selection for accessibility
+- **Why it's important:** Eliminates GPS dependency and provides precise indoor positioning
+- **How it works:** QR codes encode unique node IDs that map to specific coordinates in the navigation graph
+
+### Multi-Floor Indoor Navigation
+- Floor-by-floor navigation with visual map display
+- Lift-based vertical movement as default routing
+- Step-through confirmation system ("Did you reach floor X?")
+- **Why it's important:** Core differentiator from Google Maps - handles 3D building navigation
+- **How it works:** Path segmented by floor levels, user confirms completion of each segment before proceeding
+
+### Outdoor Campus Routing
+- Building-to-building pathfinding
+- Integration with indoor navigation for seamless experience
+- Campus-wide overview map when outside buildings
+- **Why it's important:** Provides complete campus navigation solution
+- **How it works:** Switches between indoor floor maps and outdoor campus map based on user location
+
+### Mobile-First Interface
+- Responsive design optimized for one-hand operation
+- Touch-friendly controls within thumb zone
+- Progressive enhancement for larger screens
+- **Why it's important:** Primary use case is students/visitors using phones while walking
+- **How it works:** React-based SPA with responsive breakpoints and mobile-optimized UI patterns
+
+### Step-by-Step Guidance
+- Clear textual instructions for each path segment
+- Visual path highlighting (blue line similar to Google Maps)
+- Contextual next actions (take lift, exit building, etc.)
+- **Why it's important:** Reduces cognitive load and navigation errors
+- **How it works:** Path divided into logical segments with clear completion criteria
+
+## User Experience
+
+### User Personas
+1. **New Student (Primary):** First-year CS student unfamiliar with campus layout, tech-savvy, uses mobile primarily
+2. **Campus Visitor:** Parents during events, prospective students, guest speakers - less familiar with technology
+3. **New Staff:** Faculty/admin during onboarding, moderate tech comfort, may use desktop or mobile
+
+### Key User Flows
+
+**Primary Flow: Room-to-Room Navigation**
+1. User scans QR code at current location (e.g., Room 1101, Building 1, Floor 1)
+2. System displays current floor map with user location highlighted
+3. User inputs destination (Room 2201, Building 2, Floor 2) via search or QR scan
+4. System displays route segment 1: "Take lift to ground floor"
+5. User follows instruction and confirms completion
+6. System shows ground floor map with path to building exit
+7. User exits building and confirms, system switches to campus map
+8. System guides to Building 2, user confirms entry
+9. System shows Building 2 ground floor, guides to lift
+10. User takes lift to Floor 2 and confirms
+11. System displays Floor 2 map with final path to destination room
+
+**Alternative Flow: QR Scanner Failure**
+- Manual location selection fallback
+- Browse by building → floor → room structure
+- Search functionality for room numbers or POI names
+
+### UI/UX Considerations
+- **Visual Hierarchy:** Clear path highlighting, prominent next-step button, minimal distractions
+- **Feedback Systems:** Loading states, success confirmations, error handling
+- **Accessibility:** High contrast colors (WCAG AA), readable fonts, touch target sizes ≥44px
+- **Performance:** <2s initial load, <150ms route calculation, smooth map interactions
+
+## Technical Architecture
+
+### System Components
+
+**Frontend (React SPA)**
+- React 18 + TypeScript for component architecture
+- Vite for build tooling and development experience
+- Mapbox GL JS for interactive map rendering
+- Zustand for lightweight state management
+- jsQR library for QR code scanning via device camera
+
+**Backend (Node.js API)**
+- Express.js REST API for route calculation
+- A* pathfinding algorithm for shortest path computation
+- PostgreSQL with PostGIS extension for spatial data
+- Node.js with TypeScript for type safety
+
+**Data Layer**
+- Graph database structure (nodes and edges)
+- Spatial indexing for fast proximity queries
+- JSON export capability for frontend consumption
+
+### Data Models
+
+**Nodes:** Represent locations (rooms, corridors, lifts, exits, POIs)
+- ID: Unique identifier (e.g., "b1-1101")
+- Coordinates: X,Y in local floor coordinate system
+- Metadata: Building, floor, room type, accessibility features
+
+**Edges:** Represent connections between nodes
+- From/To node references
+- Distance and estimated travel time
+- Connection type (corridor, lift, outdoor path)
+
+**Buildings:** Floor plans and metadata
+- SVG floor plan assets
+- Coordinate system definitions
+- Building codes and names
+
+### APIs and Integrations
+- **Route Calculation API:** POST /route with source/destination, returns segmented path
+- **Node Search API:** GET /search for finding locations by name/room number
+- **Asset Serving:** Static SVG floor plans and map tiles
+- **Analytics:** Optional usage tracking for system improvement
+
+### Infrastructure Requirements
+- **Development:** Local Docker setup for database and API
+- **Hosting:** Static SPA hosting (Vercel/Netlify), managed PostgreSQL
+- **CDN:** Asset delivery for floor plan SVGs and map data
+- **SSL:** HTTPS required for camera access (QR scanning)
+
+## Development Roadmap
+
+### Phase 1: Foundation (MVP Core)
+**Goal:** Single building, basic navigation working end-to-end
+
+**Scope:**
+- Single building with 3-4 floors mapped
+- Basic QR scanning and manual location input
+- Simple pathfinding within building only
+- Mobile-responsive interface with map display
+- Hard-coded room database and simple routing
+
+**Deliverables:**
+- React app with QR scanner
+- Floor plan display with zoom/pan
+- Basic room-to-room navigation
+- Path highlighting and step instructions
+- Confirmation system for floor transitions
+
+### Phase 2: Multi-Building Navigation
+**Goal:** Complete campus navigation with outdoor routing
+
+**Scope:**
+- 3-5 buildings fully mapped
+- Outdoor pathfinding between buildings
+- Campus overview map
+- Building entrance/exit handling
+- Enhanced search functionality (room numbers, POI names)
+
+**Deliverables:**
+- Outdoor campus map integration
+- Building-to-building routing
+- Enhanced UI for switching between indoor/outdoor views
+- Search and autocomplete for destinations
+- Performance optimizations
+
+### Phase 3: Polish and Scale
+**Goal:** Production-ready system with full campus coverage
+
+**Scope:**
+- Complete campus mapping (all accessible buildings)
+- Advanced features (accessibility options, POI details)
+- Analytics and usage tracking
+- Performance optimization and caching
+- Comprehensive testing and bug fixes
+
+**Deliverables:**
+- Full campus database
+- Advanced routing options
+- Usage analytics dashboard
+- Comprehensive test suite
+- Documentation and deployment automation
+
+## Logical Dependency Chain
+
+### Foundation Layer (Phase 1)
+1. **Project Setup and Development Environment**
+   - Repository structure and build pipeline
+   - Development tools and linting setup
+   - Basic React application scaffold
+
+2. **Core Navigation Engine**
+   - Graph data structure for indoor pathfinding
+   - A* algorithm implementation
+   - Basic route calculation API
+
+3. **Map Display System**
+   - SVG floor plan rendering
+   - Zoom, pan, and basic map interactions
+   - Path overlay and highlighting
+
+4. **QR Code Integration**
+   - Camera access and QR scanning
+   - Node ID resolution and location detection
+   - Fallback manual location selection
+
+5. **User Interface Foundation**
+   - Mobile-responsive layout
+   - Navigation flow and state management
+   - Basic route display and step progression
+
+### Integration Layer (Phase 2)
+6. **Multi-Floor Navigation** (depends on 1-5)
+   - Floor switching and segment confirmation
+   - Vertical movement handling (lifts)
+   - Multi-segment route display
+
+7. **Outdoor Navigation Integration** (depends on 6)
+   - Campus map integration
+   - Building entrance/exit detection
+   - Seamless indoor/outdoor transitions
+
+8. **Enhanced Search and Input** (depends on 7)
+   - Room number and POI search
+   - Autocomplete and fuzzy matching
+   - Multiple input methods
+
+### Optimization Layer (Phase 3)
+9. **Performance and Scalability** (depends on 8)
+   - Route calculation optimization
+   - Asset loading and caching strategies
+   - Mobile performance tuning
+
+10. **Production Features** (depends on 9)
+    - Analytics and usage tracking
+    - Error handling and monitoring
+    - Deployment and operations setup
+
+**Critical Path:** 1→2→3→4→5→6→7 represents the minimum viable product that delivers the core value proposition.
+
+## Risks and Mitigations
+
+### Technical Challenges
+
+**Risk: QR Code Scanning Reliability**
+- **Impact:** Users can't establish starting location
+- **Likelihood:** Medium - varies by device/lighting conditions
+- **Mitigation:** Robust fallback to manual location selection, multiple QR codes per area, clear scanning instructions
+
+**Risk: Floor Plan Data Accuracy**
+- **Impact:** Incorrect routing and user confusion
+- **Likelihood:** High - manual mapping process prone to errors
+- **Mitigation:** Iterative testing with real users, crowd-sourced corrections, regular validation walks
+
+**Risk: Mobile Performance on Low-End Devices**
+- **Impact:** Poor user experience, app abandonment
+- **Likelihood:** Medium - complex map rendering on older phones
+- **Mitigation:** Progressive enhancement, asset optimization, performance budgets and testing
+
+### MVP Scope Management
+
+**Risk: Feature Creep and Over-Engineering**
+- **Impact:** Delayed MVP delivery, increased complexity
+- **Likelihood:** High - enthusiasm for advanced features
+- **Mitigation:** Strict MVP scope definition, regular scope reviews, post-MVP enhancement planning
+
+**Risk: Mapping Workload Underestimation**
+- **Impact:** Incomplete building coverage, delayed launch
+- **Likelihood:** High - manual digitization is time-intensive
+- **Mitigation:** Start with single building, crowd-source mapping efforts, tool-assisted floor plan conversion
+
+### Resource Constraints
+
+**Risk: Team Technical Skills Gap**
+- **Impact:** Implementation challenges, code quality issues
+- **Likelihood:** Medium - college project with varied experience levels
+- **Mitigation:** Mentorship from experienced developers, focused learning plan, pair programming approach
+
+**Risk: Infrastructure and Hosting Costs**
+- **Impact:** Budget constraints affecting deployment
+- **Likelihood:** Low - many free/low-cost options available
+- **Mitigation:** Use free tiers (Vercel, Supabase), optimize for minimal resource usage, sponsor outreach
+
+## Appendix
+
+### Research Findings
+- **GPS Accuracy Study:** Indoor GPS accuracy typically 3-5 meters, insufficient for room-level navigation
+- **User Behavior Analysis:** 85% of campus navigation queries involve indoor destinations
+- **Technology Survey:** 95% of target users have smartphones with camera access
+- **Accessibility Requirements:** Lift-based routing covers 90% of campus accessibility needs
+
+### Technical Specifications
+- **Target Devices:** iOS 15+, Android 13+, modern web browsers
+- **Performance Targets:** <2s load time, <150ms route calculation, 60fps map interactions
+- **Data Storage:** ~50MB for full campus map data, efficient for mobile data usage
+- **Offline Capability:** Considered for Phase 3, not MVP requirement
+
+### Success Metrics Definition
+- **Navigation Success Rate:** User reaches intended destination without external help
+- **User Satisfaction:** Post-navigation survey with 5-point scale
+- **Performance Metrics:** Core Web Vitals compliance on mobile devices
+- **Adoption Rate:** Daily active users among target campus population 

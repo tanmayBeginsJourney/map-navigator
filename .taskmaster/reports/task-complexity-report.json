@@ -1,0 +1,365 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-12T12:26:08.694Z",
+    "tasksAnalyzed": 39,
+    "totalTasks": 39,
+    "analysisCount": 44,
+    "thresholdScore": 5,
+    "projectName": "Taskmaster",
+    "usedResearch": false
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 27,
+      "taskTitle": "Implement QR Code Generation and Deployment Strategy",
+      "complexityScore": 7,
+      "recommendedSubtasks": 1,
+      "expansionPrompt": "Expand 'Implement QR Code Generation and Deployment Strategy' by adding a subtask: 'Develop a Simple Admin Tool/Script for On-Demand QR Code Generation'. This tool would allow an administrator to input a list of existing node IDs and generate/download their corresponding QR code PDFs.",
+      "reasoning": "Medium-high complexity involving backend service development, QR code/PDF generation, design considerations, and detailed deployment planning. Existing subtasks are good. An additional subtask could cover a simple admin interface or script for on-demand QR code generation for existing nodes."
+    },
+    {
+      "taskId": 40,
+      "taskTitle": "Database Connection and ORM Setup",
+      "complexityScore": 8,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Break down 'Database Connection and ORM Setup' into: 1. Select and install ORM/Query Builder (e.g., Prisma, TypeORM, Knex). 2. Configure database connection using environment variables (for dev Docker & prod). 3. Define entities/models for all tables from Task 3. 4. Implement connection pooling and basic retry logic. 5. Setup database migration tool and create initial migration reflecting schema from Task 3. 6. Implement a basic database health check endpoint. 7. Document transaction handling patterns. 8. Ensure SSL/TLS configuration for production database connections.",
+      "reasoning": "High complexity as it involves setting up critical backend database infrastructure, including choosing and configuring an ORM/query builder, migration system, connection pooling, and security considerations. This task is currently a high-level goal."
+    },
+    {
+      "taskId": 41,
+      "taskTitle": "Production Backend Deployment and Hosting",
+      "complexityScore": 9,
+      "recommendedSubtasks": 10,
+      "expansionPrompt": "Break down 'Production Backend Deployment and Hosting' into: 1. Select hosting platform and provision backend service. 2. Create/Refine production Dockerfile for backend. 3. Provision production PostgreSQL database with PostGIS. 4. Configure all production environment variables securely on the platform. 5. Run database migrations against production DB. 6. Configure SSL/TLS and HTTP to HTTPS redirection. 7. Implement and configure CORS for deployed frontend origin. 8. Implement backend health check endpoint and configure platform to use it. 9. Setup structured logging and integrate with platform's logging. 10. Define and test initial deployment process to the platform.",
+      "reasoning": "High complexity due to the operational nature, involving platform setup, containerization, production database configuration, security measures (SSL, CORS), logging, and monitoring. This task is currently a high-level goal."
+    },
+    {
+      "taskId": 42,
+      "taskTitle": "Progressive Web App (PWA) Implementation",
+      "complexityScore": 8,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Break down 'Progressive Web App (PWA) Implementation' into: 1. Create and register a basic service worker. 2. Implement Web App Manifest (`manifest.json`) with icons and metadata. 3. Implement app shell caching in the service worker. 4. Implement caching strategy for static assets (JS, CSS, fonts). 5. Develop strategy and implement caching for SVG map files. 6. Implement basic offline fallback page. 7. Add PWA metadata to `index.html` (theme-color, Apple tags). 8. Test basic installability and offline app shell loading.",
+      "reasoning": "High complexity due to the intricacies of service workers, caching strategies, offline data storage, and ensuring a consistent installable experience across platforms. This task is currently a high-level goal."
+    },
+    {
+      "taskId": 43,
+      "taskTitle": "Implement Comprehensive Security Measures and HTTPS Setup",
+      "complexityScore": 9,
+      "recommendedSubtasks": 9,
+      "expansionPrompt": "Break down 'Implement Comprehensive Security Measures' into: 1. Enforce HTTPS for all frontend and backend traffic. 2. Implement strict CORS policy on the backend. 3. Implement server-side input validation for all API endpoints. 4. Review all database queries to ensure use of parameterized queries (prevent SQLi). 5. Implement XSS protection measures (output encoding, secure headers like X-Content-Type-Options). 6. Configure basic Content Security Policy (CSP) headers. 7. Implement rate limiting on critical backend API endpoints. 8. Configure other secure HTTP headers (HSTS, X-Frame-Options). 9. Setup regular dependency vulnerability scanning.",
+      "reasoning": "High complexity as security is a critical, multi-faceted concern requiring meticulous implementation of various measures across both frontend and backend. This task is currently a high-level goal."
+    },
+    {
+      "taskId": 1,
+      "taskTitle": "Project Setup: Monorepo and Tooling Configuration",
+      "complexityScore": 7,
+      "recommendedSubtasks": 1,
+      "expansionPrompt": "Given the existing subtasks for monorepo setup, define one additional subtask focusing on comprehensive end-to-end build/lint/run verification for both frontend and backend, and initial documentation for developers on how to use the setup (e.g., common commands, project structure overview).",
+      "reasoning": "Moderately complex due to multiple tool integrations (Vite, Node/Express, TypeScript, ESLint, Prettier) within a monorepo structure. Existing subtasks cover key areas well, but a final integration and documentation subtask could be beneficial."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Setup Dockerized Development Environment",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The current Docker setup focuses on PostgreSQL. If further expansion is needed, consider subtasks for integrating the backend and frontend services (from Task 1) into the `docker-compose.yml` for a fully containerized development environment, including build contexts, environment variable passing, and inter-service communication.",
+      "reasoning": "Involves Docker, Docker Compose, and PostgreSQL with PostGIS, which requires specific configuration. Existing subtasks cover the database setup comprehensively."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Environment Configuration and Secrets Management",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Based on the detailed description, break down 'Environment Configuration and Secrets Management' into 6 subtasks, each addressing one of the numbered points in the 'details' section: 1. Core Principle & .env.example files, 2. Frontend (Vite) .env setup, 3. Backend (Node/dotenv) .env setup, 4. Docker Compose environment configuration, 5. Production secrets management strategy (Vercel/Railway), 6. Configuration validation implementation for FE and BE.",
+      "reasoning": "High complexity due to the need for a robust and secure system across multiple environments (local, Docker, production) and platforms (FE, BE, Vercel, Railway). The task details already outline several key areas that can be subtasks."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Database Connection and ORM Setup",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Break down 'Database Connection and ORM Setup' into subtasks covering: 1. ORM/Query Builder selection, installation, and initial connection configuration. 2. Definition of initial entities/models based on Task 5 schema. 3. Implementation of connection pooling and retry logic. 4. Setup of a database migration tool and creation of initial migration scripts. 5. Implementation of transaction management mechanisms. 6. Creation of a database health check endpoint. 7. Configuration for secure production connections (SSL/TLS) and environment variable management for DB credentials.",
+      "reasoning": "Complex task involving ORM/query builder integration, connection pooling, transaction management, migrations, and secure configuration for different environments. The details provide a good basis for several subtasks."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Database Schema Design and Implementation",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Given the existing subtask for JSONB attributes, expand 'Database Schema Design and Implementation' by creating subtasks for the SQL DDL (migration scripts) for each main table: 1. `buildings` table. 2. `floor_plans` table. 3. `nodes` table (including PostGIS geometry type, SRID, and spatial index). 4. `edges` table. Ensure each subtask includes defining primary keys, foreign keys, constraints, and necessary non-spatial indexes.",
+      "reasoning": "Designing and implementing a database schema, especially with spatial data (PostGIS) and specific relationships, is moderately complex. The existing subtask for JSONB attributes is good; further subtasks can detail the creation of each primary table."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Seed Database with Initial Campus Data (Single Building)",
+      "complexityScore": 5,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task 'Seed Database with Initial Campus Data' is already well-expanded with 5 detailed subtasks. If further granularity is desired for any specific subtask (e.g., 'Define Data Structure and Collect Initial Building Data'), expand that particular subtask. Otherwise, no further expansion is needed for the parent task.",
+      "reasoning": "Task involves scripting, data definition, parsing, and database insertion. The existing 5 subtasks provide a very detailed and comprehensive breakdown."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Implement A* Pathfinding Algorithm",
+      "complexityScore": 9,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The 'Implement A* Pathfinding Algorithm' task is well-expanded into three logical subtasks covering core logic, data integration, and multi-floor adaptation. If further detail is needed, consider expanding subtask 2 ('Develop PostgreSQL Data Integration Layer') to specify sub-steps for schema definition for graph representation, query optimization for fetching graph data, and data transformation logic.",
+      "reasoning": "Implementing A* pathfinding, especially with multi-floor considerations and real data integration from PostgreSQL, is highly complex. The existing 3 subtasks effectively break this down into manageable stages."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Develop Route Calculation API Endpoint",
+      "complexityScore": 7,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The 'Develop Route Calculation API Endpoint' task is already broken down into 8 highly detailed subtasks. No further expansion of the parent task is recommended. If refinement is needed, it would be at the level of individual existing subtasks, for example, detailing specific validation rules for subtask 2.",
+      "reasoning": "Involves API design, request/response handling, validation, and integration with the A* algorithm. The existing 8 subtasks provide an extremely granular and well-thought-out plan."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Frontend: Initialize React SPA with Vite",
+      "complexityScore": 4,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 7 detailed subtasks. No further expansion of the parent task is needed. Any additional detail would be within the scope of the existing subtasks, e.g., specifying linters/formatters if not covered by Task 1's frontend part.",
+      "reasoning": "Standard frontend project setup, but the existing 7 subtasks cover all necessary steps in great detail, from scaffolding to basic routing."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Frontend: Setup State Management with Zustand",
+      "complexityScore": 5,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task for Zustand setup is well-expanded into 6 subtasks, each focusing on a specific store or initial setup. No further expansion of the parent task is necessary. If more detail is required, it would be within each existing subtask, e.g., specifying the exact fields for `useNavigationStore`.",
+      "reasoning": "Involves setting up Zustand and defining multiple stores with their state and actions. The existing 6 subtasks provide a clear and detailed breakdown for each store."
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "Frontend: SVG Floor Plan Display Component with Zoom/Pan",
+      "complexityScore": 7,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is already broken down into 8 highly detailed subtasks. No further expansion of the parent task is recommended. Any additional detail would be within the scope of the existing subtasks, e.g., specifying error handling for SVG loading in subtask 3.",
+      "reasoning": "Developing an SVG viewer with zoom/pan capabilities involves UI work and potentially complex library integration or custom SVG manipulation. The existing 8 subtasks are extremely granular and cover the development process thoroughly."
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "Frontend: QR Code Scanning Integration",
+      "complexityScore": 8,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The QR Code Scanning Integration task is very well-expanded with 7 detailed subtasks. No further expansion of the parent task is needed. If more detail is required, it would be within an existing subtask, e.g., detailing specific UI states for error handling in subtask 7.",
+      "reasoning": "Integrating QR code scanning involves camera access, real-time video processing, and library usage, making it complex. The existing 7 subtasks provide a thorough, step-by-step plan."
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "Frontend: Manual Location Selection Fallback",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks. No further expansion of the parent task is necessary. Any additional detail would be within the scope of the existing subtasks, e.g., specifying the exact API endpoints to be called in subtasks 1, 2, and 3.",
+      "reasoning": "Involves creating a multi-step selection UI, fetching data from APIs, and managing state. The existing 6 subtasks cover these aspects comprehensively, including loading/error states and accessibility."
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "Backend: API Endpoints for Location Data",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task for creating location data API endpoints is well-expanded into 7 subtasks. No further expansion of the parent task is needed. If more detail is required, it would be within an existing subtask, e.g., specifying pagination or filtering for the node list in subtask 7.",
+      "reasoning": "Involves creating multiple API endpoints with database interactions. The existing 7 subtasks provide a clear and detailed breakdown for each endpoint and its data access logic."
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "Frontend: Main Navigation UI (Start/Destination Input)",
+      "complexityScore": 5,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is well-expanded with 6 subtasks focusing on UI creation and local state. The next logical steps, integrating API calls and Zustand updates as mentioned in the parent task details, could be separate follow-up tasks or expansions of subtask 6 ('Implement Basic 'Get Directions' Button Press Handler') to include actual API call logic.",
+      "reasoning": "Focuses on creating the primary navigation UI elements and basic local state management. The existing 6 subtasks cover the UI construction in detail. API integration and Zustand updates are implied as next steps."
+    },
+    {
+      "taskId": 16,
+      "taskTitle": "Frontend: Path Highlighting on SVG Map",
+      "complexityScore": 7,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The 'Path Highlighting on SVG Map' task is already broken down into 7 highly detailed subtasks. No further expansion of the parent task is recommended. Any additional detail would be within the scope of the existing subtasks, e.g., specifying performance considerations for rendering very long paths in subtask 4.",
+      "reasoning": "Involves dynamic SVG rendering and manipulation based on external data, which can be tricky. The existing 7 subtasks provide an excellent, granular breakdown of this process."
+    },
+    {
+      "taskId": 17,
+      "taskTitle": "Frontend: Step-by-Step Guidance and Confirmation",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks. No further expansion of the parent task is necessary. If more detail is required, it would be within an existing subtask, e.g., detailing the specific UI for different maneuver types in subtask 2.",
+      "reasoning": "Involves UI for displaying instructions, managing navigation state (current step), and handling user interaction. The existing 6 subtasks cover these aspects comprehensively."
+    },
+    {
+      "taskId": 18,
+      "taskTitle": "Frontend: Multi-Floor Navigation Logic",
+      "complexityScore": 8,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The 'Multi-Floor Navigation Logic' task is already broken down into 8 highly detailed subtasks. No further expansion of the parent task is recommended. Any additional detail would be within the scope of the existing subtasks, e.g., specifying animation or transition effects for map view updates in subtask 8.",
+      "reasoning": "Handling multi-floor navigation involves complex state management, UI updates based on route segment types, and coordination between different stores and components. The existing 8 subtasks provide an excellent, granular breakdown."
+    },
+    {
+      "taskId": 19,
+      "taskTitle": "Frontend: Outdoor Campus Map Integration (Mapbox GL JS)",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks. No further expansion of the parent task is necessary. If more detail is required, it would be within an existing subtask, e.g., detailing specific error messages for API key issues in subtask 6.",
+      "reasoning": "Involves integrating a third-party mapping library, managing API keys, and handling component lifecycle for the map. The existing 6 subtasks cover these steps comprehensively."
+    },
+    {
+      "taskId": 20,
+      "taskTitle": "Backend: Outdoor Pathfinding and Indoor-Outdoor Transitions",
+      "complexityScore": 8,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task for outdoor pathfinding and transitions is well-expanded into 7 subtasks. No further expansion of the parent task is needed. If more detail is required, it would be within an existing subtask, e.g., specifying how the A* cost function should differentiate between indoor and outdoor edge weights in subtask 5.",
+      "reasoning": "Extending the A* algorithm and API for outdoor pathfinding and indoor-outdoor transitions is complex, involving data modeling, algorithm adaptation, and API changes. The existing 7 subtasks provide a detailed plan."
+    },
+    {
+      "taskId": 21,
+      "taskTitle": "Frontend: Indoor/Outdoor Map View Switching Logic",
+      "complexityScore": 7,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 7 detailed subtasks. No further expansion of the parent task is necessary. Any additional detail would be within the scope of the existing subtasks, e.g., specifying the exact state transitions and triggers for `mapMode` in subtask 1.",
+      "reasoning": "Involves managing different map views, conditional rendering of complex components, and ensuring smooth user experience during transitions. The existing 7 subtasks cover these aspects in detail."
+    },
+    {
+      "taskId": 22,
+      "taskTitle": "Backend: Node Search API Endpoint",
+      "complexityScore": 5,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task for creating a node search API is well-expanded into 6 subtasks. No further expansion of the parent task is needed. If more detail is required, it would be within an existing subtask, e.g., specifying performance considerations or indexing strategies for the search fields in subtask 4.",
+      "reasoning": "Involves creating an API endpoint with search functionality using database queries. The existing 6 subtasks provide a clear, incremental plan for its development."
+    },
+    {
+      "taskId": 23,
+      "taskTitle": "Frontend: Destination Search with Autocomplete",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks. No further expansion of the parent task is necessary. Any additional detail would be within the scope of the existing subtasks, e.g., detailing keyboard navigation and accessibility for the suggestions list in subtask 6.",
+      "reasoning": "Involves creating a search UI with autocomplete, integrating with an API, debouncing, and managing state. The existing 6 subtasks cover these aspects in detail."
+    },
+    {
+      "taskId": 24,
+      "taskTitle": "Implement Basic Accessibility (WCAG AA)",
+      "complexityScore": 7,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Given the existing specific accessibility subtasks, create 2-3 more subtasks to cover broader areas: 1. Audit and remediate accessibility for all form elements (labels, error messages, keyboard interaction). 2. Ensure all custom interactive components (e.g., modals, custom dropdowns) are fully keyboard accessible and have appropriate ARIA roles/states. 3. Review and improve semantic HTML structure across all main pages/views.",
+      "reasoning": "Accessibility is a broad topic requiring attention to detail across many components. The existing subtasks target specific areas. Additional subtasks can cover other general areas like forms and custom components."
+    },
+    {
+      "taskId": 25,
+      "taskTitle": "Frontend Performance Optimization",
+      "complexityScore": 8,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task 'Frontend Performance Optimization' is already broken down into 9 subtasks. Subtasks 8 and 9 are particularly comprehensive. If further granularity is needed, focus on expanding subtask 8 ('Optimize Initial Load Time and Asset Delivery') into specific actions for each identified optimization area (bundle analysis, code splitting per route, lazy loading specific components, SVG minification process, gzip verification per critical endpoint).",
+      "reasoning": "Performance optimization is a complex area involving bundle analysis, code splitting, lazy loading, asset optimization, and profiling. The task already has 9 subtasks, with subtasks 8 and 9 being quite comprehensive and could themselves be broken down further if needed."
+    },
+    {
+      "taskId": 26,
+      "taskTitle": "Setup CI/CD and Static Hosting",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks covering the CI/CD and static hosting setup for the frontend. No further expansion of the parent task is necessary. If more detail is required, it would be within an existing subtask, e.g., specifying different CI/CD triggers (PRs, merges) in subtask 5.",
+      "reasoning": "Involves selecting a hosting platform, configuring build and deployment pipelines, and managing environment variables. The existing 6 subtasks provide a clear, step-by-step plan."
+    },
+    {
+      "taskId": 28,
+      "taskTitle": "Comprehensive Testing Implementation for Campus Navigation System",
+      "complexityScore": 10,
+      "recommendedSubtasks": 9,
+      "expansionPrompt": "Break down 'Comprehensive Testing Implementation' into 9 subtasks, each addressing one of the numbered points in the 'details' section: 1. Test Setup & Frameworks Installation/Configuration. 2. Unit Test Implementation (A* Algorithm & Frontend Components). 3. Integration Test Implementation (API Endpoints). 4. End-to-End (E2E) Test Implementation (Key User Flows). 5. Performance Test Implementation (Route Calculation Load Testing). 6. Cross-Browser/Device Compatibility Test Plan Execution. 7. Test Data Management Strategy and Implementation. 8. CI/CD Integration of Automated Tests. 9. Code Coverage Reporting Setup and Configuration.",
+      "reasoning": "Extremely complex as it encompasses the entire testing strategy and implementation across multiple types of tests, tools, and environments. The detailed description provides a clear structure for subtasks."
+    },
+    {
+      "taskId": 29,
+      "taskTitle": "Implement QR Code Generation and Deployment Strategy",
+      "complexityScore": 7,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task for QR code generation and deployment is well-expanded into 6 subtasks. No further expansion of the parent task is needed. If more detail is required, it would be within an existing subtask, e.g., specifying the exact QR code library and PDF generation library in subtasks 4 and 5.",
+      "reasoning": "Involves backend development, QR code generation, PDF creation, design considerations, and documentation for physical deployment. The existing 6 subtasks cover these aspects in great detail."
+    },
+    {
+      "taskId": 30,
+      "taskTitle": "Error Handling and Loading States System",
+      "complexityScore": 8,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is already broken down into 11 highly detailed subtasks. No further expansion of the parent task is recommended. Any additional detail would be within the scope of the existing subtasks, e.g., specifying the exact design for the `LoadingIndicator` in subtask 2.",
+      "reasoning": "Implementing a comprehensive error handling and loading state system across the application is complex and critical for UX. The existing 11 subtasks, based on the detailed description, cover all key aspects."
+    },
+    {
+      "taskId": 31,
+      "taskTitle": "Implement Performance Monitoring and Measurement System",
+      "complexityScore": 9,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The task for performance monitoring is well-expanded into 10 subtasks. No further expansion of the parent task is needed. If more detail is required, it would be within an existing subtask, e.g., specifying the exact metrics to be displayed on the monitoring dashboard (related to subtask 5 in parent, but not explicitly a subtask here yet).",
+      "reasoning": "Implementing a full performance monitoring system is complex, involving various tools, metric definitions, alerting, and dashboarding. The existing 10 subtasks provide a good incremental approach to setting this up."
+    },
+    {
+      "taskId": 32,
+      "taskTitle": "Building Entrance/Exit Detection and Transition Logic",
+      "complexityScore": 8,
+      "recommendedSubtasks": 2,
+      "expansionPrompt": "Given the foundational subtasks, expand 'Building Entrance/Exit Detection' with subtasks for: 1. Implementing the core geofence detection logic within the Geofence Monitoring Service, including listening to device location updates and checking against registered geofences. 2. Integrating geofence entry/exit events with the UI confirmation prompt (from subtask 4) and triggering navigation context state updates (from subtask 5) and map view toggling (from subtask 6).",
+      "reasoning": "Involves location services, geofencing, state management, and UI interactions, making it complex. The existing subtasks set a good foundation. Further subtasks are needed for the core detection logic and integration."
+    },
+    {
+      "taskId": 33,
+      "taskTitle": "Coordinate System and Scaling Implementation",
+      "complexityScore": 8,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "The 'Coordinate System and Scaling Implementation' task is already broken down into 8 highly detailed subtasks. No further expansion of the parent task is recommended. Any additional detail would be within the scope of the existing subtasks, e.g., specifying the exact mathematical formulas for coordinate conversion in subtask 1 or 2's context.",
+      "reasoning": "Involves mathematical transformations, careful integration with the A* algorithm, database interaction, and caching. The existing 8 subtasks provide an excellent, detailed breakdown."
+    },
+    {
+      "taskId": 34,
+      "taskTitle": "Mobile-First Responsive Design Implementation",
+      "complexityScore": 7,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 10 subtasks focused on creating a responsive design review process. No further expansion of this 'process setup' task is needed. Actual application of these principles to specific existing components would constitute new, separate tasks.",
+      "reasoning": "This task, as detailed by its subtasks, focuses on establishing a comprehensive review process and guidelines for mobile-first responsive design, rather than direct implementation on all components. The existing 10 subtasks thoroughly cover the setup of this process."
+    },
+    {
+      "taskId": 35,
+      "taskTitle": "Production Backend Deployment and Hosting",
+      "complexityScore": 9,
+      "recommendedSubtasks": 11,
+      "expansionPrompt": "Break down 'Production Backend Deployment and Hosting' into 11 subtasks, each addressing one of the numbered points in the 'details' section: 1. Hosting Platform Selection & Setup. 2. Production Dockerfile Creation/Refinement. 3. Production Environment Variable Management. 4. Production Database Setup & Migration. 5. SSL/TLS Configuration. 6. CORS Configuration. 7. Health Check Endpoint Implementation. 8. Structured Logging Setup. 9. Basic Monitoring & Alerting Setup. 10. Deployment Strategy Definition. 11. Basic Security Hardening Implementation.",
+      "reasoning": "Production deployment is a critical and multi-faceted process involving infrastructure, configuration, security, and monitoring. The detailed description provides a clear list of necessary components that can be individual subtasks."
+    },
+    {
+      "taskId": 36,
+      "taskTitle": "Progressive Web App (PWA) Implementation",
+      "complexityScore": 8,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Break down 'Progressive Web App (PWA) Implementation' into 8 subtasks, each addressing one of the numbered points in the 'details' section: 1. Service Worker Implementation (registration, lifecycle, caching strategies, offline fallback). 2. Web App Manifest Creation and Configuration. 3. Offline Map Caching Strategy Implementation. 4. Offline Route Storage and Retrieval Implementation. 5. Client-Side Push Notification Setup (permission, subscription, SW handler). 6. App Icon and Splash Screen Asset Preparation and Configuration. 7. PWA Metadata Integration in `index.html`. 8. Comprehensive Offline Experience Testing and Refinement.",
+      "reasoning": "Implementing PWA features involves service workers, manifest configuration, caching strategies, and ensuring a good offline experience, which is moderately complex. The detailed description outlines key areas for subtasks."
+    },
+    {
+      "taskId": 37,
+      "taskTitle": "Implement Comprehensive Security Measures and HTTPS Setup",
+      "complexityScore": 9,
+      "recommendedSubtasks": 10,
+      "expansionPrompt": "Break down 'Implement Comprehensive Security Measures and HTTPS Setup' into 10 subtasks, each addressing one of the numbered points in the 'details' section: 1. HTTPS Enforcement (FE & BE). 2. Backend CORS Configuration. 3. Input Validation and Sanitization (FE & BE). 4. SQL Injection Prevention Measures (Backend). 5. XSS Protection Measures (FE & BE). 6. Content Security Policy (CSP) Header Implementation. 7. Backend API Rate Limiting Implementation. 8. Secure HTTP Headers Configuration (HSTS, X-Frame-Options, etc.). 9. Basic Authentication/Authorization Placeholder (if needed). 10. Dependency Security Scanning and Update Process.",
+      "reasoning": "Implementing comprehensive security measures is critical and complex, touching all parts of the application stack. The detailed description provides a good breakdown of key security areas."
+    },
+    {
+      "taskId": 38,
+      "taskTitle": "Database Connection and ORM Setup",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Break down 'Database Connection and ORM Setup' into subtasks covering: 1. ORM/Query Builder selection, installation, and initial connection configuration. 2. Definition of initial entities/models based on Task 5 schema. 3. Implementation of connection pooling and retry logic. 4. Setup of a database migration tool and creation of initial migration scripts. 5. Implementation of transaction management mechanisms. 6. Creation of a database health check endpoint. 7. Configuration for secure production connections (SSL/TLS) and environment variable management for DB credentials.",
+      "reasoning": "Complex task involving ORM/query builder integration, connection pooling, transaction management, migrations, and secure configuration for different environments. The details provide a good basis for several subtasks."
+    },
+    {
+      "taskId": 39,
+      "taskTitle": "Setup CI/CD and Static Hosting",
+      "complexityScore": 6,
+      "recommendedSubtasks": 0,
+      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks covering the CI/CD and static hosting setup for the frontend. No further expansion of the parent task is necessary. If more detail is required, it would be within an existing subtask, e.g., specifying different CI/CD triggers (PRs, merges) in subtask 5.",
+      "reasoning": "Involves selecting a hosting platform, configuring build and deployment pipelines, and managing environment variables. The existing 6 subtasks provide a clear, step-by-step plan."
+    },
+    {
+      "taskId": 85,
+      "taskTitle": "Comprehensive Testing Implementation for Campus Navigation System",
+      "complexityScore": 10,
+      "recommendedSubtasks": 9,
+      "expansionPrompt": "Break down 'Comprehensive Testing Implementation' into 9 subtasks, each addressing one of the numbered points in the 'details' section: 1. Test Setup & Frameworks Installation/Configuration. 2. Unit Test Implementation (A* Algorithm & Frontend Components). 3. Integration Test Implementation (API Endpoints). 4. End-to-End (E2E) Test Implementation (Key User Flows). 5. Performance Test Implementation (Route Calculation Load Testing). 6. Cross-Browser/Device Compatibility Test Plan Execution. 7. Test Data Management Strategy and Implementation. 8. CI/CD Integration of Automated Tests. 9. Code Coverage Reporting Setup and Configuration.",
+      "reasoning": "Extremely complex as it encompasses the entire testing strategy and implementation across multiple types of tests, tools, and environments. The detailed description provides a clear structure for subtasks."
+    }
+  ]
+}

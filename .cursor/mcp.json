@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "taskmaster-ai": {
+      "command": "npx",
+      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyCzq7T-27HcCOyfo6yAxh6lPWPJoe7WLH0",
+        "OPENROUTER_API_KEY": "YOUR_OPENROUTER_API_KEY_HERE",
+        "DEEPSEEK_API_KEY": "YOUR_DEEPSEEK_API_KEY_HERE",
+        "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
+        "OPENAI_API_KEY": "YOUR_OPENAI_KEY_HERE",
+        "PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
+        "XAI_API_KEY": "YOUR_XAI_KEY_HERE"
+      }
+    }
+  }
+} 
