@@ -2,8 +2,13 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { pathfindingService } from './pathfinding';
 import { config, isDevelopment } from './config';
+import { createDatabaseService } from './db/connection';
+import healthRouter from './routes/health';
 
 const app: Express = express();
+
+// Initialize database service
+let dbService: ReturnType<typeof createDatabaseService> | null = null;
 
 // Middleware
 app.use(express.json());
@@ -31,21 +36,8 @@ app.use((req, res, next) => {
   }
 });
 
-// Health check endpoint using shared types
-app.get(API_ENDPOINTS.HEALTH, (req: Request, res: Response) => {
-  const healthResponse: ApiResponse<HealthStatus> = {
-    success: true,
-    data: {
-      status: 'OK',
-      message: 'Campus Navigation API is running',
-      service: 'campus-navigation-api',
-      timestamp: new Date().toISOString(),
-    },
-    timestamp: new Date().toISOString(),
-  };
-  
-  res.status(200).json(healthResponse);
-});
+// Mount health check routes
+app.use(API_ENDPOINTS.HEALTH, healthRouter);
 
 // Pathfinding endpoint
 app.post(API_ENDPOINTS.PATHFIND, async (req: Request, res: Response) => {
@@ -293,7 +285,10 @@ app.get('/', (req: Request, res: Response) => {
       message: 'Welcome to Campus Navigation API',
       version: '1.0.0',
       endpoints: {
-        health: API_ENDPOINTS.HEALTH,
+        health: API_ENDPOINTS.HEALTH + ' (GET - Basic API health)',
+        health_db: API_ENDPOINTS.HEALTH + '/db (GET - Database connectivity & diagnostics)',
+        health_db_test: API_ENDPOINTS.HEALTH + '/db/test (GET - Database test queries)',
+        health_db_pool: API_ENDPOINTS.HEALTH + '/db/pool (GET - Connection pool status)',
         pathfind: API_ENDPOINTS.PATHFIND + ' (POST - Core A* pathfinding)',
         pathfind_test: API_ENDPOINTS.PATHFIND + '/test (GET - Service health check)',
         route: API_ENDPOINTS.ROUTE + ' (POST - Route calculation with frontend-optimized response)',
@@ -334,9 +329,47 @@ app.use((req: Request, res: Response) => {
   res.status(404).json(notFoundResponse);
 });
 
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Initialize database service
+    console.log('🔌 Initializing database service...');
+    dbService = createDatabaseService();
+    await dbService.connect();
+    console.log('✅ Database service initialized successfully');
+
+    // Start the server
 app.listen(config.port, () => {
   console.log(`🚀 Campus Navigation API server is running on port ${config.port}`);
   console.log(`📋 Health check available at: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}`);
+      console.log(`📊 Database health check: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}/db`);
+      console.log(`🧪 Database test queries: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}/db/test`);
+      console.log(`📈 Connection pool status: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}/db/pool`);
   console.log(`🗺️ Pathfinding available at: http://localhost:${config.port}${API_ENDPOINTS.PATHFIND}`);
   console.log(`🧪 Pathfinding test at: http://localhost:${config.port}${API_ENDPOINTS.PATHFIND}/test`);
 });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Received SIGINT. Graceful shutdown...');
+  if (dbService) {
+    await dbService.disconnect();
+  }
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n🛑 Received SIGTERM. Graceful shutdown...');
+  if (dbService) {
+    await dbService.disconnect();
+  }
+  process.exit(0);
+});
+
+// Start the server
+startServer();

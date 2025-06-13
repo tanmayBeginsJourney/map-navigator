@@ -1,5 +1,5 @@
 import { Node, Edge, RouteResponse, PathStep, Point, EdgeType } from '@campus-nav/shared/types';
-import { db } from './database';
+import { createDatabaseService } from './db/connection';
 
 interface AStarNode {
   node: Node;
@@ -74,6 +74,18 @@ class MinHeap<T> {
 }
 
 export class PathfindingService {
+  private db: ReturnType<typeof createDatabaseService>;
+
+  constructor() {
+    this.db = createDatabaseService();
+  }
+
+  /**
+   * Ensure database connection is established
+   */
+  private async ensureConnection(): Promise<void> {
+    await this.db.connect();
+  }
   
   /**
    * Calculate Euclidean distance between two points
@@ -176,9 +188,12 @@ export class PathfindingService {
     accessibilityRequired: boolean = false
   ): Promise<RouteResponse | null> {
     
+    // Ensure database connection
+    await this.ensureConnection();
+    
     // Get start and end nodes
-    const startNode = await db.getNodeById(startNodeId);
-    const endNode = await db.getNodeById(endNodeId);
+    const startNode = await this.db.getNodeById(startNodeId);
+    const endNode = await this.db.getNodeById(endNodeId);
     
     if (!startNode || !endNode) {
       return null;
@@ -217,8 +232,8 @@ export class PathfindingService {
       
       // Get neighbors
       const edges = accessibilityRequired 
-        ? await db.getAccessibleEdgesFromNode(current.node.id)
-        : await db.getEdgesFromNode(current.node.id);
+        ? await this.db.getAccessibleEdgesFromNode(current.node.id)
+        : await this.db.getEdgesFromNode(current.node.id);
       
       for (const edge of edges) {
         // Skip if already evaluated
@@ -226,7 +241,7 @@ export class PathfindingService {
           continue;
         }
         
-        const neighbor = await db.getNodeById(edge.to_node_id);
+        const neighbor = await this.db.getNodeById(edge.to_node_id);
         if (!neighbor) continue;
         
         // Skip inaccessible nodes if accessibility is required
