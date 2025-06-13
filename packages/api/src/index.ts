@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest } from '@campus-nav/shared/types';
+import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { pathfindingService } from './pathfinding';
 
 const app: Express = express();
@@ -137,6 +137,146 @@ app.get(`${API_ENDPOINTS.PATHFIND}/test`, (req: Request, res: Response) => {
   res.json(response);
 });
 
+// Route calculation endpoint (Task 8) - converts RouteResponse to frontend-optimized format
+app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
+  try {
+    const { startNodeId, endNodeId } = req.body;
+    
+    // Validate request
+    if (startNodeId == null || endNodeId == null) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'startNodeId and endNodeId are required',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(400).json(errorResponse);
+      return;
+    }
+
+    // Validate node IDs are strings (as per Task 8 spec) but convert to numbers for pathfinding
+    if (typeof startNodeId !== 'string' || typeof endNodeId !== 'string') {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'startNodeId and endNodeId must be strings',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(400).json(errorResponse);
+      return;
+    }
+
+    // Convert string IDs to numbers for existing pathfinding service
+    const startNodeIdNum = parseInt(startNodeId, 10);
+    const endNodeIdNum = parseInt(endNodeId, 10);
+
+    if (isNaN(startNodeIdNum) || isNaN(endNodeIdNum)) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'startNodeId and endNodeId must be valid numeric strings',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(400).json(errorResponse);
+      return;
+    }
+
+    // Check if start and end are the same
+    if (startNodeIdNum === endNodeIdNum) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'startNodeId and endNodeId cannot be the same',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(400).json(errorResponse);
+      return;
+    }
+
+    // Find the path using existing pathfinding service
+    const route = await pathfindingService.findPath(
+      startNodeIdNum,
+      endNodeIdNum,
+      false // Default to non-accessibility mode for Task 8
+    );
+
+    if (!route) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'Path not found between the specified nodes',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(404).json(errorResponse);
+      return;
+    }
+
+    // Convert RouteResponse to RouteCalculationResponse format
+    const routeCalculationResponse = convertToRouteCalculationResponse(route);
+
+    const response: ApiResponse<RouteCalculationResponse> = {
+      success: true,
+      data: routeCalculationResponse,
+      timestamp: new Date().toISOString(),
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Route calculation error:', error);
+    
+    const errorResponse: ApiResponse = {
+      success: false,
+      error: 'Error retrieving graph data',
+      timestamp: new Date().toISOString(),
+    };
+    
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * Convert RouteResponse to RouteCalculationResponse format (Task 8)
+ */
+function convertToRouteCalculationResponse(route: any): RouteCalculationResponse {
+  const path: RoutePathNode[] = route.path.map((step: any) => ({
+    nodeId: step.node.id.toString(),
+    coordinates_x_px: step.node.coordinates_x_px || step.node.geom.x,
+    coordinates_y_px: step.node.coordinates_y_px || step.node.geom.y,
+    floor_plan_id: step.node.floor_plan_id?.toString() || '1',
+    instructions: step.instruction || 'Continue straight',
+    type: step.node.type || 'junction'
+  }));
+
+  // Group path by floor plans to create segments
+  const segmentMap = new Map<string, RoutePathNode[]>();
+  
+  path.forEach(node => {
+    const floorId = node.floor_plan_id;
+    if (!segmentMap.has(floorId)) {
+      segmentMap.set(floorId, []);
+    }
+    segmentMap.get(floorId)!.push(node);
+  });
+
+  const segments: RouteSegment[] = Array.from(segmentMap.entries()).map(([floorId, nodes]) => {
+    const pathOnFloor = nodes.map(node => ({
+      x: node.coordinates_x_px,
+      y: node.coordinates_y_px
+    }));
+
+    // Create floor-specific instructions
+    const instructionsSegment = nodes.length > 1 
+      ? `Navigate through ${nodes.length} points on floor ${floorId}`
+      : `Arrive at destination on floor ${floorId}`;
+
+    return {
+      floor_plan_id: floorId,
+      path_on_floor: pathOnFloor,
+      instructions_segment: instructionsSegment
+    };
+  });
+
+  return {
+    path,
+    segments
+  };
+}
+
 // Basic route
 app.get('/', (req: Request, res: Response) => {
   const response: ApiResponse = {
@@ -148,6 +288,7 @@ app.get('/', (req: Request, res: Response) => {
         health: API_ENDPOINTS.HEALTH,
         pathfind: API_ENDPOINTS.PATHFIND + ' (POST - Core A* pathfinding)',
         pathfind_test: API_ENDPOINTS.PATHFIND + '/test (GET - Service health check)',
+        route: API_ENDPOINTS.ROUTE + ' (POST - Route calculation with frontend-optimized response)',
         buildings: API_ENDPOINTS.BUILDINGS + ' (coming soon)',
         locations: API_ENDPOINTS.LOCATIONS + ' (coming soon)',
         routes: API_ENDPOINTS.ROUTES + ' (coming soon)'
