@@ -90,8 +90,8 @@ class TypeConverter {
       coordinates_x_px: row.coordinates_x_px || undefined,
       coordinates_y_px: row.coordinates_y_px || undefined,
       geom: {
-        x: row.geom_x ?? 0,
-        y: row.geom_y ?? 0,
+        x: row.geom_x ?? null,
+        y: row.geom_y ?? null,
       },
       is_accessible: row.is_accessible ?? true,
       qr_code_payload: row.qr_code_payload || undefined,

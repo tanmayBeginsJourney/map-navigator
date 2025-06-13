@@ -91,6 +91,11 @@ export class PathfindingService {
    * Calculate Euclidean distance between two points
    */
   private calculateDistance(point1: Point, point2: Point): number {
+    // Handle nullable coordinates - if either point is missing coordinates, return a large default distance
+    if (point1.x === null || point1.y === null || point2.x === null || point2.y === null) {
+      return 1000; // Large default distance when coordinates are missing
+    }
+    
     const dx = point1.x - point2.x;
     const dy = point1.y - point2.y;
     return Math.sqrt(dx * dx + dy * dy);

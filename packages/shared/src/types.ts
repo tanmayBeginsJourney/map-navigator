@@ -32,8 +32,8 @@ export interface BuildingInfo {
 
 // Pathfinding-related types
 export interface Point {
-  x: number;
-  y: number;
+  x: number | null;
+  y: number | null;
 }
 
 export interface Node {

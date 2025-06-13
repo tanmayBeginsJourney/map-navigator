@@ -1,0 +1,32 @@
+{
+  "name": "@campus-nav/shared",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for Campus Navigation System",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "exports": {
+    "./types": {
+      "import": "./dist/types.js",
+      "require": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    }
+  },
+  "keywords": [
+    "types",
+    "typescript",
+    "shared"
+  ],
+  "author": "Campus Navigation Team",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 

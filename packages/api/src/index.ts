@@ -258,8 +258,8 @@ app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
 function convertToRouteCalculationResponse(route: RouteResponse): RouteCalculationResponse {
   const path: RoutePathNode[] = route.path.map((step: any) => ({
     nodeId: step.node.id.toString(),
-    coordinates_x_px: step.node.coordinates_x_px ?? step.node.geom.x,
-    coordinates_y_px: step.node.coordinates_y_px ?? step.node.geom.y,
+    coordinates_x_px: step.node.coordinates_x_px ?? step.node.geom.x ?? 0,
+    coordinates_y_px: step.node.coordinates_y_px ?? step.node.geom.y ?? 0,
     floor_plan_id: step.node.floor_plan_id?.toString() ?? '1',
     instructions: step.instruction ?? 'Continue straight',
     type: step.node.type ?? 'junction'
@@ -382,6 +382,9 @@ app.listen(config.port, () => {
 });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
+    if (dbService) {
+      await dbService.disconnect();
+    }
     process.exit(1);
   }
 }

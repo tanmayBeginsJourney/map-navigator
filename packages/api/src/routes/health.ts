@@ -46,9 +46,7 @@ export default function createHealthRouter(dbService: DatabaseService): Router {
           hasSql: connectionStatus.hasSql,
         },
         database: {
-          name: config.database.name,
-          host: config.database.host,
-          port: config.database.port,
+          connected: true,
         },
         postgis: {
           available: postgisResult.available,
