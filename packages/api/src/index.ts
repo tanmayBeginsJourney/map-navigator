@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
+import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { pathfindingService } from './pathfinding';
 
 const app: Express = express();
@@ -165,10 +165,9 @@ app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
     }
 
     // Convert string IDs to numbers for existing pathfinding service
-    const startNodeIdNum = parseInt(startNodeId, 10);
-    const endNodeIdNum = parseInt(endNodeId, 10);
-
-    if (isNaN(startNodeIdNum) || isNaN(endNodeIdNum)) {
+    // Use strict validation to ensure entire string is numeric (not just prefix)
+    const numericRegex = /^\d+$/;
+    if (!numericRegex.test(startNodeId) || !numericRegex.test(endNodeId)) {
       const errorResponse: ApiResponse = {
         success: false,
         error: 'startNodeId and endNodeId must be valid numeric strings',
@@ -177,6 +176,9 @@ app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
       res.status(400).json(errorResponse);
       return;
     }
+
+    const startNodeIdNum = parseInt(startNodeId, 10);
+    const endNodeIdNum = parseInt(endNodeId, 10);
 
     // Check if start and end are the same
     if (startNodeIdNum === endNodeIdNum) {
@@ -232,14 +234,14 @@ app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
 /**
  * Convert RouteResponse to RouteCalculationResponse format (Task 8)
  */
-function convertToRouteCalculationResponse(route: any): RouteCalculationResponse {
+function convertToRouteCalculationResponse(route: RouteResponse): RouteCalculationResponse {
   const path: RoutePathNode[] = route.path.map((step: any) => ({
     nodeId: step.node.id.toString(),
-    coordinates_x_px: step.node.coordinates_x_px || step.node.geom.x,
-    coordinates_y_px: step.node.coordinates_y_px || step.node.geom.y,
-    floor_plan_id: step.node.floor_plan_id?.toString() || '1',
-    instructions: step.instruction || 'Continue straight',
-    type: step.node.type || 'junction'
+    coordinates_x_px: step.node.coordinates_x_px ?? step.node.geom.x,
+    coordinates_y_px: step.node.coordinates_y_px ?? step.node.geom.y,
+    floor_plan_id: step.node.floor_plan_id?.toString() ?? '1',
+    instructions: step.instruction ?? 'Continue straight',
+    type: step.node.type ?? 'junction'
   }));
 
   // Group path by floor plans to create segments
