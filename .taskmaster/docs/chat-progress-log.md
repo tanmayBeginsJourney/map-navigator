@@ -30,7 +30,7 @@ This file tracks progress across development chat sessions for easy reference an
 1. **Tech Stack Finalized:** React 18 + TypeScript, Node.js + Express, PostgreSQL + PostGIS
 2. **No External Map Dependencies:** Custom SVG renderer instead of Mapbox for cost efficiency
 3. **Mobile-First Approach:** Optimized for one-hand operation while walking
-4. **Chat Organization Strategy:** 1 task per chat instead of 39 individual task chats
+4. **Chat Organization Strategy:** 1 task per chat , total of 39 individual chats for 39 total tasks.
 5. **TaskMaster as Primary PM Tool:** All task tracking through MCP integration
 
 ### 📁 Files Created/Modified
@@ -411,10 +411,49 @@ Task 5 complete ✅ - Ready for A* pathfinding algorithm (Task 7)"
 
 ## Usage Instructions
 
+### Chat Template for New Sessions
+
+**Use this template when starting any new chat (replace [X] with chat number and [TASK_NAME] with actual task):**
+
+```markdown
+# Campus Navigation Development - Chat [X]: [TASK_NAME]
+
+## 📋 Context Setup
+- **Project:** Campus Indoor-Outdoor Navigation System  
+- **Current Task:** Task [X] – [TASK_NAME] (Complexity: [COMPLEXITY]/10)
+- **Previous Progress:** See Chat [X-1] section in `.taskmaster/docs/chat-progress-log.md` ([PREVIOUS_TASK] complete)  
+- **Branch:** `chat-[X]` (branched from updated `main`)
+
+## 🎯 Task [X] Overview
+**Goal:** [BRIEF_TASK_DESCRIPTION]
+**Dependencies:** ✅ [DEPENDENCY_TASKS] complete
+**Deliverables:** 
+- [DELIVERABLE_1]
+- [DELIVERABLE_2]
+- [DELIVERABLE_3]
+- [DELIVERABLE_4]
+
+## 🏗️ Technical Context
+- **Database:** PostgreSQL + PostGIS with nodes/edges schema in `packages/api/migrations/`
+- **Backend:** Express + TypeScript in `packages/api/src/`
+- **Frontend:** React + TypeScript in `apps/web-app/src/`
+- **Schema:** Buildings → Floor Plans → Nodes (with geometry) → Edges (weighted graph)
+- **Coordinate System:** SRID 0 (Cartesian) for floor plan SVG mapping
+
+## 🚀 Ready to Begin
+First command: `npx task-master-ai next`
+
+## 📁 Key References
+- `.taskmaster/docs/prd.txt` – Requirements & scope  
+- `.taskmaster/docs/chat-progress-log.md` – Previous progress and decisions  
+- `packages/api/migrations/README.md` – Database schema documentation
+- `DOCKER_SETUP.md` – Running local PostgreSQL + PostGIS
+```
+
 ### For Chat Handoffs
 
 1. **At end of each chat:** AI updates the relevant section with accomplishments
-2. **At start of new chat:** Reference previous section for context
+2. **At start of new chat:** Use the template above with task-specific details
 3. **For git commits:** Use the suggested commit messages as templates
 
 ### For Progress Tracking
