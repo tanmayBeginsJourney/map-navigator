@@ -112,13 +112,13 @@ export class DatabaseService {
         const isIncoming = row.direction === 'incoming';
         
         return {
-          id: row.id,
+        id: row.id,
           from_node_id: isIncoming ? row.to_node_id : row.from_node_id,
           to_node_id: isIncoming ? row.from_node_id : row.to_node_id,
-          weight: row.weight,
-          type: row.type,
+        weight: row.weight,
+        type: row.type,
           instructions: isIncoming ? this.reverseInstruction(row.instructions) : row.instructions,
-          attributes: row.attributes,
+        attributes: row.attributes,
         };
       });
     } finally {
@@ -292,13 +292,13 @@ export class DatabaseService {
         const isIncoming = row.direction === 'incoming';
         
         return {
-          id: row.id,
+        id: row.id,
           from_node_id: isIncoming ? row.to_node_id : row.from_node_id,
           to_node_id: isIncoming ? row.from_node_id : row.to_node_id,
-          weight: row.weight,
-          type: row.type,
+        weight: row.weight,
+        type: row.type,
           instructions: isIncoming ? this.reverseInstruction(row.instructions) : row.instructions,
-          attributes: row.attributes,
+        attributes: row.attributes,
         };
       });
     } finally {
