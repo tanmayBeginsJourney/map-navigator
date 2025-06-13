@@ -11,7 +11,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
-    "test": "echo \"No tests yet\""
+    "test": "echo \"Tests coming soon - A* algorithm implementation complete\""
   },
   "keywords": [
     "campus",
@@ -24,12 +24,17 @@
   "license": "MIT",
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^24.0.1",
+    "@types/pg": "^8.15.4",
+    "jest": "^30.0.0",
     "nodemon": "^3.1.10",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
