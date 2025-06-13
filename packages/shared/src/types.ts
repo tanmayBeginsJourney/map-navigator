@@ -104,10 +104,32 @@ export interface RouteResponse {
   accessibility_compatible: boolean;
 }
 
+// Task 8: Route Calculation API specific types
+export interface RoutePathNode {
+  nodeId: string;
+  coordinates_x_px: number;
+  coordinates_y_px: number;
+  floor_plan_id: string;
+  instructions: string;
+  type: string;
+}
+
+export interface RouteSegment {
+  floor_plan_id: string;
+  path_on_floor: Array<{ x: number; y: number }>;
+  instructions_segment: string;
+}
+
+export interface RouteCalculationResponse {
+  path: RoutePathNode[];
+  segments: RouteSegment[];
+}
+
 export const API_ENDPOINTS = {
   HEALTH: '/health',
   BUILDINGS: '/buildings',
   LOCATIONS: '/locations',
   ROUTES: '/routes',
   PATHFIND: '/pathfind',
+  ROUTE: '/api/route', // Task 8: New route calculation endpoint
 } as const; 
