@@ -20,7 +20,9 @@ const ConfigSchema = z.object({
   }),
   
   // CORS Configuration
-  corsOrigins: z.string().transform((str) => str.split(',').map(origin => origin.trim())),
+  corsOrigins: z.string().transform((str) => 
+    str.split(',').map(origin => origin.trim()).filter(origin => origin.length > 0)
+  ).pipe(z.array(z.string().min(1))),
   
   // Logging Configuration
   logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('info'),

@@ -113,7 +113,15 @@ export const validateConfig = (): boolean => {
 
 // API URL helper functions
 export const getApiUrl = (endpoint = ''): string => {
-  return `${config.apiUrl}${endpoint}`;
+  // Normalize base URL and endpoint to prevent double/missing slashes
+  const baseUrl = config.apiUrl.replace(/\/+$/, ''); // Remove trailing slashes
+  const normalizedEndpoint = endpoint.replace(/^\/+/, ''); // Remove leading slashes
+  
+  if (!normalizedEndpoint) {
+    return baseUrl;
+  }
+  
+  return `${baseUrl}/${normalizedEndpoint}`;
 };
 
 export const getHealthCheckUrl = (): string => {
