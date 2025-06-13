@@ -1,17 +1,23 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { pathfindingService } from './pathfinding';
+import { config, isDevelopment } from './config';
 
 const app: Express = express();
-const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS middleware (basic setup for development)
+// CORS middleware with configurable origins
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const allowedOrigins = config.corsOrigins;
+  const origin = req.headers.origin;
+  
+  if (!origin || allowedOrigins.includes(origin) || isDevelopment) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header(
     'Access-Control-Allow-Headers',
@@ -328,9 +334,9 @@ app.use((req: Request, res: Response) => {
   res.status(404).json(notFoundResponse);
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Campus Navigation API server is running on port ${port}`);
-  console.log(`📋 Health check available at: http://localhost:${port}${API_ENDPOINTS.HEALTH}`);
-  console.log(`🗺️ Pathfinding available at: http://localhost:${port}${API_ENDPOINTS.PATHFIND}`);
-  console.log(`🧪 Pathfinding test at: http://localhost:${port}${API_ENDPOINTS.PATHFIND}/test`);
+app.listen(config.port, () => {
+  console.log(`🚀 Campus Navigation API server is running on port ${config.port}`);
+  console.log(`📋 Health check available at: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}`);
+  console.log(`🗺️ Pathfinding available at: http://localhost:${config.port}${API_ENDPOINTS.PATHFIND}`);
+  console.log(`🧪 Pathfinding test at: http://localhost:${config.port}${API_ENDPOINTS.PATHFIND}/test`);
 });

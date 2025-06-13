@@ -1,19 +1,17 @@
 import { Pool, PoolClient } from 'pg';
 import { Node, Edge } from '@campus-nav/shared/types';
+import { config } from './config';
 
 export class DatabaseService {
   private pool: Pool;
 
   constructor() {
-    const dbPort = process.env.DB_PORT;
-    const port = dbPort && !isNaN(Number(dbPort)) ? parseInt(dbPort) : 5432;
-    
     this.pool = new Pool({
-      host: process.env.DB_HOST || 'localhost',
-      port,
-      database: process.env.DB_NAME || 'campus_navigation',
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
+      host: config.database.host,
+      port: config.database.port,
+      database: config.database.name,
+      user: config.database.user,
+      password: config.database.password,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000,

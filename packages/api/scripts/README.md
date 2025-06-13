@@ -40,7 +40,7 @@ The Engineering Building sample data provides comprehensive test scenarios:
 ### Prerequisites
 
 - PostgreSQL + PostGIS database running (see `DOCKER_SETUP.md`)
-- Node.js dependencies installed (`npm install`)
+- Node.js dependencies installed (`wsl npm install`)
 
 ### Basic Usage
 
@@ -49,15 +49,15 @@ The Engineering Building sample data provides comprehensive test scenarios:
 cd packages/api
 
 # Run database seeding with sample data
-npm run seed
+wsl npm run seed
 
 # Test database connection
-npm run test-db
+wsl npm run test-db
 
 # Run all seeding tests
-npm run test-parser
-npm run test-inserter
-npm run test-seed
+wsl npm run test-parser
+wsl npm run test-inserter
+wsl npm run test-seed
 ```
 
 ## 🔧 Seeding Script Options
@@ -66,25 +66,25 @@ The main seeding script (`seed.js`) provides a flexible CLI interface:
 
 ```bash
 # Basic seeding (uses sample-data/ directory)
-node scripts/seed.js
+wsl node scripts/seed.js
 
 # Custom data directory
-node scripts/seed.js --data-dir /path/to/custom/data
+wsl node scripts/seed.js --data-dir /path/to/custom/data
 
 # Clear existing data before seeding
-node scripts/seed.js --clear
+wsl node scripts/seed.js --clear
 
 # Use sequential insertion instead of atomic transaction
-node scripts/seed.js --no-transaction
+wsl node scripts/seed.js --no-transaction
 
 # Skip post-insertion validation
-node scripts/seed.js --no-validate
+wsl node scripts/seed.js --no-validate
 
 # Set logging level (debug, info, error)
-node scripts/seed.js --log-level debug
+wsl node scripts/seed.js --log-level debug
 
 # Show help
-node scripts/seed.js --help
+wsl node scripts/seed.js --help
 ```
 
 ## 📊 Data Validation
@@ -158,10 +158,10 @@ The system includes comprehensive validation at multiple levels:
 
 ```bash
 # Run individual test suites
-npm run test-db        # Database connection tests
-npm run test-parser    # Data parsing tests
-npm run test-inserter  # Database insertion tests
-npm run test-seed      # End-to-end seeding tests
+wsl npm run test-db        # Database connection tests
+wsl npm run test-parser    # Data parsing tests
+wsl npm run test-inserter  # Database insertion tests
+wsl npm run test-seed      # End-to-end seeding tests
 
 # Tests provide detailed output with ✅/❌ indicators
 ```
@@ -249,16 +249,16 @@ sample-data/
 1. **Database Connection Failed**
    ```bash
    # Check if PostgreSQL container is running
-   docker-compose ps
+   wsl docker-compose ps
    
    # Start database if needed
-   docker-compose up -d
+   wsl docker-compose up -d
    ```
 
 2. **PostGIS Extension Not Available**
    ```bash
    # Verify PostGIS in container
-   docker-compose exec postgres psql -U postgres -d campus_navigation -c "SELECT PostGIS_Full_Version();"
+   wsl docker-compose exec postgres psql -U postgres -d campus_navigation -c "SELECT PostGIS_Full_Version();"
    ```
 
 3. **Migration Schema Missing**
@@ -271,11 +271,11 @@ sample-data/
 4. **Seeding Script Errors**
    ```bash
    # Run with debug logging
-   node scripts/seed.js --log-level debug
+   wsl node scripts/seed.js --log-level debug
    
    # Test individual components
-   npm run test-parser
-   npm run test-inserter
+   wsl npm run test-parser
+   wsl npm run test-inserter
    ```
 
 ### Debug Mode
@@ -284,7 +284,7 @@ Enable detailed logging for troubleshooting:
 
 ```bash
 # Debug level logging
-node scripts/seed.js --log-level debug
+wsl node scripts/seed.js --log-level debug
 
 # This will show:
 # - Detailed SQL queries
@@ -311,10 +311,10 @@ DB_PASSWORD=your_password
 
 ```bash
 # Production seeding with transaction safety
-node scripts/seed.js --clear --log-level info
+wsl node scripts/seed.js --clear --log-level info
 
 # Validate after seeding
-node scripts/seed.js --no-clear --log-level error
+wsl node scripts/seed.js --no-clear --log-level error
 ```
 
 ## 🔧 Extending the System
@@ -324,13 +324,13 @@ node scripts/seed.js --no-clear --log-level error
 1. Create new JSON files following the existing format
 2. Update building, floor_plan, node, and edge data
 3. Ensure foreign key relationships are maintained
-4. Run validation: `npm run test-parser`
+4. Run validation: `wsl npm run test-parser`
 
 ### Custom Data Sources
 
 1. Modify `data-parser.js` to support additional formats
 2. Update validation rules as needed
-3. Test with `npm run test-parser`
+3. Test with `wsl npm run test-parser`
 
 ### Additional Node/Edge Types
 

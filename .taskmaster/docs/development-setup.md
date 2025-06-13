@@ -1,400 +1,348 @@
 # Development Setup Guide
 
-## Prerequisites
+This guide covers setting up the Campus Navigation System development environment.
 
-### Required Software
+## 🎯 Current Project Status: 7/39 Tasks Complete (17.9%)
 
-- **Node.js 20+** - JavaScript runtime
-- **npm 9+** - Package manager (comes with Node.js)
-- **Docker Desktop** - For local database
-- **Git** - Version control
-- **VS Code** (recommended) - Code editor with extensions
+### ✅ **FOUNDATION COMPLETE:**
+- ✅ **Task 1:** Project Setup & Monorepo Configuration
+- ✅ **Task 2:** Dockerized Development Environment (PostgreSQL + PostGIS)
+- ✅ **Task 3:** Environment Configuration & Secrets Management ⭐ **JUST COMPLETED**
+- ✅ **Task 5:** Database Schema Design & Migrations
+- ✅ **Task 6:** Sample Data & Database Seeding (39 nodes, 50 edges)
+- ✅ **Task 7:** A* Pathfinding Algorithm Implementation
+- ✅ **Task 8:** Route Calculation API Endpoint
 
-### VS Code Extensions (Recommended)
+### 🎯 **NEXT PRIORITY:**
+- **Task 9:** Frontend - Initialize React SPA with Vite (all dependencies satisfied)
 
-- **TypeScript and JavaScript Language Features** (built-in)
-- **ES7+ React/Redux/React-Native snippets**
-- **Auto Rename Tag**
-- **Prettier - Code formatter**
-- **ESLint**
-- **Tailwind CSS IntelliSense** (if using Tailwind)
+---
 
-### Accounts Required
+## 🚀 Quick Start (Development Environment Ready!)
 
-- **GitHub Account** - For version control and deployment
-- **TaskMaster AI** - For project management (automatically configured)
+The development environment is **fully configured and operational**. Follow these steps to get started:
 
-## Project Structure
-
-```
-map_navigation/
-├── frontend/                 # React TypeScript SPA
-│   ├── src/
-│   │   ├── components/       # React components
-│   │   ├── lib/             # Utilities and API client
-│   │   ├── types/           # TypeScript type definitions
-│   │   └── assets/          # Static assets
-│   ├── public/              # Public assets
-│   ├── package.json
-│   └── vite.config.ts
-├── backend/                 # Node.js Express API
-│   ├── src/
-│   │   ├── routes/          # API routes
-│   │   ├── controllers/     # Request handlers
-│   │   ├── services/        # Business logic
-│   │   ├── models/          # Data models
-│   │   └── database/        # Database connection & queries
-│   ├── migrations/          # SQL migration files
-│   └── package.json
-├── assets/                  # Floor plans and map data
-│   └── svg/                 # Building floor plan SVGs
-├── docker-compose.yml       # Local database setup
-└── README.md
-```
-
-## Local Development Setup
-
-### 1. Clone Repository
-
+### 1. **Clone and Install**
 ```bash
-git clone https://github.com/tanmayBeginsJourney/map-navigator.git
-cd map-navigator
+# Clone the repository
+git clone <repository-url>
+cd map_navigation
+
+# Install dependencies (uses pnpm workspaces)
+pnpm install
 ```
 
-### 2. Database Setup
-
+### 2. **Start Database (Docker)**
 ```bash
-# Start PostgreSQL with PostGIS extension
+# Start PostgreSQL + PostGIS container
 docker-compose up -d
-
-# Wait for database to start (about 30 seconds)
-docker-compose logs postgres
 
 # Verify database is running
-docker ps
+docker-compose ps
 ```
 
-### 3. Backend Setup
-
+### 3. **Configure Environment Variables**
 ```bash
-cd backend
+# Backend configuration
+cp packages/api/.env.example packages/api/.env
+# Edit packages/api/.env with your database credentials
 
-# Install dependencies
-npm install
-
-# Copy environment template
-cp .env.example .env
-
-# Edit .env file with your settings
-# Required variables:
-# DATABASE_URL=postgresql://postgres:password@localhost:5432/campus_nav
-# NODE_ENV=development
-# PORT=3001
+# Frontend configuration  
+cp apps/web-app/.env.example apps/web-app/.env
+# Edit apps/web-app/.env with your API URL and feature flags
 ```
 
-### 4. Frontend Setup
-
+### 4. **Run Database Migrations & Seed Data**
 ```bash
-cd ../frontend
+# Run migrations to create schema
+cd packages/api
+node scripts/run-migrations.js
 
-# Install dependencies
-npm install
-
-# Copy environment template
-cp .env.example .env.local
-
-# Edit .env.local file:
-# VITE_API_BASE_URL=http://localhost:3001/api
-# VITE_APP_NAME=Campus Navigation
+# Seed with sample data (Engineering Building)
+node scripts/seed.js
 ```
 
-### 5. Run Database Migrations
-
+### 5. **Start Development Servers**
 ```bash
-cd ../backend
+# Start both API and web app in parallel
+pnpm dev
 
-# Run initial database setup
-npm run migrate
-
-# Seed with sample data (optional)
-npm run seed
+# Or start individually:
+# API server (port 3001): pnpm --filter api dev
+# Web app (port 5173): pnpm --filter web-app dev
 ```
 
-### 6. Start Development Servers
-
-**Terminal 1 - Backend:**
-
+### 6. **Verify System**
 ```bash
-cd backend
-npm run dev
-# Server starts on http://localhost:3001
+# Check API health
+curl http://localhost:3001/health
+
+# Test pathfinding
+curl -X POST http://localhost:3001/api/route \
+  -H "Content-Type: application/json" \
+  -d '{"startNodeId": "1", "endNodeId": "10", "accessibilityMode": false}'
 ```
 
-**Terminal 2 - Frontend:**
+---
 
-```bash
-cd frontend
-npm run dev
-# App starts on http://localhost:5173
+## 📋 Prerequisites
+
+### Required Software
+- **Node.js 18+** (LTS recommended)
+- **pnpm 8+** (package manager)
+- **Docker & Docker Compose** (for PostgreSQL)
+- **WSL** (Windows users - enforced for consistency)
+
+### Development Environment
+- **Operating System:** WSL (Linux) environment required
+- **Editor:** VS Code with TypeScript support recommended
+- **Terminal:** WSL bash (PowerShell commands not supported)
+
+---
+
+## 🏗️ Project Architecture
+
+### **Monorepo Structure**
+```
+map_navigation/
+├── 📦 packages/
+│   ├── api/              # Backend Node.js/Express API
+│   │   ├── src/          # TypeScript source code
+│   │   ├── migrations/   # Database schema migrations
+│   │   ├── scripts/      # Database seeding and utilities
+│   │   └── sample-data/  # Engineering Building sample data
+│   └── shared/           # Shared TypeScript types
+├── 🌐 apps/
+│   └── web-app/          # Frontend React/Vite SPA
+├── 🔧 .taskmaster/       # Project management
+├── 🐳 docker-compose.yml # PostgreSQL + PostGIS
+└── 📋 Configuration files
 ```
 
-### 7. Verify Setup
+### **Technology Stack**
+- **Frontend:** React 18 + TypeScript + Vite
+- **Backend:** Node.js + Express + TypeScript
+- **Database:** PostgreSQL 16 + PostGIS 3.4
+- **Package Manager:** pnpm (workspaces)
+- **Development:** Docker Compose + WSL
 
-- **Frontend:** Open http://localhost:5173 in browser
-- **Backend API:** Check http://localhost:3001/api/health
-- **Database:** Should show "Connected to PostgreSQL" in backend logs
+---
 
-## Mobile Development Testing
+## 🔧 Configuration Systems
 
-### Testing on Real Devices
+### **Backend Configuration (`packages/api/src/config.ts`)**
+- ✅ **Zod validation** with comprehensive error reporting
+- ✅ **dotenv integration** for development environment
+- ✅ **Production-ready** with required variable validation
+- ✅ **Security-first** approach (no hardcoded secrets)
 
-**Option 1: LAN Access (Recommended)**
-
+**Required Environment Variables:**
 ```bash
-cd frontend
-npm run dev -- --host
-
-# Note the network URL (e.g., http://192.168.1.100:5173)
-# Access this URL on your mobile device
-```
-
-**Option 2: USB Debugging (Android)**
-
-```bash
-# Enable USB debugging on Android device
-# Connect via USB
-adb reverse tcp:5173 tcp:5173
-
-# Access http://localhost:5173 on device
-```
-
-**Option 3: Safari Web Inspector (iOS)**
-
-- Connect iPhone via USB
-- Enable Web Inspector in Safari settings
-- Open Safari on Mac > Develop menu > iPhone > localhost
-
-### Device Testing Checklist
-
-- [ ] Camera access works for QR scanning
-- [ ] Touch interactions are responsive
-- [ ] Map zooming and panning work smoothly
-- [ ] Text is readable without zooming
-- [ ] All buttons are easily tappable (44px minimum)
-
-## Environment Variables Reference
-
-### Backend (.env)
-
-```bash
-# Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/campus_nav
-
-# Server
-NODE_ENV=development
+# packages/api/.env
 PORT=3001
-
-# External APIs (none required for MVP)
+NODE_ENV=development
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=campus_navigation
+DB_USER=postgres
+DB_PASSWORD=your_secure_password_here
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+LOG_LEVEL=info
+API_VERSION=v1
 ```
 
-### Frontend (.env.local)
+### **Frontend Configuration (`apps/web-app/src/config.ts`)**
+- ✅ **Vite environment variables** (VITE_ prefix)
+- ✅ **TypeScript interfaces** for type safety
+- ✅ **Feature flags** for development/production modes
+- ✅ **API URL helpers** for consistent endpoint access
 
+**Required Environment Variables:**
 ```bash
-# API
-VITE_API_BASE_URL=http://localhost:3001/api
-
-# App Configuration
-VITE_APP_NAME=Campus Navigation
-
-# Development
+# apps/web-app/.env
+VITE_API_URL=http://localhost:3001
 VITE_NODE_ENV=development
+VITE_API_VERSION=v1
+VITE_ENABLE_DEBUG_MODE=true
+VITE_ENABLE_OFFLINE_MODE=false
+VITE_ENABLE_ANALYTICS=false
+VITE_MAPBOX_TOKEN=your_mapbox_token_here
 ```
 
-## Common Development Commands
+---
 
-### Backend
+## 🗄️ Database Setup
 
+### **Schema Overview**
+- **Buildings** → **Floor Plans** → **Nodes** → **Edges**
+- **PostGIS geometry** with SRID 0 (Cartesian coordinates)
+- **Spatial indexing** for performance optimization
+- **Accessibility support** with alternative routing
+
+### **Sample Data Available**
+- **Engineering Building:** 4 floors, 39 nodes, 50 edges
+- **Multi-floor navigation** with stairs and elevators
+- **Accessibility features** for wheelchair routing
+- **Comprehensive test scenarios** for pathfinding
+
+### **Database Commands**
 ```bash
-npm run dev          # Start development server with hot reload
-npm run build        # Build for production
-npm run test         # Run unit tests
-npm run test:watch   # Run tests in watch mode
-npm run lint         # Check code style
-npm run migrate      # Run database migrations
-npm run migrate:down # Rollback last migration
-npm run seed         # Populate with sample data
+# Run migrations
+cd packages/api
+node scripts/run-migrations.js
+
+# Seed sample data
+node scripts/seed.js
+
+# Test database connection
+node scripts/test-connection.js
+
+# Clear and reseed data
+node scripts/seed.js --clear
 ```
 
-### Frontend
+---
 
+## 🔍 API Endpoints Available
+
+### **Health Check**
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build locally
-npm run test         # Run component tests
-npm run test:ui      # Run tests with UI
-npm run lint         # Check code style
-npm run type-check   # Check TypeScript types
+GET /health
+# Response: {"status":"OK","service":"campus-navigation-api"}
 ```
 
-## Troubleshooting
-
-### Database Issues
-
-**Problem:** Database connection fails
-
+### **Pathfinding**
 ```bash
-# Check if PostgreSQL is running
-docker ps
-
-# Restart database
-docker-compose down
-docker-compose up -d
-
-# Check logs
-docker-compose logs postgres
-```
-
-**Problem:** Migration fails
-
-```bash
-# Reset database (WARNING: destroys data)
-docker-compose down -v
-docker-compose up -d
-npm run migrate
-```
-
-### Frontend Issues
-
-**Problem:** Vite dev server won't start
-
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
-
-# Check port availability
-lsof -i :5173
-```
-
-**Problem:** TypeScript errors
-
-```bash
-# Check types
-npm run type-check
-
-# Restart TypeScript server in VS Code
-Cmd/Ctrl + Shift + P > "TypeScript: Restart TS Server"
-```
-
-### Mobile Testing Issues
-
-**Problem:** Camera doesn't work on mobile
-
-- Ensure HTTPS (use ngrok for local HTTPS tunnel)
-- Check browser permissions
-- Test on different browsers (Chrome, Safari)
-
-**Problem:** Touch interactions not working
-
-- Check touch target sizes (minimum 44px)
-- Test on actual devices, not just browser dev tools
-- Verify CSS touch-action properties
-
-## Code Quality Setup
-
-### Pre-commit Hooks
-
-```bash
-# Install husky for git hooks
-npm install -g husky
-
-# Setup pre-commit hook
-npx husky add .husky/pre-commit "npm run lint && npm run type-check"
-```
-
-### VS Code Settings
-
-Create `.vscode/settings.json`:
-
-```json
+POST /pathfind
+Content-Type: application/json
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  }
+  "startNodeId": 1,
+  "endNodeId": 10,
+  "accessibilityMode": false
 }
 ```
 
-## Performance Monitoring
-
-### Local Performance Testing
-
+### **Route Calculation (Task 8)**
 ```bash
-# Frontend bundle analysis
-cd frontend
-npm run build
-npm run preview
-
-# Open http://localhost:4173
-# Run Lighthouse audit in Chrome DevTools
+POST /api/route
+Content-Type: application/json
+{
+  "startNodeId": "1",
+  "endNodeId": "10", 
+  "accessibilityMode": false
+}
 ```
 
-### API Performance
+---
 
+## 🧪 Testing & Verification
+
+### **System Health Checks**
 ```bash
-# Backend load testing (install artillery first)
-npm install -g artillery
-artillery quick --count 10 --num 10 http://localhost:3001/api/route
+# Verify all services
+pnpm run health-check
+
+# Check TypeScript compilation
+pnpm run type-check
+
+# Run database tests
+cd packages/api && node scripts/test-connection.js
 ```
 
-## Deployment Preparation
+### **Development Workflow**
+1. **Start with health checks** to ensure all services operational
+2. **Use TaskMaster** for task management: `npx task-master-ai next`
+3. **Follow WSL-only development** (no PowerShell commands)
+4. **Test pathfinding** with sample data before frontend development
 
-### Frontend Build Verification
+---
 
-```bash
-cd frontend
-npm run build
-npm run preview
+## 🚀 Production Deployment
 
-# Check bundle size
-du -sh dist/
-```
+### **Frontend (Vercel)**
+- Environment variables configured in Vercel dashboard
+- Build command: `pnpm build`
+- Output directory: `apps/web-app/dist`
 
-### Backend Production Build
+### **Backend (Railway)**
+- PostgreSQL database provided by Railway
+- Environment variables configured in Railway dashboard
+- Automatic deployment from GitHub
 
-```bash
-cd backend
-npm run build
-npm start
+**See `.taskmaster/docs/production-deployment.md` for complete deployment guide.**
 
-# Verify production mode
-curl http://localhost:3001/api/health
-```
+---
 
-## Getting Help
+## 🔧 Development Tools
 
-### Resources
+### **Code Quality**
+- **ESLint v9** with modern configuration
+- **Prettier** for consistent formatting
+- **TypeScript** with strict type checking
+- **Path aliases** for clean imports
 
-- **React Documentation:** [react.dev](https://react.dev)
-- **TypeScript Handbook:** [typescriptlang.org](https://www.typescriptlang.org/docs/)
-- **Mapbox GL JS:** [docs.mapbox.com](https://docs.mapbox.com/mapbox-gl-js/)
-- **Express.js:** [expressjs.com](https://expressjs.com/)
-- **PostgreSQL:** [postgresql.org](https://www.postgresql.org/docs/)
+### **Task Management**
+- **TaskMaster AI** integration via MCP
+- **Comprehensive task tracking** with 39 tasks total
+- **Dependency management** and progress monitoring
 
-### Team Communication
+### **WSL Integration**
+- **Enforced WSL environment** for consistency
+- **Linux command compatibility** across team
+- **Proper path handling** for cross-platform development
 
-- **Issues:** Use GitHub Issues for bugs and feature requests
-- **Discussions:** Use GitHub Discussions for questions
-- **Code Review:** All changes require PR review before merge
+---
 
-### Development Workflow
+## 🆘 Troubleshooting
 
-1. Create feature branch: `git checkout -b feat/feature-name`
-2. Make changes and test locally
-3. Commit with conventional commit format: `feat: add QR scanner component`
-4. Push and create Pull Request
-5. Address review feedback
-6. Merge after approval and passing CI
+### **Common Issues**
+
+1. **Database Connection Failed**
+   ```bash
+   # Check Docker container status
+   docker-compose ps
+   
+   # Restart database
+   docker-compose restart postgres_db
+   ```
+
+2. **TypeScript Errors**
+   ```bash
+   # Check compilation
+   pnpm run type-check
+   
+   # Rebuild dependencies
+   pnpm install
+   ```
+
+3. **Port Conflicts**
+   ```bash
+   # Check port usage
+   lsof -i :3001  # API port
+   lsof -i :5173  # Frontend port
+   ```
+
+4. **Environment Variables**
+   ```bash
+   # Verify .env files exist
+   ls -la packages/api/.env
+   ls -la apps/web-app/.env
+   ```
+
+### **Getting Help**
+- Check `.taskmaster/docs/` for comprehensive documentation
+- Review `DOCKER_SETUP.md` for database issues
+- Use `npx task-master-ai next` for task guidance
+
+---
+
+## 📈 Next Steps
+
+With the foundation complete, the next development phase focuses on:
+
+1. **Task 9:** Frontend React SPA initialization
+2. **Task 10:** Basic routing and navigation setup
+3. **Task 11:** Map visualization components
+4. **Task 12:** User interface development
+
+**The development environment is production-ready and fully operational!** 🎉

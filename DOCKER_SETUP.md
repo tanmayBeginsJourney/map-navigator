@@ -13,8 +13,8 @@
 
 ### 2. Verify Installation
 ```bash
-docker --version
-docker-compose --version
+wsl docker --version
+wsl docker-compose --version
 ```
 Both commands should return version numbers without errors.
 
@@ -27,24 +27,24 @@ Both commands should return version numbers without errors.
 1. **Create environment variables** (copy from template):
 ```bash
 # Copy the template file and customize as needed
-cp .env.example .env
+wsl cp .env.example .env
 ```
 
 **⚠️ Security Note**: Never commit the actual `.env` file to version control. The `.env` file is already in `.gitignore` to prevent accidental commits. Use the provided `.env.example` as your template.
 
 2. **Start the database**:
 ```bash
-docker-compose up -d postgres_db
+wsl docker-compose up -d postgres_db
 ```
 
 3. **Verify the database is running**:
 ```bash
-docker-compose ps
+wsl docker-compose ps
 ```
 
 4. **Check database logs** (if needed):
 ```bash
-docker-compose logs postgres_db
+wsl docker-compose logs postgres_db
 ```
 
 ## Environment Configuration
@@ -55,7 +55,7 @@ The project includes a `.env.example` file with template environment variables. 
 - **Development URLs**: Pre-configured connection strings for local development
 
 To set up your environment:
-1. Copy `.env.example` to `.env`: `cp .env.example .env`
+1. Copy `.env.example` to `.env`: `wsl cp .env.example .env`
 2. Modify values in `.env` if needed (default values work for local development)
 3. Never commit your `.env` file to version control
 
@@ -79,12 +79,12 @@ Database data is stored in Docker volume `pg_data_volume` and persists across co
 
 ## Stopping Services
 ```bash
-docker-compose down
+wsl docker-compose down
 ```
 
 ## Removing Data (Reset Database)
 ```bash
-docker-compose down -v
+wsl docker-compose down -v
 ```
 **Warning**: This will delete all database data permanently.
 
@@ -92,15 +92,16 @@ docker-compose down -v
 
 ### Docker Command Not Found
 - Ensure Docker Desktop is installed and running
-- Restart your terminal/PowerShell after Docker installation
+- Restart your terminal after Docker installation
 - Verify Docker Desktop is running (whale icon in system tray)
+- Ensure WSL integration is enabled in Docker Desktop settings
 
 ### Container Won't Start
 - Check Docker Desktop is running
-- Verify port 5432 isn't already in use: `netstat -an | findstr 5432`
-- Check logs: `docker-compose logs postgres_db`
+- Verify port 5432 isn't already in use: `wsl netstat -an | grep 5432`
+- Check logs: `wsl docker-compose logs postgres_db`
 
 ### Connection Refused
-- Ensure container is running: `docker-compose ps`
+- Ensure container is running: `wsl docker-compose ps`
 - Verify environment variables in `.env` file
 - Check if host firewall is blocking port 5432 

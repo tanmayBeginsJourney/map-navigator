@@ -30,8 +30,10 @@
   "license": "MIT",
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "zod": "^3.25.64"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

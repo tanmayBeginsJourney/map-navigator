@@ -17,13 +17,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "baseUrl": "../../",
+    "baseUrl": ".",
     "paths": {
-      "@campus-nav/api/*": ["packages/api/src/*"],
-      "@campus-nav/web-app/*": ["apps/web-app/src/*"],
-      "@campus-nav/shared/*": ["packages/shared/src/*"]
+      "@campus-nav/api/*": ["./src/*"],
+      "@campus-nav/web-app/*": ["../../apps/web-app/src/*"],
+      "@campus-nav/shared/*": ["../shared/src/*"]
     }
   },
-  "include": ["src/**/*", "../shared/src/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
