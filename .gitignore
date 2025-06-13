@@ -43,4 +43,4 @@ tasks/
 *.p12
 *.pfx
 config/secrets.*
-secrets.* 
+secrets.*
