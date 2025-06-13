@@ -31,4 +31,16 @@ dist/
 
 # Task files
 tasks.json
-tasks/ 
+tasks/
+
+# SECURITY: Cursor/IDE configuration files (may contain API keys)
+.cursor/
+.cursor/**/*
+
+# SECURITY: Additional sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.*
+secrets.* 
