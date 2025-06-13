@@ -232,8 +232,8 @@ export class DatabaseService {
           building_id,
           coordinates_x_px,
           coordinates_y_px,
-          ST_X(geom) as geom_x,
-          ST_Y(geom) as geom_y,
+          ST_X(geom::geometry) as geom_x,
+          ST_Y(geom::geometry) as geom_y,
           is_accessible,
           qr_code_payload,
           attributes
@@ -255,8 +255,8 @@ export class DatabaseService {
         coordinates_x_px: row.coordinates_x_px,
         coordinates_y_px: row.coordinates_y_px,
         geom: {
-          x: row.geom_x ?? 0,
-          y: row.geom_y ?? 0,
+          x: row.geom_x ?? null,
+          y: row.geom_y ?? null,
         },
         is_accessible: row.is_accessible,
         qr_code_payload: row.qr_code_payload,

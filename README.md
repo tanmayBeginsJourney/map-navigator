@@ -59,7 +59,7 @@ pnpm dev
 - **Backend:** Node.js + Express + TypeScript  
 - **Database:** PostgreSQL 16 + PostGIS 3.4
 - **Package Manager:** pnpm (workspaces)
-- **Development:** Docker Compose + WSL
+- **Development:** Docker Compose + PowerShell
 
 ### **Monorepo Structure**
 ```
@@ -226,7 +226,7 @@ Content-Type: application/json
 - **Dependency Tracking:** Proper task sequencing and progress monitoring
 
 ### **Development Environment**
-- **WSL Required:** Consistent Linux environment for all development
+- **PowerShell Required:** Consistent Windows development environment
 - **Docker Compose:** PostgreSQL + PostGIS containerization
 - **Hot Reload:** Both frontend and backend with live updates
 - **Type Safety:** Full TypeScript integration with shared types
@@ -275,7 +275,7 @@ With the foundation complete, upcoming development focuses on:
 ### **Development Setup**
 1. Follow the Quick Start guide above
 2. Use TaskMaster for task management: `npx task-master-ai next`
-3. Follow WSL-only development (no PowerShell commands)
+3. Follow PowerShell-only development (no Unix/WSL commands)
 4. Test pathfinding with sample data before frontend development
 
 ### **Code Standards**

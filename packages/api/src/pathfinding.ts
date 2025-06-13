@@ -76,8 +76,8 @@ class MinHeap<T> {
 export class PathfindingService {
   private db: ReturnType<typeof createDatabaseService>;
 
-  constructor() {
-    this.db = createDatabaseService();
+  constructor(dbService: ReturnType<typeof createDatabaseService>) {
+    this.db = dbService;
   }
 
   /**
@@ -380,4 +380,5 @@ export class PathfindingService {
   }
 }
 
-export const pathfindingService = new PathfindingService(); 
+// PathfindingService should be instantiated with a shared database service
+// export const pathfindingService = new PathfindingService(createDatabaseService()); 

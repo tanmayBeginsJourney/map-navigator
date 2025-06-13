@@ -1,14 +1,15 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
-import { pathfindingService } from './pathfinding';
+import { PathfindingService } from './pathfinding';
 import { config, isDevelopment } from './config';
 import { createDatabaseService } from './db/connection';
-import healthRouter from './routes/health';
+import createHealthRouter from './routes/health';
 
 const app: Express = express();
 
-// Initialize database service
+// Initialize database service and pathfinding service
 let dbService: ReturnType<typeof createDatabaseService> | null = null;
+let pathfindingService: PathfindingService | null = null;
 
 // Middleware
 app.use(express.json());
@@ -36,8 +37,8 @@ app.use((req, res, next) => {
   }
 });
 
-// Mount health check routes
-app.use(API_ENDPOINTS.HEALTH, healthRouter);
+// Mount health check routes (will be updated in startServer function)
+// app.use(API_ENDPOINTS.HEALTH, healthRouter);
 
 // Pathfinding endpoint
 app.post(API_ENDPOINTS.PATHFIND, async (req: Request, res: Response) => {
@@ -74,6 +75,17 @@ app.post(API_ENDPOINTS.PATHFIND, async (req: Request, res: Response) => {
         timestamp: new Date().toISOString(),
       };
       res.status(400).json(errorResponse);
+      return;
+    }
+
+    // Ensure pathfinding service is initialized
+    if (!pathfindingService) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'Pathfinding service not initialized',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(503).json(errorResponse);
       return;
     }
 
@@ -186,6 +198,17 @@ app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
         timestamp: new Date().toISOString(),
       };
       res.status(400).json(errorResponse);
+      return;
+    }
+
+    // Ensure pathfinding service is initialized
+    if (!pathfindingService) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: 'Pathfinding service not initialized',
+        timestamp: new Date().toISOString(),
+      };
+      res.status(503).json(errorResponse);
       return;
     }
 
@@ -337,6 +360,15 @@ async function startServer() {
     dbService = createDatabaseService();
     await dbService.connect();
     console.log('✅ Database service initialized successfully');
+
+    // Initialize pathfinding service with shared database service
+    console.log('🧭 Initializing pathfinding service...');
+    pathfindingService = new PathfindingService(dbService);
+    console.log('✅ Pathfinding service initialized successfully');
+
+    // Mount health check routes with shared database service
+    const healthRouter = createHealthRouter(dbService);
+    app.use(API_ENDPOINTS.HEALTH, healthRouter);
 
     // Start the server
 app.listen(config.port, () => {

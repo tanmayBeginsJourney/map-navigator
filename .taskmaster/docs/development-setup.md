@@ -91,12 +91,12 @@ curl -X POST http://localhost:3001/api/route \
 - **Node.js 18+** (LTS recommended)
 - **pnpm 8+** (package manager)
 - **Docker & Docker Compose** (for PostgreSQL)
-- **WSL** (Windows users - enforced for consistency)
+- **PowerShell** (Windows users - enforced for consistency)
 
 ### Development Environment
-- **Operating System:** WSL (Linux) environment required
+- **Operating System:** Windows with PowerShell
 - **Editor:** VS Code with TypeScript support recommended
-- **Terminal:** WSL bash (PowerShell commands not supported)
+- **Terminal:** PowerShell (WSL/bash commands not supported)
 
 ---
 
@@ -124,7 +124,7 @@ map_navigation/
 - **Backend:** Node.js + Express + TypeScript
 - **Database:** PostgreSQL 16 + PostGIS 3.4
 - **Package Manager:** pnpm (workspaces)
-- **Development:** Docker Compose + WSL
+- **Development:** Docker Compose + PowerShell
 
 ---
 
@@ -252,7 +252,7 @@ cd packages/api && node scripts/test-connection.js
 ### **Development Workflow**
 1. **Start with health checks** to ensure all services operational
 2. **Use TaskMaster** for task management: `npx task-master-ai next`
-3. **Follow WSL-only development** (no PowerShell commands)
+3. **Follow PowerShell-only development** (no Unix/WSL commands)
 4. **Test pathfinding** with sample data before frontend development
 
 ---
@@ -286,10 +286,10 @@ cd packages/api && node scripts/test-connection.js
 - **Comprehensive task tracking** with 39 tasks total
 - **Dependency management** and progress monitoring
 
-### **WSL Integration**
-- **Enforced WSL environment** for consistency
-- **Linux command compatibility** across team
-- **Proper path handling** for cross-platform development
+### **PowerShell Integration**
+- **Enforced PowerShell environment** for consistency
+- **Windows command compatibility** across team
+- **Proper path handling** for native Windows development
 
 ---
 
@@ -325,8 +325,8 @@ cd packages/api && node scripts/test-connection.js
 4. **Environment Variables**
    ```bash
    # Verify .env files exist
-   ls -la packages/api/.env
-   ls -la apps/web-app/.env
+   Get-ChildItem packages/api/.env
+Get-ChildItem apps/web-app/.env
    ```
 
 ### **Getting Help**

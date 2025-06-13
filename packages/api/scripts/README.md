@@ -40,51 +40,51 @@ The Engineering Building sample data provides comprehensive test scenarios:
 ### Prerequisites
 
 - PostgreSQL + PostGIS database running (see `DOCKER_SETUP.md`)
-- Node.js dependencies installed (`wsl npm install`)
+- Node.js dependencies installed (`npm install`)
 
 ### Basic Usage
 
-```bash
+```powershell
 # Navigate to API directory
 cd packages/api
 
 # Run database seeding with sample data
-wsl npm run seed
+npm run seed
 
 # Test database connection
-wsl npm run test-db
+npm run test-db
 
 # Run all seeding tests
-wsl npm run test-parser
-wsl npm run test-inserter
-wsl npm run test-seed
+npm run test-parser
+npm run test-inserter
+npm run test-seed
 ```
 
 ## 🔧 Seeding Script Options
 
 The main seeding script (`seed.js`) provides a flexible CLI interface:
 
-```bash
+```powershell
 # Basic seeding (uses sample-data/ directory)
-wsl node scripts/seed.js
+node scripts/seed.js
 
 # Custom data directory
-wsl node scripts/seed.js --data-dir /path/to/custom/data
+node scripts/seed.js --data-dir /path/to/custom/data
 
 # Clear existing data before seeding
-wsl node scripts/seed.js --clear
+node scripts/seed.js --clear
 
 # Use sequential insertion instead of atomic transaction
-wsl node scripts/seed.js --no-transaction
+node scripts/seed.js --no-transaction
 
 # Skip post-insertion validation
-wsl node scripts/seed.js --no-validate
+node scripts/seed.js --no-validate
 
 # Set logging level (debug, info, error)
-wsl node scripts/seed.js --log-level debug
+node scripts/seed.js --log-level debug
 
 # Show help
-wsl node scripts/seed.js --help
+node scripts/seed.js --help
 ```
 
 ## 📊 Data Validation
@@ -156,12 +156,12 @@ The system includes comprehensive validation at multiple levels:
 
 ### Running Tests
 
-```bash
+```powershell
 # Run individual test suites
-wsl npm run test-db        # Database connection tests
-wsl npm run test-parser    # Data parsing tests
-wsl npm run test-inserter  # Database insertion tests
-wsl npm run test-seed      # End-to-end seeding tests
+npm run test-db        # Database connection tests
+npm run test-parser    # Data parsing tests
+npm run test-inserter  # Database insertion tests
+npm run test-seed      # End-to-end seeding tests
 
 # Tests provide detailed output with ✅/❌ indicators
 ```
@@ -247,44 +247,44 @@ sample-data/
 ### Common Issues
 
 1. **Database Connection Failed**
-   ```bash
+   ```powershell
    # Check if PostgreSQL container is running
-   wsl docker-compose ps
+   docker-compose ps
    
    # Start database if needed
-   wsl docker-compose up -d
+   docker-compose up -d
    ```
 
 2. **PostGIS Extension Not Available**
-   ```bash
+   ```powershell
    # Verify PostGIS in container
-   wsl docker-compose exec postgres psql -U postgres -d campus_navigation -c "SELECT PostGIS_Full_Version();"
+   docker-compose exec postgres psql -U postgres -d campus_navigation -c "SELECT PostGIS_Full_Version();"
    ```
 
 3. **Migration Schema Missing**
-   ```bash
+   ```powershell
    # Run migrations first
    cd packages/api
    # Apply migrations manually or via migration tool
    ```
 
 4. **Seeding Script Errors**
-   ```bash
+   ```powershell
    # Run with debug logging
-   wsl node scripts/seed.js --log-level debug
+   node scripts/seed.js --log-level debug
    
    # Test individual components
-   wsl npm run test-parser
-   wsl npm run test-inserter
+   npm run test-parser
+   npm run test-inserter
    ```
 
 ### Debug Mode
 
 Enable detailed logging for troubleshooting:
 
-```bash
+```powershell
 # Debug level logging
-wsl node scripts/seed.js --log-level debug
+node scripts/seed.js --log-level debug
 
 # This will show:
 # - Detailed SQL queries
@@ -309,12 +309,12 @@ DB_PASSWORD=your_password
 
 ### Production Seeding
 
-```bash
+```powershell
 # Production seeding with transaction safety
-wsl node scripts/seed.js --clear --log-level info
+node scripts/seed.js --clear --log-level info
 
 # Validate after seeding
-wsl node scripts/seed.js --no-clear --log-level error
+node scripts/seed.js --no-clear --log-level error
 ```
 
 ## 🔧 Extending the System
@@ -324,13 +324,13 @@ wsl node scripts/seed.js --no-clear --log-level error
 1. Create new JSON files following the existing format
 2. Update building, floor_plan, node, and edge data
 3. Ensure foreign key relationships are maintained
-4. Run validation: `wsl npm run test-parser`
+4. Run validation: `npm run test-parser`
 
 ### Custom Data Sources
 
 1. Modify `data-parser.js` to support additional formats
 2. Update validation rules as needed
-3. Test with `wsl npm run test-parser`
+3. Test with `npm run test-parser`
 
 ### Additional Node/Edge Types
 

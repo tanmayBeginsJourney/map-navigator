@@ -1,19 +1,19 @@
 import { pgTable, serial, text, integer, doublePrecision, boolean, jsonb, pgEnum, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-// Enum definitions matching the database schema
+// Define enums matching the database schema
 export const nodeTypeEnum = pgEnum('node_type_enum', [
-  'ROOM',
-  'POINT_OF_INTEREST', 
-  'ENTRANCE',
-  'SERVICE_POINT'
+  'ROOM', // Generic room/space
+  'POINT_OF_INTEREST', // Maps to checkpoint nodes in actual data
+  'ENTRANCE', // Building/room entrance points
+  'SERVICE_POINT', // Maps to food_court and similar service nodes
 ]);
 
 export const edgeTypeEnum = pgEnum('edge_type_enum', [
-  'HALLWAY',
-  'STAIRCASE',
-  'ELEVATOR',
-  'OUTDOOR_PATH'
+  'HALLWAY', // Standard walking path/corridor
+  'STAIRCASE', // Vertical connection via stairs
+  'ELEVATOR', // Vertical connection via elevator
+  'OUTDOOR_PATH', // Outdoor walking path
 ]);
 
 // Buildings table
@@ -60,7 +60,7 @@ export const edges = pgTable('edges', {
   id: serial('id').primaryKey(),
   fromNodeId: integer('from_node_id').notNull().references(() => nodes.id, { onDelete: 'cascade' }),
   toNodeId: integer('to_node_id').notNull().references(() => nodes.id, { onDelete: 'cascade' }),
-  weight: doublePrecision('weight'),
+  weight: doublePrecision('weight').notNull().default(1.0),
   type: edgeTypeEnum('type').notNull(),
   instructions: text('instructions'),
   attributes: jsonb('attributes'),

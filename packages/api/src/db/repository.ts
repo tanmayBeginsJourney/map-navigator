@@ -84,7 +84,7 @@ class TypeConverter {
     return {
       id: row.id,
       name: row.name || undefined,
-      type: this.convertNodeType(row.type),
+      type: TypeConverter.convertNodeType(row.type),
       floor_plan_id: row.floor_plan_id || undefined,
       building_id: row.building_id || undefined,
       coordinates_x_px: row.coordinates_x_px || undefined,
@@ -122,7 +122,7 @@ class TypeConverter {
       from_node_id: swapDirection ? toNodeId : fromNodeId,
       to_node_id: swapDirection ? fromNodeId : toNodeId,
       weight: row.weight || undefined,
-      type: this.convertEdgeType(row.type),
+      type: TypeConverter.convertEdgeType(row.type),
       instructions: row.instructions || undefined,
       attributes: row.attributes as Record<string, any> || {},
     };

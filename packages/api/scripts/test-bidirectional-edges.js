@@ -20,23 +20,23 @@ async function testBidirectionalEdges() {
 
     // Test case 1: Ground floor elevator node (should connect up and down)
     console.log('2️⃣ Testing Ground Floor Elevator (Node 10)...');
-    const groundElevatorEdges = await testNodeEdges(10, 'Ground Floor Elevator');
+    const _groundElevatorEdges = await testNodeEdges(10, 'Ground Floor Elevator');
     
     // Test case 2: Second floor elevator node (should connect up and down)
     console.log('3️⃣ Testing Second Floor Elevator (Node 13)...');
-    const secondElevatorEdges = await testNodeEdges(13, 'Second Floor Elevator');
+    const _secondElevatorEdges = await testNodeEdges(13, 'Second Floor Elevator');
     
     // Test case 3: Third floor elevator node (should connect up and down)
     console.log('4️⃣ Testing Third Floor Elevator (Node 22)...');
-    const thirdElevatorEdges = await testNodeEdges(22, 'Third Floor Elevator');
+    const _thirdElevatorEdges = await testNodeEdges(22, 'Third Floor Elevator');
     
     // Test case 4: Ground floor stairs (should connect up)
     console.log('5️⃣ Testing Ground Floor Stairs (Node 11)...');
-    const groundStairsEdges = await testNodeEdges(11, 'Ground Floor Stairs');
+    const _groundStairsEdges = await testNodeEdges(11, 'Ground Floor Stairs');
     
     // Test case 5: Second floor stairs (should connect up and down)
     console.log('6️⃣ Testing Second Floor Stairs (Node 14)...');
-    const secondStairsEdges = await testNodeEdges(14, 'Second Floor Stairs');
+    const _secondStairsEdges = await testNodeEdges(14, 'Second Floor Stairs');
 
     // Verify bidirectional connectivity
     console.log('7️⃣ Verifying Bidirectional Connectivity...');
@@ -106,6 +106,8 @@ async function testNodeEdges(nodeId, nodeName) {
  * Verify that vertical connections work bidirectionally
  */
 async function verifyBidirectionalConnectivity() {
+  const missingConnections = [];
+  
   try {
     // Test elevator connectivity: Ground (10) ↔ Second (13) ↔ Third (22) ↔ Fourth (31)
     const elevatorNodes = [10, 13, 22, 31];
@@ -133,6 +135,7 @@ async function verifyBidirectionalConnectivity() {
         console.log(`     ✅ Elevator connection: Node ${currentNode} ↔ Node ${nextNode}`);
       } else {
         console.log(`     ❌ Missing elevator connection: Node ${currentNode} ↔ Node ${nextNode}`);
+        missingConnections.push(`Elevator: Node ${currentNode} ↔ Node ${nextNode}`);
       }
     }
     
@@ -162,7 +165,13 @@ async function verifyBidirectionalConnectivity() {
         console.log(`     ✅ Stair connection: Node ${currentNode} ↔ Node ${nextNode}`);
       } else {
         console.log(`     ❌ Missing stair connection: Node ${currentNode} ↔ Node ${nextNode}`);
+        missingConnections.push(`Stair: Node ${currentNode} ↔ Node ${nextNode}`);
       }
+    }
+    
+    // Throw error if any connections are missing
+    if (missingConnections.length > 0) {
+      throw new Error(`Missing bidirectional connections: ${missingConnections.join(', ')}`);
     }
     
     console.log('   ✅ Bidirectional connectivity verification complete');

@@ -12,39 +12,39 @@
 5. **Verify**: Wait for Docker to start (whale icon in system tray)
 
 ### 2. Verify Installation
-```bash
-wsl docker --version
-wsl docker-compose --version
+```powershell
+docker --version
+docker-compose --version
 ```
 Both commands should return version numbers without errors.
 
 ### 3. Additional Requirements
 - Docker Desktop running and accessible
-- WSL2 enabled (Windows Subsystem for Linux) - usually handled by Docker Desktop installer
+- Windows containers support enabled
 
 ## Quick Start
 
 1. **Create environment variables** (copy from template):
-```bash
+```powershell
 # Copy the template file and customize as needed
-wsl cp .env.example .env
+Copy-Item .env.example .env
 ```
 
 **⚠️ Security Note**: Never commit the actual `.env` file to version control. The `.env` file is already in `.gitignore` to prevent accidental commits. Use the provided `.env.example` as your template.
 
 2. **Start the database**:
-```bash
-wsl docker-compose up -d postgres_db
+```powershell
+docker-compose up -d postgres_db
 ```
 
 3. **Verify the database is running**:
-```bash
-wsl docker-compose ps
+```powershell
+docker-compose ps
 ```
 
 4. **Check database logs** (if needed):
-```bash
-wsl docker-compose logs postgres_db
+```powershell
+docker-compose logs postgres_db
 ```
 
 ## Environment Configuration
@@ -55,7 +55,7 @@ The project includes a `.env.example` file with template environment variables. 
 - **Development URLs**: Pre-configured connection strings for local development
 
 To set up your environment:
-1. Copy `.env.example` to `.env`: `wsl cp .env.example .env`
+1. Copy `.env.example` to `.env`: `Copy-Item .env.example .env`
 2. Modify values in `.env` if needed (default values work for local development)
 3. Never commit your `.env` file to version control
 
@@ -78,13 +78,13 @@ This should return the PostGIS version, confirming the spatial extension is avai
 Database data is stored in Docker volume `pg_data_volume` and persists across container restarts.
 
 ## Stopping Services
-```bash
-wsl docker-compose down
+```powershell
+docker-compose down
 ```
 
 ## Removing Data (Reset Database)
-```bash
-wsl docker-compose down -v
+```powershell
+docker-compose down -v
 ```
 **Warning**: This will delete all database data permanently.
 
@@ -94,14 +94,14 @@ wsl docker-compose down -v
 - Ensure Docker Desktop is installed and running
 - Restart your terminal after Docker installation
 - Verify Docker Desktop is running (whale icon in system tray)
-- Ensure WSL integration is enabled in Docker Desktop settings
+- Restart PowerShell after Docker installation
 
 ### Container Won't Start
 - Check Docker Desktop is running
-- Verify port 5432 isn't already in use: `wsl netstat -an | grep 5432`
-- Check logs: `wsl docker-compose logs postgres_db`
+- Verify port 5432 isn't already in use: `Get-NetTCPConnection -LocalPort 5432`
+- Check logs: `docker-compose logs postgres_db`
 
 ### Connection Refused
-- Ensure container is running: `wsl docker-compose ps`
+- Ensure container is running: `docker-compose ps`
 - Verify environment variables in `.env` file
 - Check if host firewall is blocking port 5432 
