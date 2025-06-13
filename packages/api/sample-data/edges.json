@@ -1,0 +1,452 @@
+[
+  {
+    "id": 1,
+    "from_node_id": 1,
+    "to_node_id": 2,
+    "weight": 60,
+    "type": "HALLWAY",
+    "instructions": "Walk north from entrance to reception desk",
+    "attributes": {"distance_meters": 3.0}
+  },
+  {
+    "id": 2,
+    "from_node_id": 2,
+    "to_node_id": 3,
+    "weight": 120,
+    "type": "HALLWAY",
+    "instructions": "Walk north from reception to main hallway junction",
+    "attributes": {"distance_meters": 6.0}
+  },
+  {
+    "id": 3,
+    "from_node_id": 3,
+    "to_node_id": 4,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk east along main corridor to east wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 4,
+    "from_node_id": 3,
+    "to_node_id": 5,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk west along main corridor to west wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 5,
+    "from_node_id": 5,
+    "to_node_id": 6,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 101 - Computer Lab",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 6,
+    "from_node_id": 5,
+    "to_node_id": 7,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 102 - Lecture Hall A",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 7,
+    "from_node_id": 4,
+    "to_node_id": 8,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 103 - Faculty Office",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 8,
+    "from_node_id": 4,
+    "to_node_id": 9,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 104 - Study Room",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 9,
+    "from_node_id": 3,
+    "to_node_id": 10,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to Elevator A",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 10,
+    "from_node_id": 3,
+    "to_node_id": 11,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to Staircase A",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 11,
+    "from_node_id": 1,
+    "to_node_id": 12,
+    "weight": 320,
+    "type": "HALLWAY",
+    "instructions": "Walk southwest to accessible bathroom",
+    "attributes": {"distance_meters": 16.0}
+  },
+  {
+    "id": 12,
+    "from_node_id": 10,
+    "to_node_id": 13,
+    "weight": 50,
+    "type": "ELEVATOR",
+    "instructions": "Take elevator from Ground Floor to Second Floor",
+    "attributes": {"floor_change": 1, "wait_time_seconds": 30}
+  },
+  {
+    "id": 13,
+    "from_node_id": 11,
+    "to_node_id": 14,
+    "weight": 50,
+    "type": "STAIRCASE",
+    "instructions": "Climb stairs from Ground Floor to Second Floor",
+    "attributes": {"floor_change": 1, "steps": 20}
+  },
+  {
+    "id": 14,
+    "from_node_id": 13,
+    "to_node_id": 15,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to main hallway junction on Floor 2",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 15,
+    "from_node_id": 14,
+    "to_node_id": 15,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to main hallway junction on Floor 2",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 16,
+    "from_node_id": 15,
+    "to_node_id": 16,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk east along main corridor to east wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 17,
+    "from_node_id": 15,
+    "to_node_id": 17,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk west along main corridor to west wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 18,
+    "from_node_id": 17,
+    "to_node_id": 18,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 201 - Electronics Lab",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 19,
+    "from_node_id": 17,
+    "to_node_id": 19,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 202 - Mechanical Workshop",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 20,
+    "from_node_id": 16,
+    "to_node_id": 20,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 203 - Conference Room",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 21,
+    "from_node_id": 16,
+    "to_node_id": 21,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 204 - Graduate Office",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 22,
+    "from_node_id": 13,
+    "to_node_id": 22,
+    "weight": 50,
+    "type": "ELEVATOR",
+    "instructions": "Take elevator from Second Floor to Third Floor",
+    "attributes": {"floor_change": 1, "wait_time_seconds": 30}
+  },
+  {
+    "id": 23,
+    "from_node_id": 14,
+    "to_node_id": 23,
+    "weight": 50,
+    "type": "STAIRCASE",
+    "instructions": "Climb stairs from Second Floor to Third Floor",
+    "attributes": {"floor_change": 1, "steps": 20}
+  },
+  {
+    "id": 24,
+    "from_node_id": 22,
+    "to_node_id": 24,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to main hallway junction on Floor 3",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 25,
+    "from_node_id": 23,
+    "to_node_id": 24,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to main hallway junction on Floor 3",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 26,
+    "from_node_id": 24,
+    "to_node_id": 25,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk east along main corridor to east wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 27,
+    "from_node_id": 24,
+    "to_node_id": 26,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk west along main corridor to west wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 28,
+    "from_node_id": 26,
+    "to_node_id": 27,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 301 - Research Lab",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 29,
+    "from_node_id": 26,
+    "to_node_id": 28,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 302 - Clean Room",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 30,
+    "from_node_id": 25,
+    "to_node_id": 29,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 303 - Department Head Office",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 31,
+    "from_node_id": 25,
+    "to_node_id": 30,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 304 - Server Room",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 32,
+    "from_node_id": 22,
+    "to_node_id": 31,
+    "weight": 50,
+    "type": "ELEVATOR",
+    "instructions": "Take elevator from Third Floor to Fourth Floor",
+    "attributes": {"floor_change": 1, "wait_time_seconds": 30}
+  },
+  {
+    "id": 33,
+    "from_node_id": 23,
+    "to_node_id": 32,
+    "weight": 50,
+    "type": "STAIRCASE",
+    "instructions": "Climb stairs from Third Floor to Fourth Floor",
+    "attributes": {"floor_change": 1, "steps": 20}
+  },
+  {
+    "id": 34,
+    "from_node_id": 31,
+    "to_node_id": 33,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to main hallway junction on Floor 4",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 35,
+    "from_node_id": 32,
+    "to_node_id": 33,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk to main hallway junction on Floor 4",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 36,
+    "from_node_id": 33,
+    "to_node_id": 34,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk east along main corridor to east wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 37,
+    "from_node_id": 33,
+    "to_node_id": 35,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk west along main corridor to west wing",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 38,
+    "from_node_id": 35,
+    "to_node_id": 36,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 401 - Library Study Area",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 39,
+    "from_node_id": 35,
+    "to_node_id": 37,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 402 - Student Lounge",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 40,
+    "from_node_id": 34,
+    "to_node_id": 38,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Turn south to Room 403 - Seminar Room",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 41,
+    "from_node_id": 34,
+    "to_node_id": 39,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk south to Room 404 - Storage",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 42,
+    "from_node_id": 2,
+    "to_node_id": 1,
+    "weight": 60,
+    "type": "HALLWAY",
+    "instructions": "Walk south from reception desk to entrance",
+    "attributes": {"distance_meters": 3.0}
+  },
+  {
+    "id": 43,
+    "from_node_id": 3,
+    "to_node_id": 2,
+    "weight": 120,
+    "type": "HALLWAY",
+    "instructions": "Walk south from main hallway junction to reception",
+    "attributes": {"distance_meters": 6.0}
+  },
+  {
+    "id": 44,
+    "from_node_id": 4,
+    "to_node_id": 3,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk west from east wing to main corridor junction",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 45,
+    "from_node_id": 5,
+    "to_node_id": 3,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk east from west wing to main corridor junction",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 46,
+    "from_node_id": 6,
+    "to_node_id": 5,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk north from Room 101 to west wing hallway",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 47,
+    "from_node_id": 7,
+    "to_node_id": 5,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk north from Room 102 to west wing hallway",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 48,
+    "from_node_id": 8,
+    "to_node_id": 4,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk north from Room 103 to east wing hallway",
+    "attributes": {"distance_meters": 5.0}
+  },
+  {
+    "id": 49,
+    "from_node_id": 9,
+    "to_node_id": 4,
+    "weight": 200,
+    "type": "HALLWAY",
+    "instructions": "Walk north from Room 104 to east wing hallway",
+    "attributes": {"distance_meters": 10.0}
+  },
+  {
+    "id": 50,
+    "from_node_id": 10,
+    "to_node_id": 3,
+    "weight": 100,
+    "type": "HALLWAY",
+    "instructions": "Walk from Elevator A to main hallway junction",
+    "attributes": {"distance_meters": 5.0}
+  }
+] 

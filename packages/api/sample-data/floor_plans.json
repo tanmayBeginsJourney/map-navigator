@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "building_id": 1,
+    "floor_number": 1,
+    "name": "Ground Floor",
+    "svg_url": "/floor-plans/engineering-floor-1.svg",
+    "width_px": 800,
+    "height_px": 600,
+    "scale_m_per_px": 0.05
+  },
+  {
+    "id": 2,
+    "building_id": 1,
+    "floor_number": 2,
+    "name": "Second Floor",
+    "svg_url": "/floor-plans/engineering-floor-2.svg",
+    "width_px": 800,
+    "height_px": 600,
+    "scale_m_per_px": 0.05
+  },
+  {
+    "id": 3,
+    "building_id": 1,
+    "floor_number": 3,
+    "name": "Third Floor",
+    "svg_url": "/floor-plans/engineering-floor-3.svg",
+    "width_px": 800,
+    "height_px": 600,
+    "scale_m_per_px": 0.05
+  },
+  {
+    "id": 4,
+    "building_id": 1,
+    "floor_number": 4,
+    "name": "Fourth Floor",
+    "svg_url": "/floor-plans/engineering-floor-4.svg",
+    "width_px": 800,
+    "height_px": 600,
+    "scale_m_per_px": 0.05
+  }
+] 

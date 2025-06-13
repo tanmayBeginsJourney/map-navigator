@@ -11,7 +11,12 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
-    "test": "echo \"Tests coming soon - A* algorithm implementation complete\""
+    "test": "echo \"Tests coming soon - A* algorithm implementation complete\"",
+    "test-db": "node scripts/test-connection.js",
+    "test-parser": "node scripts/test-parser.js",
+    "test-inserter": "node scripts/test-inserter.js",
+    "test-seed": "node scripts/test-seed.js",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [
     "campus",
