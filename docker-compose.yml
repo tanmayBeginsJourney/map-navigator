@@ -2,11 +2,9 @@ services:
   postgres_db:
     image: postgis/postgis:16-3.4
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password123}
       POSTGRES_DB: ${POSTGRES_DB:-campus_navigation}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
