@@ -65,6 +65,9 @@ function parseCommandLineArgs() {
         if (nextArg && ['debug', 'info', 'error'].includes(nextArg)) {
           config.logLevel = nextArg;
           i++;
+        } else {
+          console.error(`❌ Invalid or missing log level. Expected: debug, info, error`);
+          process.exit(1);
         }
         break;
       case '--help':

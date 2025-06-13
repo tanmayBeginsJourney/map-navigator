@@ -31,37 +31,55 @@ async function runTests() {
 
     // Test 3: Check existing tables (from migrations)
     console.log('3️⃣ Checking database schema...');
+    const requiredTables = ['buildings', 'floor_plans', 'nodes', 'edges'];
     const tablesResult = await db.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      ORDER BY table_name;
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
     `);
     
-    const expectedTables = ['buildings', 'floor_plans', 'nodes', 'edges'];
     const existingTables = tablesResult.rows.map(row => row.table_name);
-    
     console.log('   Existing tables:', existingTables.join(', '));
     
-    for (const table of expectedTables) {
+    let missingTables = [];
+    for (const table of requiredTables) {
       if (existingTables.includes(table)) {
         console.log(`   ✅ Table '${table}' exists`);
       } else {
         console.log(`   ❌ Table '${table}' missing`);
+        missingTables.push(table);
       }
     }
+    
+    // Fail fast if any required tables are missing
+    if (missingTables.length > 0) {
+      throw new Error(`Missing required tables: ${missingTables.join(', ')}. Please run database migrations first.`);
+    }
+    
     console.log('');
 
     // Test 4: Check ENUM types
     console.log('4️⃣ Checking ENUM types...');
     const enumsResult = await db.query(`
-      SELECT typname as enum_name, string_agg(enumlabel, ', ' ORDER BY enumsortorder) as enum_values
+      SELECT t.typname as enum_name,
+             array_agg(e.enumlabel ORDER BY e.enumsortorder) as enum_values
       FROM pg_type t 
       JOIN pg_enum e ON t.oid = e.enumtypid  
-      WHERE typname IN ('node_type_enum', 'edge_type_enum')
-      GROUP BY typname
-      ORDER BY typname;
+      WHERE t.typname IN ('node_type_enum', 'edge_type_enum')
+      GROUP BY t.typname
     `);
+    
+    // Fail fast if no ENUM types are found
+    if (enumsResult.rows.length === 0) {
+      throw new Error('No ENUM types found. Please run database migrations first.');
+    }
+    
+    const requiredEnums = ['node_type_enum', 'edge_type_enum'];
+    const existingEnums = enumsResult.rows.map(row => row.enum_name);
+    const missingEnums = requiredEnums.filter(enumName => !existingEnums.includes(enumName));
+    
+    if (missingEnums.length > 0) {
+      throw new Error(`Missing required ENUM types: ${missingEnums.join(', ')}. Please run database migrations first.`);
+    }
     
     for (const enumRow of enumsResult.rows) {
       console.log(`   ✅ ${enumRow.enum_name}: ${enumRow.enum_values}`);

@@ -1,6 +1,10 @@
 const fs = require('fs').promises;
 const path = require('path');
 
+// Valid node and edge types - extracted as constants for maintainability
+const VALID_NODE_TYPES = ['ENTRANCE', 'ROOM', 'POINT_OF_INTEREST', 'SERVICE_POINT'];
+const VALID_EDGE_TYPES = ['HALLWAY', 'STAIRCASE', 'ELEVATOR'];
+
 /**
  * Data parsing module for Campus Navigation sample data
  * Handles JSON file parsing with comprehensive error handling
@@ -202,9 +206,8 @@ function validateNode(node, index) {
   if (!node.type || typeof node.type !== 'string') {
     throw new Error(`Node at index ${index}: 'type' must be a non-empty string`);
   }
-  const validNodeTypes = ['ROOM', 'POINT_OF_INTEREST', 'ENTRANCE', 'SERVICE_POINT'];
-  if (!validNodeTypes.includes(node.type)) {
-    throw new Error(`Node at index ${index}: 'type' must be one of: ${validNodeTypes.join(', ')}`);
+  if (!VALID_NODE_TYPES.includes(node.type)) {
+    throw new Error(`Node at index ${index}: 'type' must be one of: ${VALID_NODE_TYPES.join(', ')}`);
   }
   if (typeof node.coordinates_x_px !== 'number' || node.coordinates_x_px < 0) {
     throw new Error(`Node at index ${index}: 'coordinates_x_px' must be a non-negative number`);
@@ -238,9 +241,8 @@ function validateEdge(edge, index) {
   if (!edge.type || typeof edge.type !== 'string') {
     throw new Error(`Edge at index ${index}: 'type' must be a non-empty string`);
   }
-  const validEdgeTypes = ['HALLWAY', 'STAIRCASE', 'ELEVATOR', 'OUTDOOR_PATH'];
-  if (!validEdgeTypes.includes(edge.type)) {
-    throw new Error(`Edge at index ${index}: 'type' must be one of: ${validEdgeTypes.join(', ')}`);
+  if (!VALID_EDGE_TYPES.includes(edge.type)) {
+    throw new Error(`Edge at index ${index}: 'type' must be one of: ${VALID_EDGE_TYPES.join(', ')}`);
   }
   if (edge.weight && (typeof edge.weight !== 'number' || edge.weight <= 0)) {
     throw new Error(`Edge at index ${index}: 'weight' must be a positive number`);

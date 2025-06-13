@@ -1,6 +1,21 @@
 const database = require('./database');
 
 /**
+ * Safe JSON.stringify helper that handles errors gracefully
+ * @param {any} value - Value to stringify
+ * @param {string} fallback - Fallback value if stringify fails
+ * @returns {string} JSON string or fallback
+ */
+function safeJSONStringify(value, fallback = '[Serialization Error]') {
+  try {
+    return JSON.stringify(value);
+  } catch (error) {
+    console.warn('⚠️ JSON.stringify failed:', error.message);
+    return fallback;
+  }
+}
+
+/**
  * Database insertion module for Campus Navigation sample data
  * Provides functions to insert parsed data into PostgreSQL tables
  */
@@ -156,7 +171,7 @@ async function insertNodes(nodes) {
         node.geom.y, // For ST_MakePoint
         node.is_accessible,
         node.qr_code_payload,
-        JSON.stringify(node.attributes)
+        safeJSONStringify(node.attributes)
       ];
       
       const result = await database.query(query, params);
@@ -213,7 +228,7 @@ async function insertEdges(edges) {
         edge.weight,
         edge.type,
         edge.instructions,
-        JSON.stringify(edge.attributes)
+        safeJSONStringify(edge.attributes)
       ];
       
       const result = await database.query(query, params);
@@ -346,7 +361,7 @@ async function insertAllDataTransaction(allData) {
       params: [
         node.id, node.name, node.type, node.floor_plan_id, node.building_id,
         node.coordinates_x_px, node.coordinates_y_px, node.geom.x, node.geom.y,
-        node.is_accessible, node.qr_code_payload, JSON.stringify(node.attributes)
+        node.is_accessible, node.qr_code_payload, safeJSONStringify(node.attributes)
       ]
     });
   }
@@ -369,7 +384,7 @@ async function insertAllDataTransaction(allData) {
       `,
       params: [
         edge.id, edge.from_node_id, edge.to_node_id, edge.weight,
-        edge.type, edge.instructions, JSON.stringify(edge.attributes)
+        edge.type, edge.instructions, safeJSONStringify(edge.attributes)
       ]
     });
   }

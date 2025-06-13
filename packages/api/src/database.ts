@@ -73,7 +73,7 @@ export class DatabaseService {
         },
         is_accessible: row.is_accessible,
         qr_code_payload: row.qr_code_payload,
-        attributes: row.attributes ? JSON.parse(row.attributes) : null,
+        attributes: row.attributes || null,
       };
     } finally {
       client.release();
@@ -81,7 +81,8 @@ export class DatabaseService {
   }
 
   /**
-   * Get all edges connected to a specific node (outgoing edges)
+   * Get all edges connected to a specific node (bidirectional support)
+   * Returns edges where the node is either the source or destination
    */
   async getEdgesFromNode(nodeId: number): Promise<Edge[]> {
     const client = await this.getClient();
@@ -94,26 +95,50 @@ export class DatabaseService {
           weight,
           type,
           instructions,
-          attributes
+          attributes,
+          CASE 
+            WHEN from_node_id = $1 THEN 'outgoing'
+            WHEN to_node_id = $1 THEN 'incoming'
+          END as direction
         FROM edges 
-        WHERE from_node_id = $1
+        WHERE from_node_id = $1 OR to_node_id = $1
         ORDER BY weight ASC
       `;
       
       const result = await client.query(query, [nodeId]);
       
-      return result.rows.map((row: any) => ({
-        id: row.id,
-        from_node_id: row.from_node_id,
-        to_node_id: row.to_node_id,
-        weight: row.weight,
-        type: row.type,
-        instructions: row.instructions,
-        attributes: row.attributes,
-      }));
+      return result.rows.map((row: any) => {
+        // For incoming edges, swap from/to to maintain consistent traversal direction
+        const isIncoming = row.direction === 'incoming';
+        
+        return {
+          id: row.id,
+          from_node_id: isIncoming ? row.to_node_id : row.from_node_id,
+          to_node_id: isIncoming ? row.from_node_id : row.to_node_id,
+          weight: row.weight,
+          type: row.type,
+          instructions: isIncoming ? this.reverseInstruction(row.instructions) : row.instructions,
+          attributes: row.attributes,
+        };
+      });
     } finally {
       client.release();
     }
+  }
+
+  /**
+   * Generate reverse instruction for bidirectional edge traversal
+   */
+  private reverseInstruction(instruction: string): string {
+    if (!instruction) return instruction;
+    
+    // Simple instruction reversal logic
+    return instruction
+      .replace(/from (.+) to (.+)/i, 'from $2 to $1')
+      .replace(/Climb stairs from (.+) to (.+)/i, 'Descend stairs from $2 to $1')
+      .replace(/Take elevator from (.+) to (.+)/i, 'Take elevator from $2 to $1')
+      .replace(/Walk to (.+) from (.+)/i, 'Walk to $2 from $1')
+      .replace(/Turn (.+) to (.+)/i, 'Walk from $2 and turn opposite direction');
   }
 
   /**
@@ -171,7 +196,7 @@ export class DatabaseService {
         },
         is_accessible: row.is_accessible,
         qr_code_payload: row.qr_code_payload,
-        attributes: row.attributes ? JSON.parse(row.attributes) : null,
+        attributes: row.attributes || null,
       }));
     } finally {
       client.release();
@@ -228,7 +253,7 @@ export class DatabaseService {
   }
 
   /**
-   * Get edges with accessibility requirements
+   * Get edges with accessibility requirements (bidirectional support)
    */
   async getAccessibleEdgesFromNode(nodeId: number): Promise<Edge[]> {
     const client = await this.getClient();
@@ -241,26 +266,41 @@ export class DatabaseService {
           e.weight,
           e.type,
           e.instructions,
-          e.attributes
+          e.attributes,
+          CASE 
+            WHEN e.from_node_id = $1 THEN 'outgoing'
+            WHEN e.to_node_id = $1 THEN 'incoming'
+          END as direction
         FROM edges e
-        JOIN nodes n ON e.to_node_id = n.id
-        WHERE e.from_node_id = $1 
-          AND n.is_accessible = true
-          AND e.type != 'stairs'
+        WHERE (e.from_node_id = $1 OR e.to_node_id = $1)
+          AND e.type != 'STAIRCASE'
+          AND EXISTS (
+            SELECT 1 FROM nodes n1 
+            WHERE n1.id = CASE 
+              WHEN e.from_node_id = $1 THEN e.to_node_id 
+              ELSE e.from_node_id 
+            END 
+            AND n1.is_accessible = true
+          )
         ORDER BY e.weight ASC
       `;
       
       const result = await client.query(query, [nodeId]);
       
-      return result.rows.map((row: any) => ({
-        id: row.id,
-        from_node_id: row.from_node_id,
-        to_node_id: row.to_node_id,
-        weight: row.weight,
-        type: row.type,
-        instructions: row.instructions,
-        attributes: row.attributes,
-      }));
+      return result.rows.map((row: any) => {
+        // For incoming edges, swap from/to to maintain consistent traversal direction
+        const isIncoming = row.direction === 'incoming';
+        
+        return {
+          id: row.id,
+          from_node_id: isIncoming ? row.to_node_id : row.from_node_id,
+          to_node_id: isIncoming ? row.from_node_id : row.to_node_id,
+          weight: row.weight,
+          type: row.type,
+          instructions: isIncoming ? this.reverseInstruction(row.instructions) : row.instructions,
+          attributes: row.attributes,
+        };
+      });
     } finally {
       client.release();
     }

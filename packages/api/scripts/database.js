@@ -6,10 +6,10 @@ const { Pool } = require('pg');
  */
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
+  port: parseInt(process.env.DB_PORT || '5432', 10),
   database: process.env.DB_NAME || 'campus_navigation',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'password123',
+  password: process.env.DB_PASSWORD, // No default for security
   // Connection pool settings
   max: 10,
   idleTimeoutMillis: 30000,
@@ -18,6 +18,17 @@ const dbConfig = {
 
 // Create the connection pool
 const pool = new Pool(dbConfig);
+
+// Add global pool error handler to prevent process crashes
+pool.on('error', (err) => {
+  console.error('❌ Unexpected database pool error:', err.message);
+  console.error('Connection details:', {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    database: dbConfig.database,
+    user: dbConfig.user
+  });
+});
 
 /**
  * Get a database client from the pool
