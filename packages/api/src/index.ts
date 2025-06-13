@@ -326,32 +326,6 @@ app.get('/', (req: Request, res: Response) => {
   res.json(response);
 });
 
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', err.message);
-  
-  const errorResponse: ApiResponse = {
-    success: false,
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
-    timestamp: new Date().toISOString(),
-  };
-  
-  // Preserve existing status code or default to 500
-  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-  res.status(statusCode).json(errorResponse);
-});
-
-// 404 handler
-app.use((req: Request, res: Response) => {
-  const notFoundResponse: ApiResponse = {
-    success: false,
-    error: `Route ${req.originalUrl} not found`,
-    timestamp: new Date().toISOString(),
-  };
-  
-  res.status(404).json(notFoundResponse);
-});
-
 // Initialize database and start server
 async function startServer() {
   try {
@@ -369,6 +343,32 @@ async function startServer() {
     // Mount health check routes with shared database service
     const healthRouter = createHealthRouter(dbService);
     app.use(API_ENDPOINTS.HEALTH, healthRouter);
+
+    // Error handling middleware (must come after all routes)
+    app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+      console.error('Error:', err.message);
+      
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+        timestamp: new Date().toISOString(),
+      };
+      
+      // Preserve existing status code or default to 500
+      const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
+      res.status(statusCode).json(errorResponse);
+    });
+
+    // 404 handler (must be the last middleware)
+    app.use((req: Request, res: Response) => {
+      const notFoundResponse: ApiResponse = {
+        success: false,
+        error: `Route ${req.originalUrl} not found`,
+        timestamp: new Date().toISOString(),
+      };
+      
+      res.status(404).json(notFoundResponse);
+    });
 
     // Start the server
 app.listen(config.port, () => {
