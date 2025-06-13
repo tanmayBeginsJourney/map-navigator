@@ -5,9 +5,12 @@ export class DatabaseService {
   private pool: Pool;
 
   constructor() {
+    const dbPort = process.env.DB_PORT;
+    const port = dbPort && !isNaN(Number(dbPort)) ? parseInt(dbPort) : 5432;
+    
     this.pool = new Pool({
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
+      port,
       database: process.env.DB_NAME || 'campus_navigation',
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
@@ -65,12 +68,12 @@ export class DatabaseService {
         coordinates_x_px: row.coordinates_x_px,
         coordinates_y_px: row.coordinates_y_px,
         geom: {
-          x: row.geom_x,
-          y: row.geom_y,
+          x: row.geom_x ?? 0,
+          y: row.geom_y ?? 0,
         },
         is_accessible: row.is_accessible,
         qr_code_payload: row.qr_code_payload,
-        attributes: row.attributes,
+        attributes: row.attributes ? JSON.parse(row.attributes) : null,
       };
     } finally {
       client.release();
@@ -163,12 +166,12 @@ export class DatabaseService {
         coordinates_x_px: row.coordinates_x_px,
         coordinates_y_px: row.coordinates_y_px,
         geom: {
-          x: row.geom_x,
-          y: row.geom_y,
+          x: row.geom_x ?? 0,
+          y: row.geom_y ?? 0,
         },
         is_accessible: row.is_accessible,
         qr_code_payload: row.qr_code_payload,
-        attributes: row.attributes,
+        attributes: row.attributes ? JSON.parse(row.attributes) : null,
       }));
     } finally {
       client.release();

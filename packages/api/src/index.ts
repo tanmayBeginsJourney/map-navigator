@@ -47,7 +47,7 @@ app.post(API_ENDPOINTS.PATHFIND, async (req: Request, res: Response) => {
     const pathRequest: PathRequest = req.body;
     
     // Validate request
-    if (!pathRequest.start_node_id || !pathRequest.end_node_id) {
+    if (pathRequest.start_node_id == null || pathRequest.end_node_id == null) {
       const errorResponse: ApiResponse = {
         success: false,
         error: 'start_node_id and end_node_id are required',

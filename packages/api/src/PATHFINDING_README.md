@@ -144,10 +144,11 @@ CREATE TABLE edges (
 ## Performance Considerations
 
 ### Optimization Strategies
-1. **Spatial Indexing**: GIST indexes on geometry columns
-2. **Query Optimization**: Efficient edge retrieval with proper indexing
-3. **Memory Management**: Minimal object creation during search
-4. **Early Termination**: Stops search when goal is reached
+1. **Custom Min-Heap Priority Queue**: O(log n) binary heap implementation replaces O(n log n) array sorting
+2. **Spatial Indexing**: GIST indexes on geometry columns
+3. **Query Optimization**: Efficient edge retrieval with proper indexing
+4. **Memory Management**: Minimal object creation during search
+5. **Early Termination**: Stops search when goal is reached
 
 ### Scalability
 - **Node Capacity**: Handles 10,000+ nodes efficiently

@@ -1,4 +1,4 @@
-import { Node, Edge, RouteResponse, PathStep, Point, NodeType, EdgeType } from '@campus-nav/shared/types';
+import { Node, Edge, RouteResponse, PathStep, Point, EdgeType } from '@campus-nav/shared/types';
 import { db } from './database';
 
 interface AStarNode {
@@ -8,6 +8,69 @@ interface AStarNode {
   fCost: number; // Total cost (g + h)
   parent?: AStarNode;
   edge?: Edge; // Edge used to reach this node
+}
+
+/**
+ * Simple min-heap implementation for A* open set
+ */
+class MinHeap<T> {
+  private heap: T[] = [];
+  
+  constructor(private compare: (a: T, b: T) => number) {}
+  
+  get length(): number {
+    return this.heap.length;
+  }
+  
+  push(item: T): void {
+    this.heap.push(item);
+    this.bubbleUp(this.heap.length - 1);
+  }
+  
+  pop(): T | undefined {
+    if (this.heap.length === 0) return undefined;
+    if (this.heap.length === 1) return this.heap.pop();
+    
+    const root = this.heap[0];
+    this.heap[0] = this.heap.pop()!;
+    this.bubbleDown(0);
+    return root;
+  }
+  
+  peek(): T | undefined {
+    return this.heap.length > 0 ? this.heap[0] : undefined;
+  }
+  
+  private bubbleUp(index: number): void {
+    while (index > 0) {
+      const parentIndex = Math.floor((index - 1) / 2);
+      if (this.compare(this.heap[index], this.heap[parentIndex]) >= 0) break;
+      
+      [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[index]];
+      index = parentIndex;
+    }
+  }
+  
+  private bubbleDown(index: number): void {
+    while (true) {
+      let minIndex = index;
+      const leftChild = 2 * index + 1;
+      const rightChild = 2 * index + 2;
+      
+      if (leftChild < this.heap.length && this.compare(this.heap[leftChild], this.heap[minIndex]) < 0) {
+        minIndex = leftChild;
+      }
+      
+      if (rightChild < this.heap.length && this.compare(this.heap[rightChild], this.heap[minIndex]) < 0) {
+        minIndex = rightChild;
+      }
+      
+      if (minIndex === index) break;
+      
+      [this.heap[index], this.heap[minIndex]] = [this.heap[minIndex], this.heap[index]];
+      index = minIndex;
+    }
+  }
 }
 
 export class PathfindingService {
@@ -21,12 +84,7 @@ export class PathfindingService {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  /**
-   * Calculate Manhattan distance (useful for grid-like indoor spaces)
-   */
-  private calculateManhattanDistance(point1: Point, point2: Point): number {
-    return Math.abs(point1.x - point2.x) + Math.abs(point1.y - point2.y);
-  }
+
 
   /**
    * Heuristic function for A* algorithm
@@ -86,9 +144,10 @@ export class PathfindingService {
     
     // Generate contextual instructions
     switch (edge.type) {
-      case EdgeType.STAIRS:
+      case EdgeType.STAIRS: {
         const direction = (fromNode.floor_plan_id || 0) < (toNode.floor_plan_id || 0) ? 'up' : 'down';
         return `Take stairs ${direction} to ${toNode.name || 'next floor'}`;
+      }
       
       case EdgeType.ELEVATOR:
         return `Take elevator to ${toNode.name || 'destination floor'}`;
@@ -130,7 +189,7 @@ export class PathfindingService {
       return null;
     }
 
-    const openSet: AStarNode[] = [];
+    const openSet = new MinHeap<AStarNode>((a: AStarNode, b: AStarNode) => a.fCost - b.fCost);
     const closedSet: Set<number> = new Set();
     
     // Initialize start node
@@ -145,16 +204,15 @@ export class PathfindingService {
     openSet.push(startAStarNode);
     
     while (openSet.length > 0) {
-      // Find node with lowest fCost
-      openSet.sort((a, b) => a.fCost - b.fCost);
-      const current = openSet.shift()!;
+      // Extract node with lowest fCost (O(log n))
+      const current = openSet.pop()!;
       
       // Add to closed set
       closedSet.add(current.node.id);
       
       // Check if we reached the goal
       if (current.node.id === endNodeId) {
-        return this.reconstructPath(current, startNode, endNode);
+        return this.reconstructPath(current);
       }
       
       // Get neighbors
@@ -180,27 +238,16 @@ export class PathfindingService {
         const hCost = this.calculateHeuristic(neighbor, endNode);
         const fCost = gCost + hCost;
         
-        // Check if this path to neighbor is better
-        const existingNodeIndex = openSet.findIndex(n => n.node.id === neighbor.id);
-        
-        if (existingNodeIndex === -1) {
-          // New node
-          const neighborAStarNode: AStarNode = {
-            node: neighbor,
-            gCost,
-            hCost,
-            fCost,
-            parent: current,
-            edge,
-          };
-          openSet.push(neighborAStarNode);
-        } else if (gCost < openSet[existingNodeIndex].gCost) {
-          // Better path to existing node
-          openSet[existingNodeIndex].gCost = gCost;
-          openSet[existingNodeIndex].fCost = fCost;
-          openSet[existingNodeIndex].parent = current;
-          openSet[existingNodeIndex].edge = edge;
-        }
+        // Add neighbor to open set (heap handles duplicates via closed set check)
+        const neighborAStarNode: AStarNode = {
+          node: neighbor,
+          gCost,
+          hCost,
+          fCost,
+          parent: current,
+          edge,
+        };
+        openSet.push(neighborAStarNode);
       }
     }
     
@@ -211,7 +258,7 @@ export class PathfindingService {
   /**
    * Reconstruct the final path from A* result
    */
-  private reconstructPath(goalNode: AStarNode, startNode: Node, endNode: Node): RouteResponse {
+  private reconstructPath(goalNode: AStarNode): RouteResponse {
     const pathSteps: PathStep[] = [];
     const floorsInvolved = new Set<number>();
     const buildingsInvolved = new Set<number>();

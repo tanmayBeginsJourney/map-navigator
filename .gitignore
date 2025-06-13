@@ -17,6 +17,9 @@ dist/
 .env
 !.env.example
 
+# MCP configuration (contains API keys)
+mcp.json
+
 # Editor directories and files
 .idea
 .vscode
