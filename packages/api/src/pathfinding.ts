@@ -122,7 +122,7 @@ export class PathfindingService {
    * Get actual cost of an edge with type-based modifiers
    */
   private getEdgeCost(edge: Edge, accessibility: boolean = false): number {
-    let baseCost = edge.weight || 1;
+    let baseCost = edge.weight ?? 1; // Weight is now NOT NULL but keep fallback for safety
     
     // Apply type-based cost modifiers
     switch (edge.type) {

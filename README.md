@@ -22,33 +22,33 @@ A comprehensive indoor-outdoor navigation system for university campuses, featur
 
 The development environment is **fully configured and operational**. Get started in minutes:
 
-```bash
+```powershell
 # 1. Clone and install
-git clone <repository-url>
-cd map_navigation
+git clone <repository-url>; `
+cd map_navigation; `
 pnpm install
 
 # 2. Start database
 docker-compose up -d
 
 # 3. Configure environment (copy and edit .env files)
-cp packages/api/.env.example packages/api/.env
-cp apps/web-app/.env.example apps/web-app/.env
+Copy-Item packages/api/.env.example packages/api/.env; `
+Copy-Item apps/web-app/.env.example apps/web-app/.env
 
 # 4. Setup database
-cd packages/api
-node scripts/run-migrations.js
+cd packages/api; `
+node scripts/run-migrations.js; `
 node scripts/seed.js
 
 # 5. Start development servers
-cd ../..
+cd ../..; `
 pnpm dev
 ```
 
 **✅ System Verification:**
 - API Health: http://localhost:3001/health
 - Frontend: http://localhost:5173
-- Pathfinding Test: `curl -X POST http://localhost:3001/api/route -H "Content-Type: application/json" -d '{"startNodeId": "1", "endNodeId": "10", "accessibilityMode": false}'`
+- Pathfinding Test: `Invoke-RestMethod -Uri "http://localhost:3001/api/route" -Method POST -ContentType "application/json" -Body '{"startNodeId": "1", "endNodeId": "10", "accessibilityMode": false}'`
 
 ---
 
@@ -154,33 +154,42 @@ map_navigation/
 ## 🔍 **API Endpoints**
 
 ### **System Health**
-```bash
-GET /health
+```powershell
+# GET /health
+Invoke-RestMethod -Uri "http://localhost:3001/health"
 # Response: {"status":"OK","service":"campus-navigation-api"}
 ```
 
 ### **Route Calculation**
-```bash
-POST /api/route
-Content-Type: application/json
-{
-  "startNodeId": "1",
-  "endNodeId": "10",
-  "accessibilityMode": false
-}
+```powershell
+# POST /api/route
+$body = @{
+  startNodeId = "1"
+  endNodeId = "10"
+  accessibilityMode = $false
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://localhost:3001/api/route" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body $body
 
 # Response: Floor-segmented path with turn-by-turn instructions
 ```
 
 ### **Legacy Pathfinding**
-```bash
-POST /pathfind
-Content-Type: application/json
-{
-  "startNodeId": 1,
-  "endNodeId": 10,
-  "accessibilityMode": false
-}
+```powershell
+# POST /pathfind
+$body = @{
+  startNodeId = 1
+  endNodeId = 10
+  accessibilityMode = $false
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://localhost:3001/pathfind" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body $body
 ```
 
 ---

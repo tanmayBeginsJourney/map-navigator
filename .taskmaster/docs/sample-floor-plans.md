@@ -31,7 +31,7 @@ Since campus floor plans aren't available yet, we'll use publicly available floo
 
 ```bash
 # Create assets directory
-mkdir -p assets/floor-plans/sample-building
+New-Item -ItemType Directory -Path "assets/floor-plans/sample-building" -Force
 
 # Download PDFs and convert to SVG
 # Tools: pdf2svg, Inkscape, or online converters

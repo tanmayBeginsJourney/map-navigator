@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Test script to verify database connection and setup
  * Run with: node scripts/test-connection.js

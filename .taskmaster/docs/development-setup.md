@@ -23,9 +23,9 @@ This guide covers setting up the Campus Navigation System development environmen
 The development environment is **fully configured and operational**. Follow these steps to get started:
 
 ### 1. **Clone and Install**
-```bash
+```powershell
 # Clone the repository
-git clone <repository-url>
+git clone <repository-url>; `
 cd map_navigation
 
 # Install dependencies (uses pnpm workspaces)
@@ -33,7 +33,7 @@ pnpm install
 ```
 
 ### 2. **Start Database (Docker)**
-```bash
+```powershell
 # Start PostgreSQL + PostGIS container
 docker-compose up -d
 
@@ -42,20 +42,20 @@ docker-compose ps
 ```
 
 ### 3. **Configure Environment Variables**
-```bash
+```powershell
 # Backend configuration
-cp packages/api/.env.example packages/api/.env
+Copy-Item packages/api/.env.example packages/api/.env
 # Edit packages/api/.env with your database credentials
 
 # Frontend configuration  
-cp apps/web-app/.env.example apps/web-app/.env
+Copy-Item apps/web-app/.env.example apps/web-app/.env
 # Edit apps/web-app/.env with your API URL and feature flags
 ```
 
 ### 4. **Run Database Migrations & Seed Data**
-```bash
+```powershell
 # Run migrations to create schema
-cd packages/api
+cd packages/api; `
 node scripts/run-migrations.js
 
 # Seed with sample data (Engineering Building)
@@ -63,7 +63,7 @@ node scripts/seed.js
 ```
 
 ### 5. **Start Development Servers**
-```bash
+```powershell
 # Start both API and web app in parallel
 pnpm dev
 
@@ -73,14 +73,21 @@ pnpm dev
 ```
 
 ### 6. **Verify System**
-```bash
+```powershell
 # Check API health
-curl http://localhost:3001/health
+Invoke-RestMethod -Uri "http://localhost:3001/health"
 
 # Test pathfinding
-curl -X POST http://localhost:3001/api/route \
-  -H "Content-Type: application/json" \
-  -d '{"startNodeId": "1", "endNodeId": "10", "accessibilityMode": false}'
+$body = @{
+  startNodeId = "1"
+  endNodeId = "10"
+  accessibilityMode = $false
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://localhost:3001/api/route" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body $body
 ```
 
 ---
@@ -137,7 +144,7 @@ map_navigation/
 - ✅ **Security-first** approach (no hardcoded secrets)
 
 **Required Environment Variables:**
-```bash
+```powershell
 # packages/api/.env
 PORT=3001
 NODE_ENV=development
@@ -158,7 +165,7 @@ API_VERSION=v1
 - ✅ **API URL helpers** for consistent endpoint access
 
 **Required Environment Variables:**
-```bash
+```powershell
 # apps/web-app/.env
 VITE_API_URL=http://localhost:3001
 VITE_NODE_ENV=development
@@ -186,9 +193,9 @@ VITE_MAPBOX_TOKEN=your_mapbox_token_here
 - **Comprehensive test scenarios** for pathfinding
 
 ### **Database Commands**
-```bash
+```powershell
 # Run migrations
-cd packages/api
+cd packages/api; `
 node scripts/run-migrations.js
 
 # Seed sample data

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+
 
 /**
  * Test script to verify data parsing functionality
