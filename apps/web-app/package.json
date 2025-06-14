@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "format": "echo \"Format script to be added with Prettier setup\"",
     "preview": "vite preview",
-    "test": "echo \"No tests yet\""
+    "test": "echo \"No tests yet\"",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "campus",

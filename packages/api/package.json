@@ -12,6 +12,7 @@
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "test": "jest --runInBand",
+    "type-check": "tsc --noEmit",
     "db:test-connection": "node scripts/test-connection.js",
     "db:test-parser": "node scripts/test-parser.js",
     "db:test-inserter": "node scripts/test-inserter.js",

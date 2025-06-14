@@ -48,7 +48,7 @@ export const checkValidationErrors = (req: Request, res: Response, next: NextFun
       success: false,
       error: 'Validation failed',
       details: errors.array().reduce((acc, error) => {
-        const field = (error as any).param || 'unknown';
+        const field = 'param' in error ? String(error.param) : 'unknown';
         if (!acc[field]) {
           acc[field] = [];
         }

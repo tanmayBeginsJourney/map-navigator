@@ -35,7 +35,7 @@ export const validate =
         const errorResponse: ApiResponse = {
           success: false,
           error: 'Validation failed',
-          details: error.flatten().fieldErrors,
+          details: error.flatten().fieldErrors as Record<string, string[]>,
           timestamp: new Date().toISOString(),
         };
         res.status(400).json(errorResponse);

@@ -127,6 +127,7 @@ map_navigation/
 - ✅ **Database migrations** with PostGIS spatial support
 - ✅ **Sample data seeding** with comprehensive test scenarios
 - ✅ **Development tooling** with ESLint, Prettier, and path aliases
+- ✅ **CI/CD Pipeline** with automated testing and deployment
 
 ### **Production Features**
 - ✅ **Docker containerization** for consistent environments
@@ -134,6 +135,7 @@ map_navigation/
 - ✅ **Error recovery** with graceful failure handling
 - ✅ **Security measures** with proper secrets management
 - ✅ **Deployment guides** for modern hosting platforms
+- ✅ **Automated CI/CD** with GitHub Actions pipeline
 
 ---
 
@@ -195,6 +197,35 @@ Invoke-RestMethod -Uri "http://localhost:3001/pathfind" `
   -ContentType "application/json" `
   -Body $body
 ```
+
+---
+
+## 🚀 **CI/CD Pipeline**
+
+### **Automated Quality Assurance**
+The project includes a comprehensive CI/CD pipeline that addresses real development pain points:
+
+- **🔍 Smart Change Detection:** Only tests affected packages when changes are made
+- **🧪 Automated Testing:** All 18 tests run automatically with fresh PostgreSQL + PostGIS environment
+- **📋 Code Quality Gates:** Linting, type checking, and security audits on every commit
+- **🔗 Integration Testing:** End-to-end validation of API endpoints and system health
+- **🚀 Automated Deployment:** Zero-downtime deployment to Vercel (frontend) and Railway (backend)
+
+### **Pipeline Phases**
+1. **Quality Check** (2-3 min): Linting, type checking, security audit
+2. **Backend Tests** (5-7 min): PostgreSQL + PostGIS with all 18 tests
+3. **Frontend Tests** (3-4 min): React testing and build validation
+4. **Integration Tests** (4-5 min): Full-stack API validation
+5. **Deployment** (3-5 min): Automated production deployment
+6. **Health Check** (1-2 min): Post-deployment validation
+
+### **Developer Benefits**
+- ✅ **Fast Feedback:** Know within minutes if changes break anything
+- ✅ **Consistent Environment:** Same test environment every time
+- ✅ **Automated Quality:** No more manual test execution or linting
+- ✅ **Deployment Confidence:** Automated deployment reduces errors
+
+**See `docs/CI-CD.md` for complete pipeline documentation.**
 
 ---
 
