@@ -11,8 +11,8 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build the application (TypeScript compilation)
-RUN npm run build
+# Build the application using standalone TypeScript config
+RUN npx tsc --project tsconfig.railway.json
 
 # Remove dev dependencies after build
 RUN npm prune --production
