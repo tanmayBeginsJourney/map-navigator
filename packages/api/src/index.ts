@@ -1,17 +1,26 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { HealthStatus, ApiResponse, API_ENDPOINTS, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
+import { ApiResponse, API_ENDPOINTS, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { PathfindingService } from './pathfinding';
 import { config, isDevelopment, isProduction } from './config';
 import { createDatabaseService, DatabaseConfig } from './db/connection';
 import createHealthRouter from './routes/health';
 import { validate } from './middleware/validate';
-import { pathfindSchema } from './schemas/pathfind.schema';
 import { routeSchema } from './schemas/route.schema';
 import logger from './logger';
 
 const app: Express = express();
 
-// Initialize database service and pathfinding service
+// --- Database and Service Initialization ---
+
+// 1. Validate DB configuration
+const requiredDbConfig: Array<keyof typeof config.database> = ['host', 'port', 'name', 'user', 'password'];
+for (const key of requiredDbConfig) {
+  if (!config.database[key]) {
+    throw new Error(`FATAL: Missing required database configuration: ${key}`);
+  }
+}
+
+// 2. Create DB configuration object
 const dbConfig: DatabaseConfig = {
   host: config.database.host,
   port: config.database.port,
@@ -21,9 +30,12 @@ const dbConfig: DatabaseConfig = {
   ssl: isProduction,
 };
 
+// 3. Initialize services as singletons
 const dbService = createDatabaseService(dbConfig);
+const pathfindingService = new PathfindingService(dbService);
 
-// Middleware
+
+// --- Middleware ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -59,7 +71,6 @@ app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Reque
     
     logger.info(`Route calculation request from ${startNodeId} to ${endNodeId}`);
 
-    const pathfindingService = new PathfindingService(dbService);
     // 1. Get the raw path from the pathfinding service
     const rawRoute = await pathfindingService.findPath(startNodeId, endNodeId, accessibilityRequired);
     
@@ -192,4 +203,7 @@ process.on('SIGTERM', async () => {
 });
 
 // Start the server
-startServer();
+startServer().catch(error => {
+  logger.fatal({ err: error }, 'Unhandled error during server startup');
+  process.exit(1);
+});
