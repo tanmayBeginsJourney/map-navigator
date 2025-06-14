@@ -193,12 +193,16 @@ export class PathfindingService {
     accessibilityRequired: boolean = false
   ): Promise<RouteResponse | null> {
     
+    // Ensure IDs are numbers (in case they're passed as strings from API)
+    const startId = typeof startNodeId === 'string' ? parseInt(startNodeId, 10) : startNodeId;
+    const endId = typeof endNodeId === 'string' ? parseInt(endNodeId, 10) : endNodeId;
+    
     // Ensure database connection
     await this.ensureConnection();
     
     // Get start and end nodes
-    const startNode = await this.db.getNodeById(startNodeId);
-    const endNode = await this.db.getNodeById(endNodeId);
+    const startNode = await this.db.getNodeById(startId);
+    const endNode = await this.db.getNodeById(endId);
 
     // If start or end node is not found, return null (will be a 404 in the API layer)
     if (!startNode || !endNode) {
@@ -233,7 +237,7 @@ export class PathfindingService {
       openSetMap.delete(currentNode.node.id);
       
       // Check if we've reached the goal
-      if (currentNode.node.id === endNodeId) {
+      if (currentNode.node.id === endId) {
         return this.reconstructPath(currentNode);
       }
       

@@ -4,8 +4,7 @@ import { PathfindingService } from './pathfinding';
 import { config, isDevelopment, isProduction } from './config';
 import { createDatabaseService, DatabaseConfig } from './db/connection';
 import createHealthRouter from './routes/health';
-import { validate } from './middleware/validate';
-import { routeSchema } from './schemas/route.schema';
+import { routeValidationRules, checkValidationErrors } from './middleware/route-validation';
 import logger from './logger';
 
 const app: Express = express();
@@ -65,7 +64,7 @@ app.use((req, res, next) => {
 app.use(API_ENDPOINTS.HEALTH, createHealthRouter(dbService));
 
 // Route calculation endpoint
-app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Request, res: Response) => {
+app.post(API_ENDPOINTS.ROUTE, routeValidationRules, checkValidationErrors, async (req: Request, res: Response) => {
   logger.info('--- ROUTE CALCULATION START ---');
   try {
     const { startNodeId, endNodeId, accessibilityRequired } = req.body;
