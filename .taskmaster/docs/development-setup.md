@@ -173,7 +173,7 @@ VITE_API_VERSION=v1
 VITE_ENABLE_DEBUG_MODE=true
 VITE_ENABLE_OFFLINE_MODE=false
 VITE_ENABLE_ANALYTICS=false
-VITE_MAPBOX_TOKEN=your_mapbox_token_here
+# VITE_MAPBOX_TOKEN=your_mapbox_token_here  # Not needed - using custom SVG renderer
 ```
 
 ---

@@ -2,6 +2,8 @@
 
 This file tracks progress across development chat sessions for easy reference and git commit generation.
 
+**📁 File Size Management:** As the project grows, this file will become quite large (100-150 lines per task × 39 tasks ≈ 4000+ lines). For frontend tasks (Tasks 9-39), consider using the new `.taskmaster/docs/frontend-progress-log.md` for dedicated frontend tracking.
+
 ---
 
 ## Chat 0: Project Setup & Planning (Pre-Development)
@@ -898,6 +900,24 @@ git commit -m "feat(task-8): complete route calculation API endpoint implementat
 ```
 
 ---
+
+## Frontend Progress Logging Strategy
+
+**NEW APPROACH** for Tasks 9-39 (Frontend & Final Integration):
+
+1. **Frontend-Specific Log:** Create `.taskmaster/docs/frontend-progress-log.md` for Tasks 9-39
+2. **Structured Sections:** Organize by major development phases:
+   - **Phase 1:** Core Frontend Setup (Tasks 9-12)
+   - **Phase 2:** Navigation UI & Functionality (Tasks 13-18) 
+   - **Phase 3:** Map Integration & Multi-Floor Logic (Tasks 19-21)
+   - **Phase 4:** Search & Advanced Features (Tasks 22-23)
+   - **Phase 5:** Accessibility & Performance (Tasks 24-25)
+   - **Phase 6:** Testing & Deployment (Tasks 26-39)
+
+3. **Cross-Reference System:** Maintain links between backend and frontend logs
+4. **Git Integration:** Use separate commit patterns for frontend vs backend changes
+
+**Implementation:** Starting with Task 9, create the new frontend log and reference this file for backend context.
 
 ## Usage Instructions
 

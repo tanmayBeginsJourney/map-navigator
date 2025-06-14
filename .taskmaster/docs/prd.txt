@@ -86,7 +86,7 @@ A mobile-first web application that enables seamless navigation within campus bu
 **Frontend (React SPA)**
 - React 18 + TypeScript for component architecture
 - Vite for build tooling and development experience
-- Mapbox GL JS for interactive map rendering
+- Custom SVG Map Renderer for interactive map rendering (no external dependencies)
 - Zustand for lightweight state management
 - jsQR library for QR code scanning via device camera
 

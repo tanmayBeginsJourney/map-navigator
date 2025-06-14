@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generatedAt": "2025-06-12T12:26:08.694Z",
-    "tasksAnalyzed": 39,
+    "generatedAt": "2025-06-14T08:08:09.013Z",
+    "tasksAnalyzed": 1,
     "totalTasks": 39,
     "analysisCount": 44,
     "thresholdScore": 5,
@@ -194,14 +194,6 @@
       "reasoning": "Handling multi-floor navigation involves complex state management, UI updates based on route segment types, and coordination between different stores and components. The existing 8 subtasks provide an excellent, granular breakdown."
     },
     {
-      "taskId": 19,
-      "taskTitle": "Frontend: Outdoor Campus Map Integration (Mapbox GL JS)",
-      "complexityScore": 6,
-      "recommendedSubtasks": 0,
-      "expansionPrompt": "This task is thoroughly expanded with 6 detailed subtasks. No further expansion of the parent task is necessary. If more detail is required, it would be within an existing subtask, e.g., detailing specific error messages for API key issues in subtask 6.",
-      "reasoning": "Involves integrating a third-party mapping library, managing API keys, and handling component lifecycle for the map. The existing 6 subtasks cover these steps comprehensively."
-    },
-    {
       "taskId": 20,
       "taskTitle": "Backend: Outdoor Pathfinding and Indoor-Outdoor Transitions",
       "complexityScore": 8,
@@ -360,6 +352,14 @@
       "recommendedSubtasks": 9,
       "expansionPrompt": "Break down 'Comprehensive Testing Implementation' into 9 subtasks, each addressing one of the numbered points in the 'details' section: 1. Test Setup & Frameworks Installation/Configuration. 2. Unit Test Implementation (A* Algorithm & Frontend Components). 3. Integration Test Implementation (API Endpoints). 4. End-to-End (E2E) Test Implementation (Key User Flows). 5. Performance Test Implementation (Route Calculation Load Testing). 6. Cross-Browser/Device Compatibility Test Plan Execution. 7. Test Data Management Strategy and Implementation. 8. CI/CD Integration of Automated Tests. 9. Code Coverage Reporting Setup and Configuration.",
       "reasoning": "Extremely complex as it encompasses the entire testing strategy and implementation across multiple types of tests, tools, and environments. The detailed description provides a clear structure for subtasks."
+    },
+    {
+      "taskId": 19,
+      "taskTitle": "Frontend: Outdoor Campus Map Integration (Custom SVG Renderer)",
+      "complexityScore": 7,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Generate a detailed list of approximately 8 subtasks for 'Outdoor Campus Map Integration' (ID 19). These subtasks should cover: 1. Initial React component shell and props definition for `OutdoorCampusMapSvgComponent`. 2. Research and finalization of the outdoor campus SVG data source, format, and retrieval strategy. 3. Implementation of SVG data loading (fetching or importing) and rendering logic within the component, including error handling. 4. Styling of the SVG container for layout integration, responsiveness, and configuration of the initial map view (e.g., viewBox, scale). 5. Research and selection of a lightweight library or custom approach for SVG pan and zoom functionality. 6. Implementation of pan functionality (mouse drag and touch drag). 7. Implementation of zoom functionality (mouse wheel and pinch-to-zoom). 8. Integration of conditional display logic for the component based on `currentSegment.type === 'outdoor'` and comprehensive testing of all features.",
+      "reasoning": "Complexity (7/10) is driven by the custom SVG rendering approach, particularly implementing performant pan/zoom functionality without heavy external map dependencies, and replacing an existing Mapbox GL JS solution. The current 5 subtasks provide a good foundation. Expanding to 8 subtasks is recommended for finer-grained planning and tracking, especially for: defining the SVG data strategy, robustly implementing data loading/rendering, and breaking down pan/zoom development into research, discrete interaction implementations (pan, zoom, touch), and optimization."
     }
   ]
 }

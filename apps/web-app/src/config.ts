@@ -10,9 +10,9 @@ export interface AppConfig {
     enableDebugMode: boolean;
     enableAnalytics: boolean;
   };
-  mapbox?: {
-    token: string;
-  };
+  // mapbox?: {  // Not needed - using custom SVG renderer
+  //   token: string;
+  // };
 }
 
 // Get environment variables with proper fallbacks
@@ -48,8 +48,8 @@ function createConfig(): AppConfig {
   const enableDebugMode = getEnvBoolean('VITE_ENABLE_DEBUG_MODE', environment === 'development');
   const enableAnalytics = getEnvBoolean('VITE_ENABLE_ANALYTICS', environment === 'production');
   
-  // Optional Mapbox configuration
-  const mapboxToken = getEnvVar('VITE_MAPBOX_TOKEN');
+  // Optional Mapbox configuration - Not needed with custom SVG renderer
+  // const mapboxToken = getEnvVar('VITE_MAPBOX_TOKEN');
   
   const config: AppConfig = {
     apiUrl,
@@ -62,12 +62,12 @@ function createConfig(): AppConfig {
     },
   };
   
-  // Add mapbox configuration if token is provided
-  if (mapboxToken) {
-    config.mapbox = {
-      token: mapboxToken,
-    };
-  }
+  // Add mapbox configuration if token is provided - Not needed with custom SVG renderer
+  // if (mapboxToken) {
+  //   config.mapbox = {
+  //     token: mapboxToken,
+  //   };
+  // }
   
   // Validate critical configuration
   if (!apiUrl) {
@@ -87,7 +87,7 @@ if (config.features.enableDebugMode) {
     apiUrl: config.apiUrl,
     apiVersion: config.apiVersion,
     features: config.features,
-    hasMapboxToken: !!config.mapbox?.token,
+    // hasMapboxToken: !!config.mapbox?.token,  // Not needed - using custom SVG renderer
   });
 }
 

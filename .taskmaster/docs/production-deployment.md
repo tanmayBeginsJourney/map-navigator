@@ -22,7 +22,7 @@ VITE_API_VERSION=v1
 VITE_ENABLE_DEBUG_MODE=false
 VITE_ENABLE_OFFLINE_MODE=true
 VITE_ENABLE_ANALYTICS=true
-VITE_MAPBOX_TOKEN=your_production_mapbox_token
+# VITE_MAPBOX_TOKEN=your_production_mapbox_token  # Not needed - using custom SVG renderer
 ```
 
 ### Deployment Steps
