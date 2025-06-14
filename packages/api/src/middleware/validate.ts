@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError, z, ZodTypeAny } from 'zod';
-import { ApiResponse } from '@campus-nav/shared/types';
+import { ApiResponse } from '../types/shared';
 
 interface ValidationSchemas {
   body?: ZodTypeAny;

@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { ApiResponse, API_ENDPOINTS, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
+import { ApiResponse, API_ENDPOINTS, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from './types/shared';
 import { PathfindingService } from './pathfinding';
 import { config, isDevelopment, isProduction } from './config';
 import { createDatabaseService, DatabaseConfig } from './db/connection';

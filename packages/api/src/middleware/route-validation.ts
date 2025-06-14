@@ -1,6 +1,6 @@
 import { body, validationResult, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
-import { ApiResponse } from '@campus-nav/shared/types';
+import { ApiResponse } from '../types/shared';
 
 /**
  * Validation rules for route calculation endpoint

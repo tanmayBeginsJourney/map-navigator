@@ -224,7 +224,7 @@ export class DatabaseService {
   /**
    * Get a node by its ID (compatible with pathfinding service)
    */
-  async getNodeById(nodeId: number): Promise<import('@campus-nav/shared/types').Node | null> {
+  async getNodeById(nodeId: number): Promise<import('../types/shared').Node | null> {
     try {
       const sql = this.getSql();
       const result = await sql`
@@ -275,7 +275,7 @@ export class DatabaseService {
   /**
    * Get all edges connected to a specific node (bidirectional support)
    */
-  async getEdgesFromNode(nodeId: number): Promise<import('@campus-nav/shared/types').Edge[]> {
+  async getEdgesFromNode(nodeId: number): Promise<import('../types/shared').Edge[]> {
     try {
       const sql = this.getSql();
       const result = await sql`
@@ -319,7 +319,7 @@ export class DatabaseService {
   /**
    * Get accessible edges from a node (for wheelchair accessibility)
    */
-  async getAccessibleEdgesFromNode(nodeId: number): Promise<import('@campus-nav/shared/types').Edge[]> {
+  async getAccessibleEdgesFromNode(nodeId: number): Promise<import('../types/shared').Edge[]> {
     try {
       const sql = this.getSql();
       const result = await sql`

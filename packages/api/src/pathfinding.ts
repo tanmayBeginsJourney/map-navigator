@@ -1,4 +1,4 @@
-import { Node, Edge, RouteResponse, PathStep, Point, EdgeType } from '@campus-nav/shared/types';
+import { Node, Edge, RouteResponse, PathStep, Point, EdgeType } from './types/shared';
 import { createDatabaseService } from './db/connection';
 
 interface AStarNode {

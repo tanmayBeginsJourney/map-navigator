@@ -19,7 +19,7 @@
     "db:test-seed": "node scripts/test-seed.js",
     "db:test-bidirectional": "node scripts/test-bidirectional-edges.js",
     "seed": "node scripts/seed.js",
-    "db:migrate": "pnpm drizzle-kit migrate"
+    "db:migrate": "npm run drizzle-kit migrate"
   },
   "keywords": [
     "campus",
@@ -60,4 +60,4 @@
   "engines": {
     "node": ">=18.0.0"
   }
-}
+} 

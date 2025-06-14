@@ -1,7 +1,7 @@
 import { eq, sql, and, or } from 'drizzle-orm';
 import { DatabaseService } from './connection';
 import { nodes, edges, nodeTypeEnum, edgeTypeEnum } from './schema';
-import type { Node as SharedNode, Edge as SharedEdge, NodeType as SharedNodeType, EdgeType as SharedEdgeType } from '@campus-nav/shared/types';
+import type { Node as SharedNode, Edge as SharedEdge, NodeType as SharedNodeType, EdgeType as SharedEdgeType } from '../types/shared';
 
 // Type conversion utilities to handle null/undefined differences between Drizzle and shared types
 class TypeConverter {
