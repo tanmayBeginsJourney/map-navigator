@@ -4,8 +4,5 @@ module.exports = {
   moduleNameMapper: {
     '^@campus-nav/shared/(.*)$': '<rootDir>/../shared/src/$1',
   },
-  testMatch: ['**/__tests__/**/*.test.ts'],
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-  },
+  testMatch: ['**/tests/**/*.test.ts'],
 }; 
