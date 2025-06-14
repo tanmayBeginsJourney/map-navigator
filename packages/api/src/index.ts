@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
+import { HealthStatus, ApiResponse, API_ENDPOINTS, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { PathfindingService } from './pathfinding';
 import { config, isDevelopment, isProduction } from './config';
 import { createDatabaseService, DatabaseConfig } from './db/connection';
@@ -52,44 +52,8 @@ app.use((req, res, next) => {
 // Mount health check routes (will be updated in startServer function)
 app.use(API_ENDPOINTS.HEALTH, createHealthRouter(dbService));
 
-// Pathfinding endpoint
-app.post(API_ENDPOINTS.ROUTE, validate(pathfindSchema), async (req: Request, res: Response) => {
-  try {
-    const { start_node_id, end_node_id, accessibility_required } = req.body as PathRequest;
-    
-    logger.info(`Pathfinding request from ${start_node_id} to ${end_node_id}`);
-    
-    const pathfindingService = new PathfindingService(dbService);
-    const route = await pathfindingService.findPath(start_node_id, end_node_id, accessibility_required);
-    
-    if (route) {
-      const response: ApiResponse<RouteResponse> = {
-        success: true,
-        data: route,
-        timestamp: new Date().toISOString(),
-      };
-      res.json(response);
-    } else {
-      const response: ApiResponse = {
-        success: false,
-        error: 'Path not found',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(404).json(response);
-    }
-  } catch (error) {
-    logger.error({ err: error }, 'Pathfinding error');
-    const response: ApiResponse = {
-      success: false,
-      error: 'An unexpected error occurred during pathfinding.',
-      timestamp: new Date().toISOString(),
-    };
-    res.status(500).json(response);
-  }
-});
-
 // Route calculation endpoint
-app.post(API_ENDPOINTS.ROUTE, validate(routeSchema), async (req: Request, res: Response) => {
+app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Request, res: Response) => {
   try {
     const { startNodeId, endNodeId, accessibilityRequired } = req.body;
     

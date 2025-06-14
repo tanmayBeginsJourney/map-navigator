@@ -10,7 +10,6 @@ interface ImportMetaEnv {
   readonly VITE_MAP_PROVIDER: string
   readonly VITE_MAP_API_KEY: string
   readonly VITE_API_VERSION: string
-      // readonly VITE_MAPBOX_TOKEN: string  // Not needed - using custom SVG renderer
   // Allow dynamic key access for environment variables
   readonly [key: string]: any
 }

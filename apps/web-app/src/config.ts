@@ -48,9 +48,6 @@ function createConfig(): AppConfig {
   const enableDebugMode = getEnvBoolean('VITE_ENABLE_DEBUG_MODE', environment === 'development');
   const enableAnalytics = getEnvBoolean('VITE_ENABLE_ANALYTICS', environment === 'production');
   
-  // Optional Mapbox configuration - Not needed with custom SVG renderer
-  // const mapboxToken = getEnvVar('VITE_MAPBOX_TOKEN');
-  
   const config: AppConfig = {
     apiUrl,
     apiVersion,
@@ -61,13 +58,6 @@ function createConfig(): AppConfig {
       enableAnalytics,
     },
   };
-  
-  // Add mapbox configuration if token is provided - Not needed with custom SVG renderer
-  // if (mapboxToken) {
-  //   config.mapbox = {
-  //     token: mapboxToken,
-  //   };
-  // }
   
   // Validate critical configuration
   if (!apiUrl) {
@@ -87,7 +77,6 @@ if (config.features.enableDebugMode) {
     apiUrl: config.apiUrl,
     apiVersion: config.apiVersion,
     features: config.features,
-    // hasMapboxToken: !!config.mapbox?.token,  // Not needed - using custom SVG renderer
   });
 }
 

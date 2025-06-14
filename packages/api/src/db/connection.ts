@@ -24,13 +24,18 @@ export interface DatabaseConfig {
   connectionTimeout?: number;
 }
 
+export type AppSchema = typeof schema;
+
 export class DatabaseService {
   private sql: postgres.Sql | null = null;
-  private db: ReturnType<typeof drizzle> | null = null;
+  private db: ReturnType<typeof drizzle<AppSchema>> | null = null;
   private isConnected = false;
   private connectionAttempts = 0;
 
-  constructor(private dbConfig: DatabaseConfig) {}
+  constructor(
+    private dbConfig: DatabaseConfig,
+    private schema: AppSchema
+  ) {}
 
   /**
    * Initialize database connection with retry logic
@@ -56,7 +61,7 @@ export class DatabaseService {
           host: this.dbConfig.host,
           port: this.dbConfig.port,
           database: this.dbConfig.name,
-          username: this.dbConfig.user,
+          user: this.dbConfig.user,
           password: this.dbConfig.password,
           ssl: this.dbConfig.ssl,
           max: this.dbConfig.maxConnections || 20,
@@ -70,8 +75,8 @@ export class DatabaseService {
           },
         });
 
-        // Initialize Drizzle with schema
-        this.db = drizzle(this.sql, { schema });
+        // Initialize Drizzle with the provided schema
+        this.db = drizzle(this.sql, { schema: this.schema });
 
         // Test connection with a simple query
         await this.sql`SELECT 1 as test`;
@@ -384,22 +389,16 @@ export class DatabaseService {
 
 // Create singleton instance
 export const createDatabaseService = (dbConfig?: DatabaseConfig): DatabaseService => {
-  const finalConfig: DatabaseConfig = {
-    ...{
-      host: config.database.host,
-      port: config.database.port,
-      name: config.database.name,
-      user: config.database.user,
-      password: config.database.password,
-      ssl: isProduction,
-      maxConnections: isProduction ? 50 : 10,
-      idleTimeout: 30,
-      connectionTimeout: 10,
-    },
-    ...dbConfig,
+  const finalConfig = dbConfig || {
+    host: config.database.host,
+    port: config.database.port,
+    name: config.database.name,
+    user: config.database.user,
+    password: config.database.password,
+    ssl: isProduction,
   };
-  
-  return new DatabaseService(finalConfig);
+
+  return new DatabaseService(finalConfig, schema);
 };
 
 // Export schema for external use

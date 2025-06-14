@@ -28,7 +28,7 @@
       "@campus-nav/shared/*": ["../shared/src/*"]
     }
   },
-  "include": ["src/**/*", "tests/**/*", "jest.config.js", "drizzle.config.ts"],
+  "include": ["src/**/*", "drizzle.config.ts"],
   "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "../shared" }

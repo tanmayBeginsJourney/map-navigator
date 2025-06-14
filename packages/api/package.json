@@ -4,7 +4,7 @@
   "description": "Backend API for Campus Navigation System",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts | pino-pretty",
+    "dev": "nodemon --exec ts-node src/index.ts | pino-pretty",
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint . --ext .ts",
@@ -42,14 +42,14 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^29.5.12",
     "@types/node": "^24.0.1",
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.1",
-    "jest": "^30.0.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.10",
     "pino-pretty": "^13.0.0",
-    "ts-jest": "^29.4.0",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"

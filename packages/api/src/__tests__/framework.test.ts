@@ -31,8 +31,8 @@ describe('Integration Test Framework', () => {
     };
     dbService = createDatabaseService(dbConfig);
     await dbService.connect();
-    // Create a new, fully-typed Drizzle instance for tests
-    db = drizzle(dbService.getSql(), { schema });
+    // The DatabaseService already creates a typed Drizzle client. Reuse it.
+    db = dbService.getDb();
   });
 
   afterAll(async () => {

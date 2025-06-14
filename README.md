@@ -200,10 +200,15 @@ Invoke-RestMethod -Uri "http://localhost:3001/pathfind" `
 
 ## 🧪 **Testing & Quality Assurance**
 
-The project is configured with a complete automated testing framework using Jest.
+The project is configured with a complete automated testing framework using Jest and Testcontainers. This setup ensures that tests are hermetic, reliable, and do not interfere with the development database.
+
+### **Isolated Test Environment**
+- **Testcontainers:** For each test run, a dedicated PostgreSQL database is automatically spun up in a Docker container.
+- **Automated Migrations & Seeding:** The test database is automatically migrated and seeded with necessary data before any tests are executed.
+- **Guaranteed Isolation:** This approach prevents flaky tests and data corruption by ensuring a clean, isolated environment for every test suite.
 
 ### **Running Tests**
-Tests are run against the live development database defined in `docker-compose.yml`. Ensure the Docker containers are running before executing tests.
+The test environment is fully automated. Simply run the test command from the API package directory.
 
 ```powershell
 # From the packages/api directory:

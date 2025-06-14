@@ -4,7 +4,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
-  details?: any; // For detailed validation errors
+  details?: unknown; // For detailed validation errors
   timestamp: string;
 }
 
