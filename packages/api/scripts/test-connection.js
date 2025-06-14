@@ -38,7 +38,7 @@ async function runTests() {
     const existingTables = tablesResult.rows.map(row => row.table_name);
     console.log('   Existing tables:', existingTables.join(', '));
     
-    let missingTables = [];
+    const missingTables = [];
     for (const table of requiredTables) {
       if (existingTables.includes(table)) {
         console.log(`   ✅ Table '${table}' exists`);

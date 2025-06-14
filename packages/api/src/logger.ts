@@ -13,7 +13,7 @@ function getPackageVersion(): string {
     const packageJsonPath = join(__dirname, '..', 'package.json');
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
     return packageJson.version || '1.0.0';
-  } catch (error) {
+  } catch {
     // Fallback to environment variable or default if package.json read fails
     return process.env.npm_package_version || '1.0.0';
   }

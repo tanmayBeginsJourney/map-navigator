@@ -1,6 +1,6 @@
 import { PathfindingService } from '../pathfinding';
 import { DatabaseService } from '../db/connection';
-import { Node, Edge, EdgeType, NodeType, PathStep } from '@campus-nav/shared/types';
+import { Node, Edge, EdgeType, NodeType } from '@campus-nav/shared/types';
 
 // 1. Mock Data: Define a simple graph: A -> B -> C
 const mockNodes: Record<number, Node> = {
