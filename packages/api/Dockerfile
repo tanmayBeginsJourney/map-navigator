@@ -4,15 +4,18 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy package.json and install ALL dependencies (including devDependencies for build)
 COPY package.json ./
-RUN npm install --production
+RUN npm install
 
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the application (TypeScript compilation)
 RUN npm run build
+
+# Remove dev dependencies after build
+RUN npm prune --production
 
 # Expose port
 EXPOSE 3001
