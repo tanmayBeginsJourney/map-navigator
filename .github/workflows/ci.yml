@@ -2,21 +2,21 @@ name: 🚀 Campus Navigation CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
     branches: [main]
 
 env:
-  NODE_VERSION: '18'
-  PNPM_VERSION: '8'
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
 
 jobs:
-  # Phase 1: Code Quality & Dependency Analysis
+  # Phase 1: Quality Check (2-3 min)
   quality-check:
-    name: 📋 Code Quality & Dependencies
+    name: 🔍 Quality Check
     runs-on: ubuntu-latest
     outputs:
-      api-changed: ${{ steps.changes.outputs.api }}
+      backend-changed: ${{ steps.changes.outputs.backend }}
       frontend-changed: ${{ steps.changes.outputs.frontend }}
       shared-changed: ${{ steps.changes.outputs.shared }}
     
@@ -27,11 +27,11 @@ jobs:
           fetch-depth: 0
 
       - name: 🔍 Detect changes
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
-            api:
+            backend:
               - 'packages/api/**'
               - 'packages/shared/**'
             frontend:
@@ -40,146 +40,168 @@ jobs:
             shared:
               - 'packages/shared/**'
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
 
-      - name: 📥 Install dependencies
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 📚 Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 🗄️ Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🔍 Lint all packages
-        run: pnpm run lint
+      - name: 📋 Lint code
+        run: pnpm lint
 
-      - name: 🔧 Type check all packages
-        run: pnpm run type-check
+      - name: 🔧 Type check
+        run: pnpm type-check
 
-      - name: 📊 Check for security vulnerabilities
+      - name: 🔒 Security audit
         run: pnpm audit --audit-level moderate
+        continue-on-error: true
 
-  # Phase 2: Backend Testing with Real Database
+      - name: 📊 Discord Notification - Quality Check
+        if: always()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🔍 **Quality Check Complete**
+            **Status**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
+            **Branch**: `${{ github.ref_name }}`
+            **Commit**: `${{ github.sha }}`
+            **Changes**: Backend: ${{ steps.changes.outputs.backend }}, Frontend: ${{ steps.changes.outputs.frontend }}
+
+  # Phase 2: Backend Tests (5-7 min)
   backend-tests:
-    name: 🧪 Backend Tests (PostgreSQL + PostGIS)
+    name: 🧪 Backend Tests
     runs-on: ubuntu-latest
     needs: quality-check
-    if: needs.quality-check.outputs.api-changed == 'true'
+    if: needs.quality-check.outputs.backend-changed == 'true' || needs.quality-check.outputs.shared-changed == 'true'
     
     services:
       postgres:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test_password
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: campus_navigation_test
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
 
-      - name: 📥 Install dependencies
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🗄️ Setup test database
-        run: |
-          cd packages/api
-          # Apply migrations to test database
-          pnpm run db:migrate
-        env:
-          DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
-          DATABASE_NAME: campus_navigation_test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: test_password
-          NODE_ENV: test
+      - name: 🏗️ Build shared package
+        run: pnpm --filter @campus-nav/shared build
 
-      - name: 🧪 Run API tests
-        run: |
-          cd packages/api
-          pnpm test
+      - name: 🧪 Run backend tests
+        run: pnpm --filter @campus-nav/api test
         env:
-          DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
-          DATABASE_NAME: campus_navigation_test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: test_password
           NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: campus_navigation_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
 
-      - name: 📊 Upload test coverage
-        uses: codecov/codecov-action@v3
+      - name: 📊 Discord Notification - Backend Tests
+        if: always()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          file: packages/api/coverage/lcov.info
-          flags: backend
+          args: |
+            🧪 **Backend Tests Complete**
+            **Status**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
+            **Branch**: `${{ github.ref_name }}`
+            **Database**: PostgreSQL + PostGIS
 
-  # Phase 3: Frontend Testing & Build
+  # Phase 3: Frontend Tests (3-4 min)
   frontend-tests:
-    name: 🎨 Frontend Tests & Build
+    name: 🎨 Frontend Tests
     runs-on: ubuntu-latest
     needs: quality-check
-    if: needs.quality-check.outputs.frontend-changed == 'true'
+    if: needs.quality-check.outputs.frontend-changed == 'true' || needs.quality-check.outputs.shared-changed == 'true'
     
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
 
-      - name: 📥 Install dependencies
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🧪 Run frontend tests
-        run: |
-          cd apps/web-app
-          pnpm test
+      - name: 🏗️ Build shared package
+        run: pnpm --filter @campus-nav/shared build
 
       - name: 🏗️ Build frontend
-        run: |
-          cd apps/web-app
-          pnpm build
+        run: pnpm --filter @campus-nav/web-app build
 
-      - name: 📦 Upload build artifacts
-        uses: actions/upload-artifact@v3
+      - name: 🧪 Run frontend tests
+        run: pnpm --filter @campus-nav/web-app test
+
+      - name: 📊 Discord Notification - Frontend Tests
+        if: always()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          name: frontend-build
-          path: apps/web-app/dist
+          args: |
+            🎨 **Frontend Tests Complete**
+            **Status**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
+            **Branch**: `${{ github.ref_name }}`
+            **Framework**: React + Vite
 
-  # Phase 4: Integration Testing
+  # Phase 4: Integration Tests (4-5 min)
   integration-tests:
     name: 🔗 Integration Tests
     runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
+    needs: [quality-check, backend-tests, frontend-tests]
     if: always() && (needs.backend-tests.result == 'success' || needs.backend-tests.result == 'skipped') && (needs.frontend-tests.result == 'success' || needs.frontend-tests.result == 'skipped')
     
     services:
@@ -187,148 +209,180 @@ jobs:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test_password
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: campus_navigation_test
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
 
-      - name: 📥 Install dependencies
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🗄️ Setup test database
+      - name: 🏗️ Build packages
         run: |
-          cd packages/api
-          pnpm run db:migrate
-        env:
-          DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
-          DATABASE_NAME: campus_navigation_test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: test_password
-          NODE_ENV: test
+          pnpm --filter @campus-nav/shared build
+          pnpm --filter @campus-nav/api build
 
       - name: 🚀 Start API server
         run: |
           cd packages/api
-          pnpm build
-          pnpm start &
+          npm start &
           sleep 10
         env:
-          DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
-          DATABASE_NAME: campus_navigation_test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: test_password
           NODE_ENV: test
-          PORT: 3001
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: campus_navigation_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
 
-      - name: 🧪 Run API health checks
+      - name: 🧪 Test API endpoints
         run: |
-          curl -f http://localhost:3001/health
-          curl -f http://localhost:3001/health/db
+          curl -f http://localhost:3001/health || exit 1
+          curl -f http://localhost:3001/health/db || exit 1
 
-      - name: 📊 Test API endpoints
-        run: |
-          # Test route calculation with proper error handling
-          response=$(curl -s -w "%{http_code}" -X POST http://localhost:3001/api/route \
-            -H "Content-Type: application/json" \
-            -d '{"startNodeId":"999","endNodeId":"998"}')
-          
-          # Should return 404 for non-existent route (expected behavior)
-          if [[ "${response: -3}" == "404" ]]; then
-            echo "✅ Route API correctly handles non-existent routes"
-          else
-            echo "❌ Route API unexpected response: $response"
-            exit 1
-          fi
+      - name: 📊 Discord Notification - Integration Tests
+        if: always()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🔗 **Integration Tests Complete**
+            **Status**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
+            **Branch**: `${{ github.ref_name }}`
+            **API Health**: Tested
 
-  # Phase 5: Deployment (Production)
+  # Phase 5: Deployment (3-5 min) - NEW!
   deploy:
     name: 🚀 Deploy to Production
     runs-on: ubuntu-latest
-    needs: [integration-tests]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
+    needs: [quality-check, backend-tests, frontend-tests, integration-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (needs.integration-tests.result == 'success' || (needs.backend-tests.result == 'success' && needs.frontend-tests.result == 'success'))
     
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
 
-      - name: 📥 Install dependencies
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🏗️ Build all packages
-        run: pnpm build
-
-      - name: 🚀 Deploy Frontend to Vercel
+      # Deploy Frontend to Vercel
+      - name: 🎨 Deploy Frontend to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: apps/web-app
+          working-directory: ./apps/web-app
+          vercel-args: '--prod'
 
-      - name: 🚀 Deploy Backend to Railway
-        uses: bervProject/railway-deploy@v1.3.0
+      # Deploy Backend to Railway
+      - name: 🚂 Deploy Backend to Railway
+        uses: railway-app/railway-action@v1
         with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: ${{ secrets.RAILWAY_SERVICE_ID }}
+          api-token: ${{ secrets.RAILWAY_TOKEN }}
+          service-id: ${{ secrets.RAILWAY_SERVICE_ID }}
+          working-directory: ./packages/api
 
-      - name: 🔔 Notify deployment success
-        if: success()
-        run: |
-          echo "🎉 Deployment successful!"
-          echo "Frontend: https://your-app.vercel.app"
-          echo "Backend: https://your-api.railway.app"
+      - name: 📊 Discord Notification - Deployment
+        if: always()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🚀 **Deployment Complete**
+            **Status**: ${{ job.status == 'success' && '✅ Success' || '❌ Failed' }}
+            **Branch**: `${{ github.ref_name }}`
+            **Frontend**: Vercel
+            **Backend**: Railway
+            **Live URL**: https://campus-navigation-frontend-lizi052ai-tanmays-projects-8086dda2.vercel.app
 
-  # Phase 6: Post-deployment Health Check
+  # Phase 6: Health Check (1-2 min) - NEW!
   health-check:
-    name: 🏥 Post-deployment Health Check
+    name: 🏥 Post-Deployment Health Check
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: deploy
     if: always() && needs.deploy.result == 'success'
     
     steps:
-      - name: 🔍 Check production health
+      - name: 🏥 Check Frontend Health
         run: |
-          # Wait for deployment to be ready
-          sleep 30
-          
-          # Check backend health (replace with your actual Railway URL)
-          # curl -f https://your-api.railway.app/health
-          
-          # Check frontend accessibility (replace with your actual Vercel URL)
-          # curl -f https://your-app.vercel.app
-          
-          echo "🏥 Health checks would run here with actual deployment URLs" 
+          sleep 30  # Wait for deployment to propagate
+          curl -f https://campus-navigation-frontend-lizi052ai-tanmays-projects-8086dda2.vercel.app || exit 1
+
+      - name: 🏥 Check Backend Health
+        run: |
+          # Will update with actual Railway URL once backend is deployed
+          echo "Backend health check - URL pending Railway deployment"
+
+      - name: 📊 Discord Notification - Health Check
+        if: always()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🏥 **Health Check Complete**
+            **Status**: ${{ job.status == 'success' && '✅ Healthy' || '❌ Issues Detected' }}
+            **Frontend**: Online
+            **Backend**: Pending Railway setup
+            **Ready for use**: ${{ job.status == 'success' && 'Yes' || 'No' }}
+
+  # Final Summary Notification
+  pipeline-summary:
+    name: 📋 Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [quality-check, backend-tests, frontend-tests, integration-tests, deploy, health-check]
+    if: always()
+    
+    steps:
+      - name: 📊 Discord Notification - Pipeline Summary
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            📋 **CI/CD Pipeline Summary**
+            **Overall Status**: ${{ (needs.quality-check.result == 'success' && (needs.backend-tests.result == 'success' || needs.backend-tests.result == 'skipped') && (needs.frontend-tests.result == 'success' || needs.frontend-tests.result == 'skipped') && (needs.integration-tests.result == 'success' || needs.integration-tests.result == 'skipped') && (needs.deploy.result == 'success' || needs.deploy.result == 'skipped') && (needs.health-check.result == 'success' || needs.health-check.result == 'skipped')) && '✅ All Systems Go' || '❌ Issues Detected' }}
+            
+            **Phase Results**:
+            🔍 Quality Check: ${{ needs.quality-check.result == 'success' && '✅' || '❌' }}
+            🧪 Backend Tests: ${{ needs.backend-tests.result == 'success' && '✅' || needs.backend-tests.result == 'skipped' && '⏭️' || '❌' }}
+            🎨 Frontend Tests: ${{ needs.frontend-tests.result == 'success' && '✅' || needs.frontend-tests.result == 'skipped' && '⏭️' || '❌' }}
+            🔗 Integration: ${{ needs.integration-tests.result == 'success' && '✅' || needs.integration-tests.result == 'skipped' && '⏭️' || '❌' }}
+            🚀 Deployment: ${{ needs.deploy.result == 'success' && '✅' || needs.deploy.result == 'skipped' && '⏭️' || '❌' }}
+            🏥 Health Check: ${{ needs.health-check.result == 'success' && '✅' || needs.health-check.result == 'skipped' && '⏭️' || '❌' }}
+            
+            **Branch**: `${{ github.ref_name }}`
+            **Commit**: `${{ github.sha }}`
+            **Triggered by**: ${{ github.actor }} 

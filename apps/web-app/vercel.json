@@ -1,0 +1,15 @@
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "env": {
+    "VITE_API_URL": "https://map-navigator-production.up.railway.app"
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://map-navigator-production.up.railway.app/api/$1"
+    }
+  ]
+} 
