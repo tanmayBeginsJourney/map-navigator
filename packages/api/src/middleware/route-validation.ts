@@ -1,4 +1,4 @@
-import { body, validationResult } from 'express-validator';
+import { body, validationResult, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 import { ApiResponse } from '@campus-nav/shared/types';
 
@@ -47,14 +47,14 @@ export const checkValidationErrors = (req: Request, res: Response, next: NextFun
     const errorResponse: ApiResponse = {
       success: false,
       error: 'Validation failed',
-      details: errors.array().reduce((acc, error) => {
+      details: errors.array().reduce((acc: Record<string, string[]>, error: ValidationError) => {
         const field = 'param' in error ? String(error.param) : 'unknown';
         if (!acc[field]) {
           acc[field] = [];
         }
         acc[field].push(error.msg);
         return acc;
-      }, {} as Record<string, string[]>),
+      }, {}),
       timestamp: new Date().toISOString(),
     };
     
