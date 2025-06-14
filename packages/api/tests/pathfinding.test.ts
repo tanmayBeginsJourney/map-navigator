@@ -1,6 +1,7 @@
+import { describe, beforeEach, afterEach, it, expect, jest } from '@jest/globals';
 import { PathfindingService } from '../src/pathfinding';
 import { DatabaseService } from '../src/db/connection';
-import { Node, Edge, RouteResponse, Point, EdgeType, NodeType } from '@campus-nav/shared/types';
+import { Node, Edge, EdgeType, NodeType } from '@campus-nav/shared/types';
 
 // Mock the DatabaseService
 jest.mock('../src/db/connection', () => {

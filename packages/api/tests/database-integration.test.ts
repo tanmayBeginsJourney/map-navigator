@@ -1,5 +1,5 @@
+import { describe, beforeAll, afterAll, beforeEach, afterEach, it, expect } from '@jest/globals';
 import { createDatabaseService, DatabaseService } from '../src/db/connection';
-import { Node as SharedNode, Edge as SharedEdge, NodeType as SharedNodeType, EdgeType as SharedEdgeType } from '@campus-nav/shared/types';
 import * as schema from '../src/db/schema';
 import { sql } from 'drizzle-orm';
 

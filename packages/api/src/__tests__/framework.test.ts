@@ -3,15 +3,16 @@ import { eq } from 'drizzle-orm';
 import { DatabaseService, createDatabaseService } from '../db/connection';
 import { config } from '../config';
 import * as schema from '../db/schema';
+import logger from '../logger';
 
 // Helper function to reset the database between tests
 const resetDatabase = async (db: PostgresJsDatabase<typeof schema>) => {
   // This will delete all rows from the tables, resetting them
-  console.log('Resetting database...');
+  logger.debug('Resetting database for test');
   await db.delete(schema.edges);
   await db.delete(schema.nodes);
   // Add other tables as needed, in the correct order to respect foreign keys
-  console.log('Database reset complete.');
+  logger.debug('Database reset complete');
 };
 
 

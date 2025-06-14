@@ -114,6 +114,7 @@ app.post(API_ENDPOINTS.ROUTE, routeValidationRules, checkValidationErrors, async
 function convertToRouteCalculationResponse(route: RouteResponse): RouteCalculationResponse {
   if (!route || !route.path) {
     // This case should ideally be handled before calling, but as a safeguard:
+    logger.warn('convertToRouteCalculationResponse called with null/undefined route or path');
     return { path: [], segments: [] };
   }
 
@@ -185,7 +186,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // --- Global Error Handler ---
 // This should be the last middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   logger.error({ err }, 'Unhandled error caught by global error handler');
   
   const response: ApiResponse = {
@@ -213,19 +214,31 @@ async function startServer(): Promise<void> {
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Received SIGINT. Graceful shutdown...');
-  if (dbService) {
-    await dbService.disconnect();
+  logger.info('Received SIGINT signal, initiating graceful shutdown');
+  try {
+    if (dbService) {
+      await dbService.disconnect();
+    }
+    logger.info('Graceful shutdown completed');
+    process.exit(0);
+  } catch (error) {
+    logger.error({ err: error }, 'Error during graceful shutdown');
+    process.exit(1);
   }
-  process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Received SIGTERM. Graceful shutdown...');
-  if (dbService) {
-    await dbService.disconnect();
+  logger.info('Received SIGTERM signal, initiating graceful shutdown');
+  try {
+    if (dbService) {
+      await dbService.disconnect();
+    }
+    logger.info('Graceful shutdown completed');
+    process.exit(0);
+  } catch (error) {
+    logger.error({ err: error }, 'Error during graceful shutdown');
+    process.exit(1);
   }
-  process.exit(0);
 });
 
 // Start the server only if the file is executed directly

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
+import logger from './logger';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -57,23 +58,31 @@ function parseConfig() {
     return ConfigSchema.parse(rawConfig);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('❌ Invalid environment configuration:');
-      error.errors.forEach((err) => {
-        console.error(`  • ${err.path.join('.')}: ${err.message}`);
-      });
-      console.error('\n📋 Required environment variables:');
-      console.error('  • DB_HOST: Database host (default: localhost)');
-      console.error('  • DB_PORT: Database port (default: 5432)');
-      console.error('  • DB_NAME: Database name (default: campus_navigation)');
-      console.error('  • DB_USER: Database user (default: postgres)');
-      console.error('  • DB_PASSWORD: Database password (required for production)');
-      console.error('  • PORT: Server port (default: 3001)');
-      console.error('  • NODE_ENV: Environment (development|test|production)');
-      console.error('  • CORS_ORIGINS: Allowed CORS origins (comma-separated)');
-      console.error('  • LOG_LEVEL: Logging level (error|warn|info|debug)');
-      console.error('\n💡 Copy .env.example to .env and configure your values');
+      logger.fatal({
+        errors: error.errors.map(err => ({
+          path: err.path.join('.'),
+          message: err.message,
+          code: err.code
+        }))
+      }, 'Invalid environment configuration');
+      
+      logger.fatal({
+        requiredVariables: {
+          DB_HOST: 'Database host (default: localhost)',
+          DB_PORT: 'Database port (default: 5432)',
+          DB_NAME: 'Database name (default: campus_navigation)',
+          DB_USER: 'Database user (default: postgres)',
+          DB_PASSWORD: 'Database password (required for production)',
+          PORT: 'Server port (default: 3001)',
+          NODE_ENV: 'Environment (development|test|production)',
+          CORS_ORIGINS: 'Allowed CORS origins (comma-separated)',
+          LOG_LEVEL: 'Logging level (error|warn|info|debug)'
+        }
+      }, 'Required environment variables');
+      
+      logger.fatal('Copy .env.example to .env and configure your values');
     } else {
-      console.error('❌ Failed to load configuration:', error);
+      logger.fatal({ err: error }, 'Failed to load configuration');
     }
     process.exit(1);
   }
@@ -93,10 +102,18 @@ export const isTest = config.nodeEnv === 'test';
 
 // Log configuration on startup (excluding sensitive data)
 if (isDevelopment) {
-  console.log('🔧 Configuration loaded:');
-  console.log(`  • Environment: ${config.nodeEnv}`);
-  console.log(`  • Port: ${config.port}`);
-  console.log(`  • Database: ${config.database.host}:${config.database.port}/${config.database.name}`);
-  console.log(`  • CORS Origins: ${config.corsOrigins.join(', ')}`);
-  console.log(`  • Log Level: ${config.logLevel}`);
+  logger.info({
+    environment: config.nodeEnv,
+    port: config.port,
+    database: {
+      host: config.database.host,
+      port: config.database.port,
+      name: config.database.name,
+      user: config.database.user
+      // password intentionally excluded for security
+    },
+    corsOrigins: config.corsOrigins,
+    logLevel: config.logLevel,
+    apiVersion: config.apiVersion
+  }, 'Configuration loaded successfully');
 } 

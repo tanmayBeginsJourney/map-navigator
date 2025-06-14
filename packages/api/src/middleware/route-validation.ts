@@ -24,6 +24,7 @@ export const routeValidationRules = [
   
   body('accessibilityRequired')
     .optional()
+    .toBoolean()
     .isBoolean()
     .withMessage('accessibilityRequired must be a boolean'),
     
@@ -47,7 +48,7 @@ export const checkValidationErrors = (req: Request, res: Response, next: NextFun
       success: false,
       error: 'Validation failed',
       details: errors.array().reduce((acc, error) => {
-        const field = error.type === 'field' ? error.path : 'unknown';
+        const field = (error as any).param || 'unknown';
         if (!acc[field]) {
           acc[field] = [];
         }
