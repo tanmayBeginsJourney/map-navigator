@@ -32,13 +32,33 @@ const ConfigSchema = z.object({
   apiVersion: z.string().default('v1'),
 });
 
+// Parse DATABASE_URL if provided (Railway format)
+function parseDatabaseUrl(databaseUrl: string) {
+  try {
+    const url = new URL(databaseUrl);
+    return {
+      host: url.hostname,
+      port: url.port || '5432',
+      name: url.pathname.slice(1), // Remove leading slash
+      user: url.username,
+      password: url.password
+    };
+  } catch (error) {
+    throw new Error(`Invalid DATABASE_URL format: ${error}`);
+  }
+}
+
 // Parse and validate environment variables
 function parseConfig() {
   try {
-    const rawConfig = {
-      port: process.env.PORT,
-      nodeEnv: process.env.NODE_ENV,
-      database: {
+    // Handle both individual DB vars and DATABASE_URL
+    let databaseConfig;
+    if (process.env.DATABASE_URL) {
+      // Railway/Heroku style DATABASE_URL
+      databaseConfig = parseDatabaseUrl(process.env.DATABASE_URL);
+    } else {
+      // Individual environment variables
+      databaseConfig = {
         host: process.env.DB_HOST || 'localhost',
         port: process.env.DB_PORT || '5432',
         name: process.env.DB_NAME || 'campus_navigation',
@@ -49,7 +69,13 @@ function parseConfig() {
           }
           return 'secure_default_password'; // development only fallback
         })()
-      },
+      };
+    }
+
+    const rawConfig = {
+      port: process.env.PORT,
+      nodeEnv: process.env.NODE_ENV,
+      database: databaseConfig,
       corsOrigins: process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:3000',
       logLevel: process.env.LOG_LEVEL,
       apiVersion: process.env.API_VERSION,
