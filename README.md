@@ -38,8 +38,8 @@ Copy-Item apps/web-app/.env.example apps/web-app/.env
 
 # 4. Setup database
 cd packages/api; `
-node scripts/run-migrations.js; `
-node scripts/seed.js
+pnpm db:migrate; `
+pnpm seed
 
 # 5. Start development servers
 cd ../..; `
@@ -49,7 +49,7 @@ pnpm dev
 **✅ System Verification:**
 - API Health: http://localhost:3001/health
 - Frontend: http://localhost:5173
-- Pathfinding Test: `Invoke-RestMethod -Uri "http://localhost:3001/api/route" -Method POST -ContentType "application/json" -Body '{"startNodeId": "1", "endNodeId": "10", "accessibilityMode": false}'`
+- Pathfinding Test: `Invoke-RestMethod -Uri "http://localhost:3001/api/route" -Method POST -ContentType "application/json" -Body '{"startNodeId": 1, "endNodeId": 10, "accessibilityRequired": false}'`
 
 ---
 
@@ -168,9 +168,9 @@ Invoke-RestMethod -Uri "http://localhost:3001/health"
 ```powershell
 # POST /api/route
 $body = @{
-  startNodeId = "1"
-  endNodeId = "10"
-  accessibilityMode = $false
+  startNodeId = 1
+  endNodeId = 10
+  accessibilityRequired = $false
 } | ConvertTo-Json
 
 Invoke-RestMethod -Uri "http://localhost:3001/api/route" `
@@ -199,6 +199,17 @@ Invoke-RestMethod -Uri "http://localhost:3001/pathfind" `
 ---
 
 ## 🧪 **Testing & Quality Assurance**
+
+The project is configured with a complete automated testing framework using Jest.
+
+### **Running Tests**
+Tests are run against the live development database defined in `docker-compose.yml`. Ensure the Docker containers are running before executing tests.
+
+```powershell
+# From the packages/api directory:
+cd packages/api
+pnpm test
+```
 
 ### **Comprehensive Test Coverage**
 - ✅ **Database Connection Tests** with schema validation

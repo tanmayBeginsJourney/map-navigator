@@ -4,6 +4,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
+  details?: any; // For detailed validation errors
   timestamp: string;
 }
 
@@ -129,7 +130,5 @@ export const API_ENDPOINTS = {
   HEALTH: '/health',
   BUILDINGS: '/buildings',
   LOCATIONS: '/locations',
-  ROUTES: '/routes',
-  PATHFIND: '/pathfind',
-  ROUTE: '/api/route', // Task 8: New route calculation endpoint
+  ROUTE: '/api/route', // Standard route calculation endpoint
 } as const; 

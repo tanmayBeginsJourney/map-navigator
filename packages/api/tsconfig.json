@@ -7,6 +7,7 @@
     "types": ["node", "express", "jest", "pg"],
     "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "outDir": "./dist",
+    "rootDir": ".",
     "noEmit": false,
     "strict": true,
     "esModuleInterop": true,
@@ -27,6 +28,9 @@
       "@campus-nav/shared/*": ["../shared/src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": ["src/**/*", "tests/**/*", "jest.config.js", "drizzle.config.ts"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../shared" }
+  ]
 }

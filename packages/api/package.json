@@ -4,20 +4,21 @@
   "description": "Backend API for Campus Navigation System",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon -r tsconfig-paths/register src/index.ts",
+    "dev": "nodemon src/index.ts | pino-pretty",
     "build": "tsc",
-    "start": "node dist/api/src/index.js",
-    "lint": "eslint src --ext .ts",
+    "start": "node dist/index.js",
+    "lint": "eslint . --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
-    "test": "jest",
+    "test": "jest --runInBand",
     "db:test-connection": "node scripts/test-connection.js",
     "db:test-parser": "node scripts/test-parser.js",
     "db:test-inserter": "node scripts/test-inserter.js",
     "db:test-seed": "node scripts/test-seed.js",
     "db:test-bidirectional": "node scripts/test-bidirectional-edges.js",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "db:migrate": "pnpm drizzle-kit migrate"
   },
   "keywords": [
     "campus",
@@ -35,6 +36,7 @@
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
     "pg": "^8.16.0",
+    "pino": "^9.7.0",
     "postgres": "^3.4.7",
     "zod": "^3.25.64"
   },
@@ -46,6 +48,7 @@
     "drizzle-kit": "^0.31.1",
     "jest": "^30.0.0",
     "nodemon": "^3.1.10",
+    "pino-pretty": "^13.0.0",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",

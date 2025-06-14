@@ -1,15 +1,27 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { HealthStatus, ApiResponse, API_ENDPOINTS, PathRequest, RouteResponse, RouteCalculationResponse, RoutePathNode, RouteSegment } from '@campus-nav/shared/types';
 import { PathfindingService } from './pathfinding';
-import { config, isDevelopment } from './config';
-import { createDatabaseService } from './db/connection';
+import { config, isDevelopment, isProduction } from './config';
+import { createDatabaseService, DatabaseConfig } from './db/connection';
 import createHealthRouter from './routes/health';
+import { validate } from './middleware/validate';
+import { pathfindSchema } from './schemas/pathfind.schema';
+import { routeSchema } from './schemas/route.schema';
+import logger from './logger';
 
 const app: Express = express();
 
 // Initialize database service and pathfinding service
-let dbService: ReturnType<typeof createDatabaseService> | null = null;
-let pathfindingService: PathfindingService | null = null;
+const dbConfig: DatabaseConfig = {
+  host: config.database.host,
+  port: config.database.port,
+  name: config.database.name,
+  user: config.database.user,
+  password: config.database.password,
+  ssl: isProduction,
+};
+
+const dbService = createDatabaseService(dbConfig);
 
 // Middleware
 app.use(express.json());
@@ -38,217 +50,81 @@ app.use((req, res, next) => {
 });
 
 // Mount health check routes (will be updated in startServer function)
-// app.use(API_ENDPOINTS.HEALTH, healthRouter);
+app.use(API_ENDPOINTS.HEALTH, createHealthRouter(dbService));
 
 // Pathfinding endpoint
-app.post(API_ENDPOINTS.PATHFIND, async (req: Request, res: Response) => {
+app.post(API_ENDPOINTS.ROUTE, validate(pathfindSchema), async (req: Request, res: Response) => {
   try {
-    const pathRequest: PathRequest = req.body;
+    const { start_node_id, end_node_id, accessibility_required } = req.body as PathRequest;
     
-    // Validate request
-    if (pathRequest.start_node_id == null || pathRequest.end_node_id == null) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'start_node_id and end_node_id are required',
+    logger.info(`Pathfinding request from ${start_node_id} to ${end_node_id}`);
+    
+    const pathfindingService = new PathfindingService(dbService);
+    const route = await pathfindingService.findPath(start_node_id, end_node_id, accessibility_required);
+    
+    if (route) {
+      const response: ApiResponse<RouteResponse> = {
+        success: true,
+        data: route,
         timestamp: new Date().toISOString(),
       };
-      res.status(400).json(errorResponse);
-      return;
-    }
-
-    // Validate node IDs are numbers
-    if (!Number.isInteger(pathRequest.start_node_id) || !Number.isInteger(pathRequest.end_node_id)) {
-      const errorResponse: ApiResponse = {
+      res.json(response);
+    } else {
+      const response: ApiResponse = {
         success: false,
-        error: 'start_node_id and end_node_id must be integers',
+        error: 'Path not found',
         timestamp: new Date().toISOString(),
       };
-      res.status(400).json(errorResponse);
-      return;
+      res.status(404).json(response);
     }
-
-    // Check if start and end are the same
-    if (pathRequest.start_node_id === pathRequest.end_node_id) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'start_node_id and end_node_id cannot be the same',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(400).json(errorResponse);
-      return;
-    }
-
-    // Ensure pathfinding service is initialized
-    if (!pathfindingService) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'Pathfinding service not initialized',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(503).json(errorResponse);
-      return;
-    }
-
-    // Find the path
-    const route = await pathfindingService.findPath(
-      pathRequest.start_node_id,
-      pathRequest.end_node_id,
-      pathRequest.accessibility_required || false
-    );
-
-    if (!route) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'No path found between the specified nodes',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(404).json(errorResponse);
-      return;
-    }
-
-    const response: ApiResponse = {
-      success: true,
-      data: route,
-      timestamp: new Date().toISOString(),
-    };
-
-    res.json(response);
   } catch (error) {
-    console.error('Pathfinding error:', error);
-    
-    const errorResponse: ApiResponse = {
+    logger.error({ err: error }, 'Pathfinding error');
+    const response: ApiResponse = {
       success: false,
-      error: 'Internal server error during pathfinding',
+      error: 'An unexpected error occurred during pathfinding.',
       timestamp: new Date().toISOString(),
     };
-    
-    res.status(500).json(errorResponse);
+    res.status(500).json(response);
   }
 });
 
-// Pathfinding test endpoint
-app.get(`${API_ENDPOINTS.PATHFIND}/test`, (req: Request, res: Response) => {
-  const response: ApiResponse = {
-    success: true,
-    data: {
-      message: 'Pathfinding service is operational',
-      algorithms: ['A*'],
-      features: [
-        'Multi-floor navigation',
-        'Accessibility support',
-        'Real-time instructions',
-        'Dynamic cost calculation',
-        'Building transitions'
-      ]
-    },
-    timestamp: new Date().toISOString(),
-  };
-  
-  res.json(response);
-});
-
-// Route calculation endpoint (Task 8) - converts RouteResponse to frontend-optimized format
-app.post(API_ENDPOINTS.ROUTE, async (req: Request, res: Response) => {
+// Route calculation endpoint
+app.post(API_ENDPOINTS.ROUTE, validate(routeSchema), async (req: Request, res: Response) => {
   try {
-    const { startNodeId, endNodeId } = req.body;
+    const { startNodeId, endNodeId, accessibilityRequired } = req.body;
     
-    // Validate request
-    if (startNodeId == null || endNodeId == null) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'startNodeId and endNodeId are required',
+    logger.info(`Route calculation request from ${startNodeId} to ${endNodeId}`);
+
+    const pathfindingService = new PathfindingService(dbService);
+    // 1. Get the raw path from the pathfinding service
+    const rawRoute = await pathfindingService.findPath(startNodeId, endNodeId, accessibilityRequired);
+    
+    if (rawRoute) {
+      // 2. Convert the raw path to the frontend-optimized format
+      const finalRoute = convertToRouteCalculationResponse(rawRoute);
+      
+      const response: ApiResponse<RouteCalculationResponse> = {
+        success: true,
+        data: finalRoute,
         timestamp: new Date().toISOString(),
       };
-      res.status(400).json(errorResponse);
-      return;
-    }
-
-    // Validate node IDs are strings (as per Task 8 spec) but convert to numbers for pathfinding
-    if (typeof startNodeId !== 'string' || typeof endNodeId !== 'string') {
-      const errorResponse: ApiResponse = {
+      res.json(response);
+    } else {
+      const response: ApiResponse = {
         success: false,
-        error: 'startNodeId and endNodeId must be strings',
+        error: 'Route not found',
         timestamp: new Date().toISOString(),
       };
-      res.status(400).json(errorResponse);
-      return;
+      res.status(404).json(response);
     }
-
-    // Convert string IDs to numbers for existing pathfinding service
-    // Use strict validation to ensure entire string is numeric (not just prefix)
-    const numericRegex = /^\d+$/;
-    if (!numericRegex.test(startNodeId) || !numericRegex.test(endNodeId)) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'startNodeId and endNodeId must be valid numeric strings',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(400).json(errorResponse);
-      return;
-    }
-
-    const startNodeIdNum = parseInt(startNodeId, 10);
-    const endNodeIdNum = parseInt(endNodeId, 10);
-
-    // Check if start and end are the same
-    if (startNodeIdNum === endNodeIdNum) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'startNodeId and endNodeId cannot be the same',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(400).json(errorResponse);
-      return;
-    }
-
-    // Ensure pathfinding service is initialized
-    if (!pathfindingService) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'Pathfinding service not initialized',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(503).json(errorResponse);
-      return;
-    }
-
-    // Find the path using existing pathfinding service
-    const route = await pathfindingService.findPath(
-      startNodeIdNum,
-      endNodeIdNum,
-      false // Default to non-accessibility mode for Task 8
-    );
-
-    if (!route) {
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: 'Path not found between the specified nodes',
-        timestamp: new Date().toISOString(),
-      };
-      res.status(404).json(errorResponse);
-      return;
-    }
-
-    // Convert RouteResponse to RouteCalculationResponse format
-    const routeCalculationResponse = convertToRouteCalculationResponse(route);
-
-    const response: ApiResponse<RouteCalculationResponse> = {
-      success: true,
-      data: routeCalculationResponse,
-      timestamp: new Date().toISOString(),
-    };
-
-    res.json(response);
   } catch (error) {
-    console.error('Route calculation error:', error);
-    
-    const errorResponse: ApiResponse = {
+    logger.error({ err: error }, 'Route calculation error');
+    const response: ApiResponse = {
       success: false,
-      error: 'Error retrieving graph data',
+      error: 'An unexpected error occurred during route calculation.',
       timestamp: new Date().toISOString(),
     };
-    
-    res.status(500).json(errorResponse);
+    res.status(500).json(response);
   }
 });
 
@@ -308,16 +184,10 @@ app.get('/', (req: Request, res: Response) => {
       message: 'Welcome to Campus Navigation API',
       version: '1.0.0',
       endpoints: {
-        health: API_ENDPOINTS.HEALTH + ' (GET - Basic API health)',
-        health_db: API_ENDPOINTS.HEALTH + '/db (GET - Database connectivity & diagnostics)',
-        health_db_test: API_ENDPOINTS.HEALTH + '/db/test (GET - Database test queries)',
-        health_db_pool: API_ENDPOINTS.HEALTH + '/db/pool (GET - Connection pool status)',
-        pathfind: API_ENDPOINTS.PATHFIND + ' (POST - Core A* pathfinding)',
-        pathfind_test: API_ENDPOINTS.PATHFIND + '/test (GET - Service health check)',
-        route: API_ENDPOINTS.ROUTE + ' (POST - Route calculation with frontend-optimized response)',
-        buildings: API_ENDPOINTS.BUILDINGS + ' (coming soon)',
-        locations: API_ENDPOINTS.LOCATIONS + ' (coming soon)',
-        routes: API_ENDPOINTS.ROUTES + ' (coming soon)'
+        health: API_ENDPOINTS.HEALTH + ' (GET - Full system health, including DB)',
+        route: API_ENDPOINTS.ROUTE + ' (POST - Core route calculation for the frontend)',
+        buildings: API_ENDPOINTS.BUILDINGS + ' (GET - Coming soon)',
+        locations: API_ENDPOINTS.LOCATIONS + ' (GET - Coming soon)',
       }
     },
     timestamp: new Date().toISOString(),
@@ -327,64 +197,15 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Initialize database and start server
-async function startServer() {
+async function startServer(): Promise<void> {
   try {
-    // Initialize database service
-    console.log('🔌 Initializing database service...');
-    dbService = createDatabaseService();
     await dbService.connect();
-    console.log('✅ Database service initialized successfully');
-
-    // Initialize pathfinding service with shared database service
-    console.log('🧭 Initializing pathfinding service...');
-    pathfindingService = new PathfindingService(dbService);
-    console.log('✅ Pathfinding service initialized successfully');
-
-    // Mount health check routes with shared database service
-    const healthRouter = createHealthRouter(dbService);
-    app.use(API_ENDPOINTS.HEALTH, healthRouter);
-
-    // Error handling middleware (must come after all routes)
-    app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-      console.error('Error:', err.message);
-      
-      const errorResponse: ApiResponse = {
-        success: false,
-        error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
-        timestamp: new Date().toISOString(),
-      };
-      
-      // Preserve existing status code or default to 500
-      const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-      res.status(statusCode).json(errorResponse);
+    
+    app.listen(config.port, () => {
+      logger.info(`✅ Server is running at http://localhost:${config.port}`);
     });
-
-    // 404 handler (must be the last middleware)
-    app.use((req: Request, res: Response) => {
-      const notFoundResponse: ApiResponse = {
-        success: false,
-        error: `Route ${req.originalUrl} not found`,
-        timestamp: new Date().toISOString(),
-      };
-      
-      res.status(404).json(notFoundResponse);
-    });
-
-    // Start the server
-app.listen(config.port, () => {
-  console.log(`🚀 Campus Navigation API server is running on port ${config.port}`);
-  console.log(`📋 Health check available at: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}`);
-      console.log(`📊 Database health check: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}/db`);
-      console.log(`🧪 Database test queries: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}/db/test`);
-      console.log(`📈 Connection pool status: http://localhost:${config.port}${API_ENDPOINTS.HEALTH}/db/pool`);
-  console.log(`🗺️ Pathfinding available at: http://localhost:${config.port}${API_ENDPOINTS.PATHFIND}`);
-  console.log(`🧪 Pathfinding test at: http://localhost:${config.port}${API_ENDPOINTS.PATHFIND}/test`);
-});
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    if (dbService) {
-      await dbService.disconnect();
-    }
+    logger.error({ err: error }, '❌ Failed to start server');
     process.exit(1);
   }
 }

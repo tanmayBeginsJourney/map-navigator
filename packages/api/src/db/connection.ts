@@ -5,6 +5,7 @@ import { config, isProduction } from '../config';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
+import logger from '../logger';
 
 // Connection retry configuration
 const RETRY_ATTEMPTS = 5;
@@ -14,8 +15,8 @@ const MAX_RETRY_DELAY = 30000; // 30 seconds
 export interface DatabaseConfig {
   host: string;
   port: number;
-  database: string;
-  username: string;
+  name: string;
+  user: string;
   password: string;
   ssl?: boolean;
   maxConnections?: number;
@@ -48,14 +49,14 @@ export class DatabaseService {
   private async connectWithRetry(): Promise<void> {
     for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
       try {
-        console.log(`🔌 Attempting database connection (attempt ${attempt}/${RETRY_ATTEMPTS})`);
+        logger.info(`🔌 Attempting database connection (attempt ${attempt}/${RETRY_ATTEMPTS})`);
         
         // Create postgres connection
         this.sql = postgres({
           host: this.dbConfig.host,
           port: this.dbConfig.port,
-          database: this.dbConfig.database,
-          username: this.dbConfig.username,
+          database: this.dbConfig.name,
+          username: this.dbConfig.user,
           password: this.dbConfig.password,
           ssl: this.dbConfig.ssl,
           max: this.dbConfig.maxConnections || 20,
@@ -78,19 +79,19 @@ export class DatabaseService {
         this.isConnected = true;
         this.connectionAttempts = 0;
         
-        console.log('✅ Database connected successfully');
+        logger.info('✅ Database connected successfully');
         return;
 
       } catch (error) {
         this.connectionAttempts = attempt;
-        console.error(`❌ Database connection attempt ${attempt} failed:`, error);
+        logger.error({ err: error }, `❌ Database connection attempt ${attempt} failed`);
 
         // Clean up failed connection
         if (this.sql) {
           try {
             await this.sql.end();
           } catch (cleanupError) {
-            console.warn('Warning: Error during connection cleanup:', cleanupError);
+            logger.warn({ err: cleanupError }, 'Warning: Error during connection cleanup');
           }
           this.sql = null;
           this.db = null;
@@ -107,7 +108,7 @@ export class DatabaseService {
           MAX_RETRY_DELAY
         );
         
-        console.log(`⏳ Retrying in ${delay}ms...`);
+        logger.info(`⏳ Retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
@@ -195,7 +196,7 @@ export class DatabaseService {
    * Gracefully close database connections
    */
   async disconnect(): Promise<void> {
-    console.log('🔌 Closing database connections...');
+    logger.info('🔌 Closing database connections...');
     
     try {
       if (this.sql) {
@@ -207,9 +208,9 @@ export class DatabaseService {
       this.isConnected = false;
       this.connectionAttempts = 0;
       
-      console.log('✅ Database connections closed successfully');
+      logger.info('✅ Database connections closed successfully');
     } catch (error) {
-      console.error('❌ Error closing database connections:', error);
+      logger.error({ err: error },'❌ Error closing database connections:');
       throw error;
     }
   }
@@ -263,7 +264,7 @@ export class DatabaseService {
         attributes: row.attributes || null,
       };
     } catch (error) {
-      console.error(`Error getting node ${nodeId}:`, error);
+      logger.error({ err: error },`Error getting node ${nodeId}:`);
       throw error;
     }
   }
@@ -307,7 +308,7 @@ export class DatabaseService {
         };
       });
     } catch (error) {
-      console.error(`Error getting edges for node ${nodeId}:`, error);
+      logger.error({ err: error },`Error getting edges for node ${nodeId}:`);
       throw error;
     }
   }
@@ -360,7 +361,7 @@ export class DatabaseService {
         };
       });
     } catch (error) {
-      console.error(`Error getting accessible edges for node ${nodeId}:`, error);
+      logger.error({ err: error },`Error getting accessible edges for node ${nodeId}:`);
       throw error;
     }
   }
@@ -383,19 +384,22 @@ export class DatabaseService {
 
 // Create singleton instance
 export const createDatabaseService = (dbConfig?: DatabaseConfig): DatabaseService => {
-  const config_to_use = dbConfig || {
-    host: config.database.host,
-    port: config.database.port,
-    database: config.database.name,
-    username: config.database.user,
-    password: config.database.password,
-    ssl: isProduction,
-    maxConnections: 20,
-    idleTimeout: 30,
-    connectionTimeout: 10,
+  const finalConfig: DatabaseConfig = {
+    ...{
+      host: config.database.host,
+      port: config.database.port,
+      name: config.database.name,
+      user: config.database.user,
+      password: config.database.password,
+      ssl: isProduction,
+      maxConnections: isProduction ? 50 : 10,
+      idleTimeout: 30,
+      connectionTimeout: 10,
+    },
+    ...dbConfig,
   };
-
-  return new DatabaseService(config_to_use);
+  
+  return new DatabaseService(finalConfig);
 };
 
 // Export schema for external use
