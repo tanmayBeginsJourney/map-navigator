@@ -202,8 +202,12 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// Start the server
-startServer().catch(error => {
-  logger.fatal({ err: error }, 'Unhandled error during server startup');
-  process.exit(1);
-});
+// Start the server only if the file is executed directly
+if (require.main === module) {
+  startServer().catch(error => {
+    logger.fatal({ err: error }, 'Unhandled error during server startup');
+    process.exit(1);
+  });
+}
+
+export { app, dbService };
