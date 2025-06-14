@@ -57,6 +57,7 @@ export interface Edge {
   to_node_id: number;
   weight?: number;
   type: EdgeType;
+  is_accessible?: boolean;
   instructions?: string;
   attributes?: Record<string, any>;
 }

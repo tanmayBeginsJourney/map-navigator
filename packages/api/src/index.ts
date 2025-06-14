@@ -66,17 +66,22 @@ app.use(API_ENDPOINTS.HEALTH, createHealthRouter(dbService));
 
 // Route calculation endpoint
 app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Request, res: Response) => {
+  logger.info('--- ROUTE CALCULATION START ---');
   try {
     const { startNodeId, endNodeId, accessibilityRequired } = req.body;
     
-    logger.info(`Route calculation request from ${startNodeId} to ${endNodeId}`);
+    logger.info({ startNodeId, endNodeId, accessibilityRequired }, 'Route calculation request received');
 
     // 1. Get the raw path from the pathfinding service
+    logger.info('Calling pathfindingService.findPath...');
     const rawRoute = await pathfindingService.findPath(startNodeId, endNodeId, accessibilityRequired);
+    logger.info({ rawRouteExists: !!rawRoute }, 'pathfindingService.findPath finished.');
     
     if (rawRoute) {
       // 2. Convert the raw path to the frontend-optimized format
+      logger.info('Calling convertToRouteCalculationResponse...');
       const finalRoute = convertToRouteCalculationResponse(rawRoute);
+      logger.info('convertToRouteCalculationResponse finished.');
       
       const response: ApiResponse<RouteCalculationResponse> = {
         success: true,
@@ -85,6 +90,7 @@ app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Reque
       };
       res.json(response);
     } else {
+      logger.warn('No route found. Sending 404 response.');
       const response: ApiResponse = {
         success: false,
         error: 'Route not found',
@@ -93,7 +99,7 @@ app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Reque
       res.status(404).json(response);
     }
   } catch (error) {
-    logger.error({ err: error }, 'Route calculation error');
+    logger.error({ err: error }, '--- ROUTE CALCULATION CRASH ---');
     const response: ApiResponse = {
       success: false,
       error: 'An unexpected error occurred during route calculation.',
@@ -107,14 +113,21 @@ app.post(API_ENDPOINTS.ROUTE, validate({ body: routeSchema }), async (req: Reque
  * Convert RouteResponse to RouteCalculationResponse format (Task 8)
  */
 function convertToRouteCalculationResponse(route: RouteResponse): RouteCalculationResponse {
-  const path: RoutePathNode[] = route.path.map((step: any) => ({
-    nodeId: step.node.id.toString(),
-    coordinates_x_px: step.node.coordinates_x_px ?? step.node.geom.x ?? 0,
-    coordinates_y_px: step.node.coordinates_y_px ?? step.node.geom.y ?? 0,
-    floor_plan_id: step.node.floor_plan_id?.toString() ?? '1',
-    instructions: step.instruction ?? 'Continue straight',
-    type: step.node.type ?? 'junction'
-  }));
+  if (!route || !route.path) {
+    // This case should ideally be handled before calling, but as a safeguard:
+    return { path: [], segments: [] };
+  }
+
+  const path: RoutePathNode[] = route.path
+    .filter(step => !!step && !!step.node) // Filter out any invalid steps
+    .map((step: any) => ({
+      nodeId: step.node.id.toString(),
+      coordinates_x_px: step.node.coordinates_x_px ?? step.node.geom?.x ?? 0,
+      coordinates_y_px: step.node.coordinates_y_px ?? step.node.geom?.y ?? 0,
+      floor_plan_id: step.node.floor_plan_id?.toString() ?? '1',
+      instructions: step.instruction ?? 'Continue straight',
+      type: step.node.type ?? 'junction'
+    }));
 
   // Group path by floor plans to create segments
   const segmentMap = new Map<string, RoutePathNode[]>();
@@ -169,6 +182,20 @@ app.get('/', (req: Request, res: Response) => {
   };
   
   res.json(response);
+});
+
+// --- Global Error Handler ---
+// This should be the last middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  logger.error({ err }, 'Unhandled error caught by global error handler');
+  
+  const response: ApiResponse = {
+    success: false,
+    error: 'An internal server error occurred',
+    timestamp: new Date().toISOString(),
+  };
+  
+  res.status(500).json(response);
 });
 
 // Initialize database and start server

@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
 import { app, dbService } from '../src/index'; // Import the configured app and dbService
 import * as schema from '../src/db/schema';
@@ -57,7 +58,7 @@ describe('API Endpoints', () => {
     it('should return a 404 if no route is found', async () => {
       const res = await request(app)
         .post('/api/route')
-        .send({ startNodeId: 998, endNodeId: 999 }); // Non-existent nodes
+        .send({ startNodeId: '998', endNodeId: '999' }); // Non-existent nodes
       
       expect(res.status).toBe(404);
       expect(res.body.success).toBe(false);
@@ -81,7 +82,7 @@ describe('API Endpoints', () => {
 
       const res = await request(app)
         .post('/api/route')
-        .send({ startNodeId: startNode!.id, endNodeId: endNode!.id });
+        .send({ startNodeId: startNode!.id.toString(), endNodeId: endNode!.id.toString() });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);

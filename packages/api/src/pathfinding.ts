@@ -199,75 +199,104 @@ export class PathfindingService {
     // Get start and end nodes
     const startNode = await this.db.getNodeById(startNodeId);
     const endNode = await this.db.getNodeById(endNodeId);
-    
+
+    // If start or end node is not found, return null (will be a 404 in the API layer)
     if (!startNode || !endNode) {
       return null;
     }
-
-    // Check accessibility requirements
-    if (accessibilityRequired && (!startNode.is_accessible || !endNode.is_accessible)) {
-      return null;
-    }
-
-    const openSet = new MinHeap<AStarNode>((a: AStarNode, b: AStarNode) => a.fCost - b.fCost);
-    const closedSet: Set<number> = new Set();
     
-    // Initialize start node
+    // Min-heap for the open set (nodes to be evaluated)
+    const openSet = new MinHeap<AStarNode>((a, b) => a.fCost - b.fCost);
+    
+    // Map to keep track of nodes in the open set for quick lookups
+    const openSetMap = new Map<number, AStarNode>();
+    
+    // Set for the closed set (nodes already evaluated)
+    const closedSet = new Set<number>();
+    
+    // Initialize start node for A*
     const startAStarNode: AStarNode = {
       node: startNode,
       gCost: 0,
       hCost: this.calculateHeuristic(startNode, endNode),
-      fCost: 0,
+      fCost: this.calculateHeuristic(startNode, endNode),
+      parent: undefined,
+      edge: undefined
     };
-    startAStarNode.fCost = startAStarNode.gCost + startAStarNode.hCost;
     
     openSet.push(startAStarNode);
+    openSetMap.set(startNode.id, startAStarNode);
     
+    // Main A* loop
     while (openSet.length > 0) {
-      // Extract node with lowest fCost (O(log n))
-      const current = openSet.pop()!;
+      const currentNode = openSet.pop()!;
+      openSetMap.delete(currentNode.node.id);
       
-      // Add to closed set
-      closedSet.add(current.node.id);
-      
-      // Check if we reached the goal
-      if (current.node.id === endNodeId) {
-        return this.reconstructPath(current);
+      // Check if we've reached the goal
+      if (currentNode.node.id === endNodeId) {
+        return this.reconstructPath(currentNode);
       }
       
-      // Get neighbors
-      const edges = accessibilityRequired 
-        ? await this.db.getAccessibleEdgesFromNode(current.node.id)
-        : await this.db.getEdgesFromNode(current.node.id);
+      closedSet.add(currentNode.node.id);
       
-      for (const edge of edges) {
-        // Skip if already evaluated
-        if (closedSet.has(edge.to_node_id)) {
+      // Get neighbors for the current node, considering accessibility
+      const neighbors = accessibilityRequired 
+        ? await this.db.getAccessibleEdgesFromNode(currentNode.node.id)
+        : await this.db.getEdgesFromNode(currentNode.node.id);
+      
+      for (const edge of neighbors) {
+        
+        // Determine the actual neighbor node's ID
+        const neighborNodeId = edge.from_node_id === currentNode.node.id 
+          ? edge.to_node_id
+          : edge.from_node_id;
+
+        // This should not happen with good data, but as a safeguard:
+        if (neighborNodeId === null || neighborNodeId === undefined) {
+          continue;
+        }
+
+        // Skip if neighbor is already evaluated
+        if (closedSet.has(neighborNodeId)) {
           continue;
         }
         
-        const neighbor = await this.db.getNodeById(edge.to_node_id);
-        if (!neighbor) continue;
-        
-        // Skip inaccessible nodes if accessibility is required
-        if (accessibilityRequired && !neighbor.is_accessible) {
+        // Skip inaccessible paths if required
+        if (accessibilityRequired && (edge.type === EdgeType.STAIRS || edge.is_accessible === false)) {
           continue;
         }
         
-        const gCost = current.gCost + this.getEdgeCost(edge, accessibilityRequired);
-        const hCost = this.calculateHeuristic(neighbor, endNode);
-        const fCost = gCost + hCost;
+        const edgeCost = this.getEdgeCost(edge, accessibilityRequired);
+        const tentativeGCost = currentNode.gCost + edgeCost;
         
-        // Add neighbor to open set (heap handles duplicates via closed set check)
-        const neighborAStarNode: AStarNode = {
-          node: neighbor,
-          gCost,
-          hCost,
-          fCost,
-          parent: current,
-          edge,
-        };
-        openSet.push(neighborAStarNode);
+        const existingNeighbor = openSetMap.get(neighborNodeId);
+        
+        if (!existingNeighbor || tentativeGCost < existingNeighbor.gCost) {
+          const neighborNode = await this.db.getNodeById(neighborNodeId);
+          if (!neighborNode) continue; // Safeguard if an edge points to a non-existent node
+
+          const hCost = this.calculateHeuristic(neighborNode, endNode);
+          
+          const neighborAStarNode: AStarNode = {
+            node: neighborNode,
+            gCost: tentativeGCost,
+            hCost: hCost,
+            fCost: tentativeGCost + hCost,
+            parent: currentNode,
+            edge: edge
+          };
+          
+          if (!existingNeighbor) {
+            openSet.push(neighborAStarNode);
+            openSetMap.set(neighborNodeId, neighborAStarNode);
+          } else {
+            // Update the existing node in the heap
+            // This is complex for a min-heap; for simplicity, we add a new node
+            // The algorithm will still work, just slightly less efficient
+            openSet.push(neighborAStarNode);
+            openSetMap.set(neighborNodeId, neighborAStarNode);
+          }
+        }
       }
     }
     
