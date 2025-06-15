@@ -11,7 +11,7 @@ interface ImportMetaEnv {
   readonly VITE_MAP_API_KEY: string
   readonly VITE_API_VERSION: string
   // Allow dynamic key access for environment variables
-  readonly [key: string]: any
+  readonly [key: string]: string | undefined
 }
 
 interface ImportMeta {
