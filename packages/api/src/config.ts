@@ -35,7 +35,10 @@ const ConfigSchema = z.object({
 // Parse DATABASE_URL if provided (Railway format)
 function parseDatabaseUrl(databaseUrl: string) {
   try {
-    console.log('🔍 DEBUG: Raw DATABASE_URL provided:', databaseUrl ? `${databaseUrl.substring(0, 20)}...` : 'undefined');
+    logger.debug('Parsing DATABASE_URL', { 
+      hasUrl: !!databaseUrl,
+      urlPrefix: databaseUrl ? `${databaseUrl.substring(0, 20)}...` : 'undefined'
+    });
     const url = new URL(databaseUrl);
     const parsed = {
       host: url.hostname,
@@ -44,16 +47,16 @@ function parseDatabaseUrl(databaseUrl: string) {
       user: url.username,
       password: url.password
     };
-    console.log('🔍 DEBUG: Parsed database config:', {
+    logger.debug('Parsed database config', {
       host: parsed.host,
       port: parsed.port,
       name: parsed.name,
       user: parsed.user,
-      password: parsed.password ? '***REDACTED***' : 'undefined'
+      hasPassword: !!parsed.password
     });
     return parsed;
   } catch (error) {
-    console.error('❌ ERROR: Failed to parse DATABASE_URL:', error);
+    logger.error({ err: error }, 'Failed to parse DATABASE_URL');
     throw new Error(`Invalid DATABASE_URL format: ${error}`);
   }
 }
@@ -61,24 +64,24 @@ function parseDatabaseUrl(databaseUrl: string) {
 // Parse and validate environment variables
 function parseConfig() {
   try {
-    console.log('🔍 DEBUG: NODE_ENV:', process.env.NODE_ENV);
-    console.log('🔍 DEBUG: DATABASE_URL exists:', !!process.env.DATABASE_URL);
-    console.log('🔍 DEBUG: Individual DB vars:', {
-      DB_HOST: !!process.env.DB_HOST,
-      DB_PORT: !!process.env.DB_PORT,
-      DB_NAME: !!process.env.DB_NAME,
-      DB_USER: !!process.env.DB_USER,
-      DB_PASSWORD: !!process.env.DB_PASSWORD
+    logger.debug('Environment configuration', {
+      nodeEnv: process.env.NODE_ENV,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      hasDbHost: !!process.env.DB_HOST,
+      hasDbPort: !!process.env.DB_PORT,
+      hasDbName: !!process.env.DB_NAME,
+      hasDbUser: !!process.env.DB_USER,
+      hasDbPassword: !!process.env.DB_PASSWORD
     });
 
     // Handle both individual DB vars and DATABASE_URL
     let databaseConfig;
     if (process.env.DATABASE_URL) {
-      console.log('📍 Using DATABASE_URL for configuration');
+      logger.debug('Using DATABASE_URL for configuration');
       // Railway/Heroku style DATABASE_URL
       databaseConfig = parseDatabaseUrl(process.env.DATABASE_URL);
     } else {
-      console.log('📍 Using individual DB environment variables');
+      logger.debug('Using individual DB environment variables');
       // Individual environment variables
       databaseConfig = {
         host: process.env.DB_HOST || 'localhost',

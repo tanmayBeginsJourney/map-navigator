@@ -55,17 +55,17 @@ export class DatabaseService {
         logger.info(`🔌 Attempting database connection (attempt ${attempt}/${RETRY_ATTEMPTS})`);
         
         // Log connection details (without password) for debugging
-                 console.log('🔍 DEBUG: Database connection config:', {
-           host: this.dbConfig.host,
-           port: this.dbConfig.port,
-           database: this.dbConfig.name,
-           user: this.dbConfig.user,
-           ssl: this.dbConfig.ssl ? 'enabled (rejectUnauthorized: false)' : 'disabled',
-           maxConnections: this.dbConfig.maxConnections || 20,
-           idleTimeout: this.dbConfig.idleTimeout || 30,
-           connectTimeout: this.dbConfig.connectionTimeout || 10,
-           passwordProvided: !!this.dbConfig.password
-         });
+        logger.debug('Database connection config', {
+          host: this.dbConfig.host,
+          port: this.dbConfig.port,
+          database: this.dbConfig.name,
+          user: this.dbConfig.user,
+          ssl: this.dbConfig.ssl ? 'enabled (rejectUnauthorized: false)' : 'disabled',
+          maxConnections: this.dbConfig.maxConnections || 20,
+          idleTimeout: this.dbConfig.idleTimeout || 30,
+          connectTimeout: this.dbConfig.connectionTimeout || 10,
+          passwordProvided: !!this.dbConfig.password
+        });
         
         // Create postgres connection
         this.sql = postgres({
@@ -103,7 +103,7 @@ export class DatabaseService {
 
       } catch (error) {
         this.connectionAttempts = attempt;
-        console.error('🔍 DEBUG: Connection error details:', {
+        logger.debug('Connection error details', {
           errorMessage: error instanceof Error ? error.message : String(error),
           errorName: error instanceof Error ? error.name : 'Unknown',
           errorCode: (error as any)?.code,
