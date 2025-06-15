@@ -39,9 +39,33 @@ export const resetAllStores = async () => {
   const { useNavigationStore } = await import('./useNavigationStore');
   const { default: logger } = await import('../utils/logger');
   
-  // Reset all stores to initial state
-  useUiStore.getState().resetUiState();
-  useMapStore.getState().resetMapState();
-  useNavigationStore.getState().resetNavigation();
-  logger.info('All stores reset to initial state');
+  try {
+    // Reset all stores to initial state with defensive checks
+    const uiState = useUiStore.getState();
+    const mapState = useMapStore.getState();
+    const navigationState = useNavigationStore.getState();
+    
+    if (typeof uiState.resetUiState === 'function') {
+      uiState.resetUiState();
+    } else {
+      logger.error('resetUiState method not found on UI store');
+    }
+    
+    if (typeof mapState.resetMapState === 'function') {
+      mapState.resetMapState();
+    } else {
+      logger.error('resetMapState method not found on Map store');
+    }
+    
+    if (typeof navigationState.resetNavigation === 'function') {
+      navigationState.resetNavigation();
+    } else {
+      logger.error('resetNavigation method not found on Navigation store');
+    }
+    
+    logger.info('All stores reset to initial state');
+  } catch (error) {
+    logger.error({ error }, 'Failed to reset stores');
+    throw error;
+  }
 }; 

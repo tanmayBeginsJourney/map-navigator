@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { 
   useUiStore, 
   useLoadingState, 
@@ -10,6 +10,18 @@ import {
 } from '../store';
 
 const StoreTestComponent: React.FC = () => {
+  // Ref to track timeout for cleanup
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+  
   // UI Store hooks
   const { isLoading, setLoading, error, setError, clearError, showToast } = useUiStore();
   const loadingState = useLoadingState();
@@ -140,9 +152,17 @@ const StoreTestComponent: React.FC = () => {
             setBuildingId(1);
             setCurrentLocationNodeId(1);
             setDestinationNodeId(10);
-            setTimeout(() => {
+            
+            // Clear any existing timeout
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
+            
+            // Set new timeout with ref tracking
+            timeoutRef.current = setTimeout(() => {
               setLoading(false);
               showToast('Navigation setup complete!', 'success');
+              timeoutRef.current = null;
             }, 1000);
           }}
           style={{ 

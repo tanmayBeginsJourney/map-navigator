@@ -24,6 +24,9 @@ interface UiState {
     type: 'success' | 'error' | 'warning' | 'info';
     duration?: number;
   } | null;
+  
+  // Internal state for toast timeout management
+  toastTimeoutId: ReturnType<typeof setTimeout> | null;
 }
 
 // UI Actions Interface
@@ -69,6 +72,7 @@ const initialState: UiState = {
   isMapFullscreen: false,
   showQRScanner: false,
   toast: null,
+  toastTimeoutId: null,
 };
 
 // Create store creator function
@@ -129,21 +133,36 @@ const createUiStore: StateCreator<UiStore> = (set, get) => ({
   // Toast actions
   showToast: (message: string, type: 'success' | 'error' | 'warning' | 'info', duration = 3000) => {
     logger.info({ message, type, duration }, 'Toast notification shown');
-    set({ toast: { message, type, duration } });
+    
+    // Clear any existing timeout to prevent race conditions
+    const currentState = get();
+    if (currentState.toastTimeoutId) {
+      clearTimeout(currentState.toastTimeoutId);
+    }
+    
+    // Set new toast
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    
     // Auto-hide toast after duration
     if (duration > 0) {
-      setTimeout(() => {
-        const currentState = get();
-        if (currentState.toast?.message === message) {
+      timeoutId = setTimeout(() => {
+        const state = get();
+        if (state.toast?.message === message) {
           logger.debug({ message }, 'Toast auto-hidden after duration');
-          currentState.hideToast();
+          state.hideToast();
         }
       }, duration);
     }
+    
+    set({ toast: { message, type, duration }, toastTimeoutId: timeoutId });
   },
   hideToast: () => {
     logger.debug('Toast notification hidden');
-    set({ toast: null });
+    const currentState = get();
+    if (currentState.toastTimeoutId) {
+      clearTimeout(currentState.toastTimeoutId);
+    }
+    set({ toast: null, toastTimeoutId: null });
   },
   
   // Reset action

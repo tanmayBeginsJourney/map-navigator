@@ -73,9 +73,12 @@ class FrontendLogger {
       // Pretty output for development
       const emoji = this.getLevelEmoji(entry.level);
       const timestamp = new Date(entry.time).toLocaleTimeString();
-      const context = Object.keys(entry)
+      const context: Record<string, unknown> = {};
+      Object.keys(entry)
         .filter(key => !['level', 'time', 'service', 'version', 'environment', 'msg'].includes(key))
-        .reduce((acc, key) => ({ ...acc, [key]: entry[key] }), {});
+        .forEach(key => {
+          context[key] = entry[key];
+        });
       
       const hasContext = Object.keys(context).length > 0;
       console.log(

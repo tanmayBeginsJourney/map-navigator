@@ -449,7 +449,10 @@ const createNavigationStore: StateCreator<NavigationStore> = (set, get) => ({
       nextInstruction: null,
     },
   }),
-  resetNavigation: () => set(initialState),
+  resetNavigation: () => {
+    logger.info('Navigation store reset to initial state');
+    set({ ...initialState });
+  },
   swapStartDestination: () => {
     const state = get();
     set({
