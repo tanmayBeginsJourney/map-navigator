@@ -55,17 +55,17 @@ export class DatabaseService {
         logger.info(`🔌 Attempting database connection (attempt ${attempt}/${RETRY_ATTEMPTS})`);
         
         // Log connection details (without password) for debugging
-        console.log('🔍 DEBUG: Database connection config:', {
-          host: this.dbConfig.host,
-          port: this.dbConfig.port,
-          database: this.dbConfig.name,
-          user: this.dbConfig.user,
-          ssl: this.dbConfig.ssl,
-          maxConnections: this.dbConfig.maxConnections || 20,
-          idleTimeout: this.dbConfig.idleTimeout || 30,
-          connectTimeout: this.dbConfig.connectionTimeout || 10,
-          passwordProvided: !!this.dbConfig.password
-        });
+                 console.log('🔍 DEBUG: Database connection config:', {
+           host: this.dbConfig.host,
+           port: this.dbConfig.port,
+           database: this.dbConfig.name,
+           user: this.dbConfig.user,
+           ssl: this.dbConfig.ssl ? 'enabled (rejectUnauthorized: false)' : 'disabled',
+           maxConnections: this.dbConfig.maxConnections || 20,
+           idleTimeout: this.dbConfig.idleTimeout || 30,
+           connectTimeout: this.dbConfig.connectionTimeout || 10,
+           passwordProvided: !!this.dbConfig.password
+         });
         
         // Create postgres connection
         this.sql = postgres({
@@ -74,7 +74,10 @@ export class DatabaseService {
           database: this.dbConfig.name,
           user: this.dbConfig.user,
           password: this.dbConfig.password,
-          ssl: this.dbConfig.ssl,
+          ssl: this.dbConfig.ssl ? {
+            // Railway uses self-signed certificates for internal connections
+            rejectUnauthorized: false
+          } : false,
           max: this.dbConfig.maxConnections || 20,
           idle_timeout: this.dbConfig.idleTimeout || 30,
           connect_timeout: this.dbConfig.connectionTimeout || 10,
