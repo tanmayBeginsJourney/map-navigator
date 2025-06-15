@@ -86,7 +86,7 @@ jobs:
             **Status**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
             **Branch**: `${{ github.ref_name }}`
             **Commit**: `${{ github.sha }}`
-            **Changes**: Backend: ${{ steps.changes.outputs.backend || 'false' }}, Frontend: ${{ steps.changes.outputs.frontend || 'false' }}
+            **Changes**: Backend: ${{ steps.changes.outputs.backend || 'false' }}, Frontend: ${{ steps.changes.outputs.frontend || 'false' }}, Shared: ${{ steps.changes.outputs.shared || 'false' }}
 
   # Phase 2: Backend Tests (5-7 min)
   backend-tests:
