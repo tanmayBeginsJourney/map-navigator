@@ -59,7 +59,7 @@ DISCORD_WEBHOOK = https://discord.com/api/webhooks/YOUR_WEBHOOK_URL
 
 **Vercel (already have project, need tokens):**
 ```
-VERCEL_TOKEN = [Get from https://vercel.com/account/tokens]
+VERCEL_TOKEN = [Get from https://vercel.com/ account/tokens]
 VERCEL_ORG_ID = [Your team/user ID from Vercel dashboard]
 VERCEL_PROJECT_ID = [From Vercel project settings]
 ```
@@ -178,4 +178,4 @@ Phase 2 is complete when:
 ---
 
 **Estimated Total Setup Time: 10-15 minutes**
-**Current Status: 70% Complete - Need Railway services and GitHub secrets** 
+**Current Status: 100% COMPLETE - Full CI/CD pipeline operational with all services deployed!** 

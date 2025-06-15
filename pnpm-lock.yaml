@@ -82,9 +82,6 @@ importers:
 
   packages/api:
     dependencies:
-      '@campus-nav/shared':
-        specifier: workspace:*
-        version: link:../shared
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
