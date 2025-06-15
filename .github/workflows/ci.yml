@@ -130,6 +130,16 @@ jobs:
       - name: 🏗️ Build shared package
         run: pnpm --filter @campus-nav/shared build
 
+      - name: 🗄️ Setup database schema
+        run: pnpm --filter @campus-nav/api db:migrate
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: campus_navigation_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+
       - name: 🧪 Run backend tests
         run: pnpm --filter @campus-nav/api test
         env:
@@ -202,7 +212,7 @@ jobs:
     name: 🔗 Integration Tests
     runs-on: ubuntu-latest
     needs: [quality-check, backend-tests, frontend-tests]
-    if: always() && ((needs.backend-tests.result || 'failure') == 'success' || (needs.backend-tests.result || 'failure') == 'skipped') && ((needs.frontend-tests.result || 'failure') == 'success' || (needs.frontend-tests.result || 'failure') == 'skipped')
+    if: always() && ((needs['backend-tests'].result || 'failure') == 'success' || (needs['backend-tests'].result || 'failure') == 'skipped') && ((needs['frontend-tests'].result || 'failure') == 'success' || (needs['frontend-tests'].result || 'failure') == 'skipped')
     
     services:
       postgres:
@@ -241,6 +251,16 @@ jobs:
           pnpm --filter @campus-nav/shared build
           pnpm --filter @campus-nav/api build
 
+      - name: 🗄️ Setup database schema
+        run: pnpm --filter @campus-nav/api db:migrate
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: campus_navigation_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+
       - name: 🚀 Start API server
         run: |
           cd packages/api
@@ -276,7 +296,7 @@ jobs:
     name: 🚀 Deploy to Production
     runs-on: ubuntu-latest
     needs: [quality-check, backend-tests, frontend-tests, integration-tests]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && ((needs.integration-tests.result || 'failure') == 'success' || ((needs.backend-tests.result || 'failure') == 'success' && (needs.frontend-tests.result || 'failure') == 'success'))
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && ((needs['integration-tests'].result || 'failure') == 'success' || ((needs['backend-tests'].result || 'failure') == 'success' && (needs['frontend-tests'].result || 'failure') == 'success'))
     
     steps:
       - name: 📥 Checkout code
@@ -332,7 +352,7 @@ jobs:
     name: 🏥 Post-Deployment Health Check
     runs-on: ubuntu-latest
     needs: deploy
-    if: always() && (needs.deploy.result || 'failure') == 'success'
+    if: always() && (needs['deploy'].result || 'failure') == 'success'
     
     steps:
       - name: 🏥 Check Frontend Health
@@ -373,15 +393,15 @@ jobs:
         with:
           args: |
             📋 **CI/CD Pipeline Summary**
-            **Overall Status**: ${{ ((needs.quality-check.result || 'failure') == 'success' && ((needs.backend-tests.result || 'skipped') == 'success' || (needs.backend-tests.result || 'skipped') == 'skipped') && ((needs.frontend-tests.result || 'skipped') == 'success' || (needs.frontend-tests.result || 'skipped') == 'skipped') && ((needs.integration-tests.result || 'skipped') == 'success' || (needs.integration-tests.result || 'skipped') == 'skipped') && ((needs.deploy.result || 'skipped') == 'success' || (needs.deploy.result || 'skipped') == 'skipped') && ((needs.health-check.result || 'skipped') == 'success' || (needs.health-check.result || 'skipped') == 'skipped')) && '✅ All Systems Go' || '❌ Issues Detected' }}
+            **Overall Status**: ${{ ((needs['quality-check'].result || 'failure') == 'success' && ((needs['backend-tests'].result || 'skipped') == 'success' || (needs['backend-tests'].result || 'skipped') == 'skipped') && ((needs['frontend-tests'].result || 'skipped') == 'success' || (needs['frontend-tests'].result || 'skipped') == 'skipped') && ((needs['integration-tests'].result || 'skipped') == 'success' || (needs['integration-tests'].result || 'skipped') == 'skipped') && ((needs['deploy'].result || 'skipped') == 'success' || (needs['deploy'].result || 'skipped') == 'skipped') && ((needs['health-check'].result || 'skipped') == 'success' || (needs['health-check'].result || 'skipped') == 'skipped')) && '✅ All Systems Go' || '❌ Issues Detected' }}
             
             **Phase Results**:
-            🔍 Quality Check: ${{ (needs.quality-check.result || 'failure') == 'success' && '✅' || '❌' }}
-            🧪 Backend Tests: ${{ (needs.backend-tests.result || 'skipped') == 'success' && '✅' || (needs.backend-tests.result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
-            🎨 Frontend Tests: ${{ (needs.frontend-tests.result || 'skipped') == 'success' && '✅' || (needs.frontend-tests.result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
-            🔗 Integration: ${{ (needs.integration-tests.result || 'skipped') == 'success' && '✅' || (needs.integration-tests.result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
-            🚀 Deployment: ${{ (needs.deploy.result || 'skipped') == 'success' && '✅' || (needs.deploy.result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
-            🏥 Health Check: ${{ (needs.health-check.result || 'skipped') == 'success' && '✅' || (needs.health-check.result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
+            🔍 Quality Check: ${{ (needs['quality-check'].result || 'failure') == 'success' && '✅' || '❌' }}
+            🧪 Backend Tests: ${{ (needs['backend-tests'].result || 'skipped') == 'success' && '✅' || (needs['backend-tests'].result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
+            🎨 Frontend Tests: ${{ (needs['frontend-tests'].result || 'skipped') == 'success' && '✅' || (needs['frontend-tests'].result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
+            🔗 Integration: ${{ (needs['integration-tests'].result || 'skipped') == 'success' && '✅' || (needs['integration-tests'].result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
+            🚀 Deployment: ${{ (needs['deploy'].result || 'skipped') == 'success' && '✅' || (needs['deploy'].result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
+            🏥 Health Check: ${{ (needs['health-check'].result || 'skipped') == 'success' && '✅' || (needs['health-check'].result || 'skipped') == 'skipped' && '⏭️' || '❌' }}
             
             **Branch**: `${{ github.ref_name }}`
             **Commit**: `${{ github.sha }}`
