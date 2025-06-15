@@ -168,7 +168,13 @@ const createUiStore: StateCreator<UiStore> = (set, get) => ({
   // Reset action
   resetUiState: () => {
     logger.info('UI store reset to initial state');
-    set(initialState);
+    // Clear any existing timeout before reset
+    const currentState = get();
+    if (currentState.toastTimeoutId) {
+      clearTimeout(currentState.toastTimeoutId);
+    }
+    // Use structuredClone for deep copy to avoid shared references
+    set(structuredClone(initialState));
   },
 });
 

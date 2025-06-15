@@ -64,7 +64,7 @@ class FrontendLogger {
       version: this.version,
       environment: this.environment,
       msg,
-      ...context,
+      ...(context ? context : {}),
     };
   }
 
